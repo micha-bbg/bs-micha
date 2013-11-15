@@ -1,0 +1,10 @@
+Package: ntp
+Version: @VER@-1
+Description: Synchronize system clock over a network
+Section: base
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.ntp.org
+Source:
+Depends:

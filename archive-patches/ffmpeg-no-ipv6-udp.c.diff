@@ -1,0 +1,103 @@
+--- a/libavformat/udp.c.org	2013-05-03 14:00:09.000000000 +0200
++++ b/libavformat/udp.c	2013-08-29 00:11:57.528480395 +0200
+@@ -128,14 +128,6 @@
+         }
+     }
+ #endif
+-#if defined(IPPROTO_IPV6) && defined(IPV6_MULTICAST_HOPS)
+-    if (addr->sa_family == AF_INET6) {
+-        if (setsockopt(sockfd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &mcastTTL, sizeof(mcastTTL)) < 0) {
+-            log_net_error(NULL, AV_LOG_ERROR, "setsockopt(IPV6_MULTICAST_HOPS)");
+-            return -1;
+-        }
+-    }
+-#endif
+     return 0;
+ }
+ 
+@@ -153,18 +145,6 @@
+         }
+     }
+ #endif
+-#if HAVE_STRUCT_IPV6_MREQ && defined(IPPROTO_IPV6)
+-    if (addr->sa_family == AF_INET6) {
+-        struct ipv6_mreq mreq6;
+-
+-        memcpy(&mreq6.ipv6mr_multiaddr, &(((struct sockaddr_in6 *)addr)->sin6_addr), sizeof(struct in6_addr));
+-        mreq6.ipv6mr_interface= 0;
+-        if (setsockopt(sockfd, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, &mreq6, sizeof(mreq6)) < 0) {
+-            log_net_error(NULL, AV_LOG_ERROR, "setsockopt(IPV6_ADD_MEMBERSHIP)");
+-            return -1;
+-        }
+-    }
+-#endif
+     return 0;
+ }
+ 
+@@ -182,18 +162,6 @@
+         }
+     }
+ #endif
+-#if HAVE_STRUCT_IPV6_MREQ && defined(IPPROTO_IPV6)
+-    if (addr->sa_family == AF_INET6) {
+-        struct ipv6_mreq mreq6;
+-
+-        memcpy(&mreq6.ipv6mr_multiaddr, &(((struct sockaddr_in6 *)addr)->sin6_addr), sizeof(struct in6_addr));
+-        mreq6.ipv6mr_interface= 0;
+-        if (setsockopt(sockfd, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq6, sizeof(mreq6)) < 0) {
+-            log_net_error(NULL, AV_LOG_ERROR, "setsockopt(IPV6_DROP_MEMBERSHIP)");
+-            return -1;
+-        }
+-    }
+-#endif
+     return 0;
+ }
+ 
+@@ -233,26 +201,27 @@
+     int i;
+     for (i = 0; i < nb_sources; i++) {
+         struct group_source_req mreqs;
+-        int level = addr->sa_family == AF_INET ? IPPROTO_IP : IPPROTO_IPV6;
+-        struct addrinfo *sourceaddr = udp_resolve_host(sources[i], 0,
+-                                                       SOCK_DGRAM, AF_UNSPEC,
+-                                                       AI_NUMERICHOST);
+-        if (!sourceaddr)
+-            return AVERROR(ENOENT);
+-
+-        mreqs.gsr_interface = 0;
+-        memcpy(&mreqs.gsr_group, addr, addr_len);
+-        memcpy(&mreqs.gsr_source, sourceaddr->ai_addr, sourceaddr->ai_addrlen);
+-        freeaddrinfo(sourceaddr);
+-
+-        if (setsockopt(sockfd, level,
+-                       include ? MCAST_JOIN_SOURCE_GROUP : MCAST_BLOCK_SOURCE,
+-                       (const void *)&mreqs, sizeof(mreqs)) < 0) {
+-            if (include)
+-                log_net_error(NULL, AV_LOG_ERROR, "setsockopt(MCAST_JOIN_SOURCE_GROUP)");
+-            else
+-                log_net_error(NULL, AV_LOG_ERROR, "setsockopt(MCAST_BLOCK_SOURCE)");
+-            return ff_neterrno();
++        if (addr->sa_family == AF_INET) {
++                struct addrinfo *sourceaddr = udp_resolve_host(sources[i], 0,
++                                                               SOCK_DGRAM, AF_UNSPEC,
++                                                               AI_NUMERICHOST);
++                if (!sourceaddr)
++                    return AVERROR(ENOENT);
++
++                mreqs.gsr_interface = 0;
++                memcpy(&mreqs.gsr_group, addr, addr_len);
++                memcpy(&mreqs.gsr_source, sourceaddr->ai_addr, sourceaddr->ai_addrlen);
++                freeaddrinfo(sourceaddr);
++
++                if (setsockopt(sockfd, IPPROTO_IP,
++                               include ? MCAST_JOIN_SOURCE_GROUP : MCAST_BLOCK_SOURCE,
++                               (const void *)&mreqs, sizeof(mreqs)) < 0) {
++                    if (include)
++                        log_net_error(NULL, AV_LOG_ERROR, "setsockopt(MCAST_JOIN_SOURCE_GROUP)");
++                    else
++                        log_net_error(NULL, AV_LOG_ERROR, "setsockopt(MCAST_BLOCK_SOURCE)");
++                    return ff_neterrno();
++                }
+         }
+     }
+ #elif HAVE_STRUCT_IP_MREQ_SOURCE && defined(IP_BLOCK_SOURCE)

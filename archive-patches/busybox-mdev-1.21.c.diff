@@ -1,0 +1,35 @@
+--- a/util-linux/mdev.c
++++ b/util-linux/mdev.c
+@@ -864,11 +864,20 @@
+ 	int firmware_fd, loading_fd;
+ 
+ 	/* check for /lib/firmware/$FIRMWARE */
+-	xchdir("/lib/firmware");
+-	firmware_fd = open(firmware, O_RDONLY); /* can fail */
++	if (chdir("/lib/firmware")) {
++		/* don't die -- might need to write mdev.seq */
++		bb_perror_msg("chdir(/lib/firmware)");
++		return;
++	}
++	firmware_fd = xopen(firmware, O_RDONLY);
++	loading_fd = -1;
+ 
+ 	/* check for /sys/$DEVPATH/loading ... give 30 seconds to appear */
+-	xchdir(sysfs_path);
++	if (chdir(sysfs_path)) {
++		bb_perror_msg("chdir(%s)", sysfs_path); /* crappy driver... */
++		goto out;
++	}
++
+ 	for (cnt = 0; cnt < 30; ++cnt) {
+ 		loading_fd = open("loading", O_WRONLY);
+ 		if (loading_fd >= 0)
+@@ -941,7 +950,7 @@
+ {
+ 	/* We time out after 2 sec */
+ 	static const struct timespec ts = { 0, 32*1000*1000 };
+-	int timeout = 2000 / 32;
++	int timeout = 5000 / 32;
+ 	int seq_fd = -1;
+ 	int do_once = 1;
+ 	sigset_t set_CHLD;

@@ -1,0 +1,26 @@
+--- Makefile.org	2013-08-24 19:01:52.594469637 +0200
++++ Makefile	2013-08-24 19:02:27.888906629 +0200
+@@ -9,12 +9,12 @@
+ exec_prefix=${prefix}
+ bindir=${exec_prefix}/bin
+ sbindir=${exec_prefix}/sbin
+-libexecdir=/sbin
++libexecdir=${exec_prefix}/sbin
+ datadir=${datarootdir}
+ datarootdir=${prefix}/share
+ mandir=/Data/coolstream/buildsystem-cs-tank/build_tmp/.remove
+ mansubdir=man
+-sysconfdir=/etc/ssh
++sysconfdir=${exec_prefix}/etc/ssh
+ piddir=/var/run
+ srcdir=.
+ top_srcdir=.
+@@ -26,7 +26,7 @@
+ SFTP_SERVER=$(libexecdir)/sftp-server
+ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+ SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
+-PRIVSEP_PATH=/share/empty
++PRIVSEP_PATH=${exec_prefix}/share/empty
+ SSH_PRIVSEP_USER=sshd
+ STRIP_OPT=-s
+ 

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+CONF=/etc/vsftpd.conf
+
+case $1 in
+	start)
+		if pidof vsftpd > /dev/null; then
+			exit
+		fi
+		chown 0:0 $CONF
+		vsftpd $CONF
+		;;
+	stop)
+		if pidof vsftpd > /dev/null; then
+			killall vsftpd # lame...
+		fi
+		;;
+esac

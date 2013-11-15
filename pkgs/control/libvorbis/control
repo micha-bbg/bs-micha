@@ -1,0 +1,11 @@
+Package: libvorbis
+Version: @VER@-1
+Description: Libraries to Decode and work with Vorbis Bitstreams
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.xiph.org/vorbis
+Source:
+Depends: libogg.so.0
+Provides: @PROV@

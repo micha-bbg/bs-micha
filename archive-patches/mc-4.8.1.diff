@@ -1,0 +1,12 @@
+diff -uNr mc-4.6.2.org/Makefile.in mc-4.6.2/Makefile.in
+--- mc-4.6.2.org/Makefile.in	2009-02-01 20:46:26.000000000 +0100
++++ mc-4.6.2/Makefile.in	2009-03-09 19:42:44.000000000 +0100
+@@ -418,7 +418,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = 1.5
+-SUBDIRS = intl po lib src doc contrib misc $(am__append_1)
++SUBDIRS = intl po lib src contrib misc $(am__append_1)
+ EXTRA_DIST = 
+ dist_noinst_SCRIPTS = build-glib2.sh
+ dist_noinst_HEADERS = $(top_srcdir)/version.h

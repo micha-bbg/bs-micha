@@ -1,0 +1,11 @@
+Package: libfreetype
+Version: @VER@-1
+Description: A Free, High-Quality, and Portable Font Engine
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.freetype.org/
+Source:
+Depends: @DEP@
+Provides: @PROV@

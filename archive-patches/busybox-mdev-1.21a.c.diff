@@ -1,0 +1,35 @@
+--- a/util-linux/mdev.c.orig	2013-01-21 01:22:00.000000000 +0100
++++ a/util-linux/mdev.c	2013-08-19 04:28:31.104941856 +0200
+@@ -771,11 +771,20 @@
+ 	int firmware_fd, loading_fd;
+ 
+ 	/* check for /lib/firmware/$FIRMWARE */
+-	xchdir("/lib/firmware");
+-	firmware_fd = open(firmware, O_RDONLY); /* can fail */
++	if (chdir("/lib/firmware")) {
++		/* don't die -- might need to write mdev.seq */
++		bb_perror_msg("chdir(/lib/firmware)");
++		return;
++	}
++	firmware_fd = xopen(firmware, O_RDONLY);
++	loading_fd = -1;
+ 
+ 	/* check for /sys/$DEVPATH/loading ... give 30 seconds to appear */
+-	xchdir(sysfs_path);
++	if (chdir(sysfs_path)) {
++		bb_perror_msg("chdir(%s)", sysfs_path); /* crappy driver... */
++		goto out;
++	}
++
+ 	for (cnt = 0; cnt < 30; ++cnt) {
+ 		loading_fd = open("loading", O_WRONLY);
+ 		if (loading_fd >= 0)
+@@ -898,7 +907,7 @@
+ 		 * in parallel, and we need to wait */
+ 		seq = getenv("SEQNUM");
+ 		if (seq) {
+-			int timeout = 2000 / 32; /* 2000 msec */
++			int timeout = 5000 / 32; /* 2000 msec */
+ 			do {
+ 				int seqlen;
+ 				char seqbuf[sizeof(int)*3 + 2];

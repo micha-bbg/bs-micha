@@ -1,0 +1,12 @@
+Package: cs-drivers
+Version: @VER@-1
+Description: Drivers and Firmware for Coolstream HD1 Hardware
+Section: base/drivers
+Priority: required
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://coolstreamtech.com/
+Source:
+Depends: cs-libs depmod
+Provides: cs-drivers
+Conflicts: cs-beta-drivers

@@ -1,0 +1,62 @@
+#!/bin/sh
+
+#set -x
+PATH=/var/bin:/bin:/var/sbin:/sbin
+
+case $1 in
+	start)
+		dmesg -n1
+		# start network.
+		dt -t"Starting network..."
+		echo "Starting Network now ......."
+		ifup -a
+
+		# UPNP
+		mkdir -p /media/00upnp
+		[ -e /var/etc/.djmount -a -x /bin/djmount ] && /bin/djmount -o iocharset=utf8 /media/00upnp &
+		if [ -e /var/etc/.ushare -a -x /bin/ushare ]; then
+			sleep 10
+			/bin/ushare -D &
+		fi
+		[ -e /var/etc/.xupnpd -a -x /bin/xupnpd ] && /bin/xupnpd
+		# telnet
+		[ -e /var/etc/.telnetd -a -x /sbin/telnetd ] && /sbin/telnetd -f /etc/issue
+		# vsftpd
+		[ -e /var/etc/.vsftpd -a -x /sbin/vsftpd ] && /sbin/vsftpd
+		;;
+	stop)
+		if pidof vsftpd > /dev/null; then
+			echo "Kill vsftpd"
+			killall vsftpd
+		fi
+		if pidof ushare > /dev/null; then
+			echo "Kill ushare"
+			trap "" INT
+			kill -INT `pidof ushare`
+		fi
+		if [ -e /var/etc/.djmount ]; then
+			echo "Kill djmount"
+			fusermount -u /media/00upnp
+		fi
+		if pidof xupnpd > /dev/null; then
+			echo "Kill xupnpd"
+			killall xupnpd
+		fi
+		# stop network.
+		dt -t"Stopping network..."
+		echo "Stopping Network now ......."
+		ifdown -af
+		;;
+	restart)
+		$0 stop
+		sleep 2
+		$0 start
+		;;
+esac
+
+
+
+
+
+
+

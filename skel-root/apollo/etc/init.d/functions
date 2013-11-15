@@ -1,0 +1,68 @@
+#!/bin/sh
+
+PATH=/var/bin:/bin:/var/sbin:/sbin
+
+create_node() {
+	device=$1
+
+	rm -f /dev/${device}
+	major=`awk "\\$2==\"$device\" {print \\$1}" /proc/devices`
+
+	if [ ${major} ]; then
+		echo Creating device node for $1
+		mknod /dev/${device} c $major 0
+	fi
+
+}
+
+create_node_dir() {
+	device=$1
+
+	rm -rf /dev/${device}
+	mkdir -p /dev/${device}
+
+	major=`awk "\\$2==\"$device\" {print \\$1}" /proc/devices`
+
+	if [ ${major} ]; then
+		echo Creating device node for $1
+		mknod /dev/${device}/0 c $major 0
+	fi
+
+}
+
+run_initscripts() {
+	if [ "$1" == "stop" ]; then
+		action="stop"
+		files="/opt/*/etc/init.d/K[0-9][0-9]* /etc/init.d/K[0-9][0-9]*"
+	else
+		action="start"
+		files="/opt/*/etc/init.d/S[0-9][0-9]* /etc/init.d/S[0-9][0-9]*"
+	fi
+
+	names=$(for file in $files ; do echo ${file##*/} ; done | sort -u)
+	for name in $names; do
+		[ "${name:1}" = "[0-9][0-9]*" ] && continue # mis-globbed /opt/*/...
+		for file in /opt/*/etc/init.d/$name /etc/init.d/$name; do
+			if [ -x "$file"  ]; then
+				echo "${action}ing $file ..."
+				case "$file" in
+				*.sh)
+					# Source shell script for speed.
+					(
+						trap - INT QUIT TSTP
+						set $action
+						. $file
+					)
+					;;
+				*)
+					# No sh extension, so fork subprocess.
+					$file $action
+					;;
+				esac
+				# only execute the first of a given name,
+				# to allow overriding /etc from /opt
+				break;
+			fi
+		done
+	done
+}

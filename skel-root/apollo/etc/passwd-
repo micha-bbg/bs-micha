@@ -1,0 +1,4 @@
+root::0:99:Linux User,,,:/root:/bin/sh
+nobody:x:1000:1002:Linux User,,,:/home/nobody:/bin/false
+ssh:x:1001:1001:Linux User,,,:/home/ssh:/bin/sh
+sshd:x:1002:1002:Linux User,,,:/home/sshd:/bin/sh

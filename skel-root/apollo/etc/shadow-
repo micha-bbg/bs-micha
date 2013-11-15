@@ -1,0 +1,5 @@
+root:$1$lLpt.BtX$ef5rxlw4ijNi.spqdAvan1:0:0:99999:7:::
+#root::0:0:99999:7:::
+nobody:!:0:0:99999:7:::
+ssh:oEOdswu0uYPGI:15941:0:99999:7:::
+sshd:KRwWKwFjL9vPo:15941:0:99999:7:::

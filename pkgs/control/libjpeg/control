@@ -1,0 +1,11 @@
+Package: libjpeg-turbo
+Version: @VER@-1
+Description: JPEG processing library
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://sourceforge.net/projects/libjpeg-turbo/
+Source:
+Depends:
+Provides: @PROV@

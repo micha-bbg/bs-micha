@@ -1,0 +1,12 @@
+/etc/group
+/etc/passwd
+/etc/protocols
+/etc/services
+/etc/hostname
+/etc/inetd.conf
+/etc/inittab
+/etc/fstab
+/etc/mdev.conf
+/etc/modprobe.conf
+/etc/nsswitch.conf
+/etc/network/interfaces

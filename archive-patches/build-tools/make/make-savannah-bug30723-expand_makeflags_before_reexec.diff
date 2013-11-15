@@ -1,0 +1,17 @@
+Index: main.c
+===================================================================
+RCS file: /sources/make/make/main.c,v
+retrieving revision 1.243
+retrieving revision 1.244
+diff -u -p -u -p -r1.243 -r1.244
+--- main.c	19 Jul 2010 07:10:53 -0000	1.243
++++ main.c	10 Aug 2010 07:35:34 -0000	1.244
+@@ -2093,7 +2093,7 @@ main (int argc, char **argv, char **envp
+             const char *pv = define_makeflags (1, 1);
+             char *p = alloca (sizeof ("MAKEFLAGS=") + strlen (pv) + 1);
+             sprintf (p, "MAKEFLAGS=%s", pv);
+-            putenv (p);
++            putenv (allocated_variable_expand (p));
+           }
+ 
+ 	  if (ISDB (DB_BASIC))

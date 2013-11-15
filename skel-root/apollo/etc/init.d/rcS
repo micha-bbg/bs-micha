@@ -1,0 +1,60 @@
+#!/bin/sh
+
+PATH=/var/bin:/bin:/var/sbin:/sbin
+
+# reset colors, to not hurt my eyes...
+echo -e "\033[0m"
+# 132 columns
+echo -e "\033[?3h"
+
+mount -t proc proc /proc
+
+# Create console and null devices if they don't exist.
+[ -e /dev/console ] || mknod -m 644 /dev/console c 5 1
+[ -e /dev/null ]    || mknod -m 666 /dev/null  c 1 3
+
+mount -t tmpfs tmpfs /tmp
+mount -t sysfs sys /sys
+mount -t tmpfs tmp /tmp
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+mkdir -p /dev/shm/usb
+mount -t usbfs none /proc/bus/usb
+mkdir -p /tmp/dev
+DEV=$(grep -w var /proc/mtd | cut -f 0 -s -d :)
+BNR=$(echo $DEV | cut -c${#DEV})
+if [ "$DEV" -a "$BNR" ]; then
+	case $BNR in
+		[0-9])
+			[ -e /var ] || mkdir /var
+			echo "mounting /dev/mtdblock${BNR} to /var"
+			mount -t jffs2 /dev/mtdblock${BNR} /var
+		;;
+	esac
+fi
+
+#mount -a
+
+# the ethernet chip needs 2 seconds to initialize...
+# ...so start it *now*, then real network setup is fast
+echo ifconfig eth0 up
+ifconfig eth0 up
+
+# directory for mounting disks
+mkdir /tmp/media
+rm -f /media		# don't remove if it is a directory
+ln -s /tmp/media /	# /media points to /tmp/media/
+
+# Start syslogd early so we have logger messages in syslog.
+if [ -x /sbin/syslogd -a -e /var/etc/.syslogd ]; then
+	/sbin/syslogd -m 0
+fi
+
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+echo > /dev/mdev.seq
+/sbin/mdev -s
+
+# Start all init scripts in /etc/init.d
+# executing them in numerical order.
+. /etc/init.d/functions
+run_initscripts start

@@ -1,0 +1,289 @@
+--- a/config-1.16-apollo-uclibc
++++ b/.config
+@@ -17,15 +17,17 @@
+ #
+ # CT_OBSOLETE is not set
+ CT_EXPERIMENTAL=y
++# CT_ALLOW_BUILD_AS_ROOT is not set
+ # CT_DEBUG_CT is not set
+ 
+ #
+ # Paths
+ #
+-CT_LOCAL_TARBALLS_DIR="/opt/cross/downloads"
++CT_LOCAL_TARBALLS_DIR="${CST_BASE_DIR}/download"
+ CT_SAVE_TARBALLS=y
++CT_CUSTOM_LOCATION_ROOT_DIR=""
+ CT_WORK_DIR="${CT_TOP_DIR}/targets"
+-CT_PREFIX_DIR="/opt/arm/${CT_TARGET}"
++CT_PREFIX_DIR="${CST_BASE_DIR}/cross"
+ CT_INSTALL_DIR="${CT_PREFIX_DIR}"
+ # CT_RM_RF_PREFIX_DIR is not set
+ # CT_REMOVE_DOCS is not set
+@@ -60,10 +62,13 @@
+ #
+ # Build behavior
+ #
+-CT_PARALLEL_JOBS=8
+-CT_LOAD=0
++CT_PARALLEL_JOBS=6
++CT_LOAD=""
+ CT_USE_PIPES=y
+-CT_EXTRA_FLAGS_FOR_HOST=""
++CT_EXTRA_CFLAGS_FOR_BUILD=""
++CT_EXTRA_LDFLAGS_FOR_BUILD=""
++CT_EXTRA_CFLAGS_FOR_HOST=""
++CT_EXTRA_LDFLAGS_FOR_HOST=""
+ # CT_CONFIG_SHELL_SH is not set
+ # CT_CONFIG_SHELL_ASH is not set
+ CT_CONFIG_SHELL_BASH=y
+@@ -122,6 +127,7 @@
+ # CT_ARCH_s390 is not set
+ # CT_ARCH_m68k is not set
+ # CT_ARCH_alpha is not set
++# CT_ARCH_microblaze is not set
+ # CT_ARCH_blackfin is not set
+ CT_ARCH_arm_AVAILABLE=y
+ CT_ARCH_x86_AVAILABLE=y
+@@ -133,7 +139,9 @@
+ CT_ARCH_s390_AVAILABLE=y
+ CT_ARCH_m68k_AVAILABLE=y
+ CT_ARCH_alpha_AVAILABLE=y
++CT_ARCH_microblaze_AVAILABLE=y
+ CT_ARCH_blackfin_AVAILABLE=y
++CT_ARCH_SUFFIX=""
+ 
+ #
+ # Generic target options
+@@ -155,7 +163,9 @@
+ CT_ARCH_ARM_MODE_ARM=y
+ # CT_ARCH_ARM_MODE_THUMB is not set
+ # CT_ARCH_ARM_INTERWORKING is not set
++CT_ARCH_ARM_EABI_FORCE=y
+ CT_ARCH_ARM_EABI=y
++# CT_ARCH_ARM_TUPLE_USE_EABIHF is not set
+ 
+ #
+ # Toolchain options
+@@ -208,25 +218,30 @@
+ CT_KERNEL_VERSION="custom"
+ # CT_KERNEL_bare_metal is not set
+ CT_KERNEL_linux=y
+-CT_KERNEL_mingw32_AVAILABLE=y
+ CT_KERNEL_bare_metal_AVAILABLE=y
++CT_KERNEL_windows_AVAILABLE=y
+ CT_KERNEL_linux_AVAILABLE=y
++# CT_KERNEL_V_3_7_3 is not set
++# CT_KERNEL_V_3_7_2 is not set
++# CT_KERNEL_V_3_7_1 is not set
++# CT_KERNEL_V_3_7 is not set
++# CT_KERNEL_V_3_6 is not set
+ # CT_KERNEL_V_3_5 is not set
+-# CT_KERNEL_V_3_4_7 is not set
+-# CT_KERNEL_V_3_3_8 is not set
+-# CT_KERNEL_V_3_2_25 is not set
+-# CT_KERNEL_V_3_1_10 is not set
+-# CT_KERNEL_V_3_0_39 is not set
+-# CT_KERNEL_V_2_6_39_4 is not set
+-# CT_KERNEL_V_2_6_38_8 is not set
+-# CT_KERNEL_V_2_6_37_6 is not set
+-# CT_KERNEL_V_2_6_36_4 is not set
+-# CT_KERNEL_V_2_6_33_20 is not set
+-# CT_KERNEL_V_2_6_32_59 is not set
+-# CT_KERNEL_V_2_6_31_14 is not set
+-# CT_KERNEL_V_2_6_27_62 is not set
++# CT_KERNEL_V_3_4 is not set
++# CT_KERNEL_V_3_3 is not set
++# CT_KERNEL_V_3_2 is not set
++# CT_KERNEL_V_3_1 is not set
++# CT_KERNEL_V_3_0 is not set
++# CT_KERNEL_V_2_6_39 is not set
++# CT_KERNEL_V_2_6_38 is not set
++# CT_KERNEL_V_2_6_37 is not set
++# CT_KERNEL_V_2_6_36 is not set
++# CT_KERNEL_V_2_6_33 is not set
++# CT_KERNEL_V_2_6_32 is not set
++# CT_KERNEL_V_2_6_31 is not set
++# CT_KERNEL_V_2_6_27 is not set
+ CT_KERNEL_LINUX_CUSTOM=y
+-CT_KERNEL_LINUX_CUSTOM_LOCATION="/opt/src/linux-2.6.34/"
++CT_KERNEL_LINUX_CUSTOM_LOCATION="${CST_BASE_DIR}/download/linux-${CST_KERNEL_LINUX_CUSTOM}.tar.bz2"
+ 
+ #
+ # Common kernel options
+@@ -246,16 +261,20 @@
+ # Binary utilities
+ #
+ CT_ARCH_BINFMT_ELF=y
++CT_BINUTILS="binutils"
++CT_BINUTILS_binutils=y
+ 
+ #
+ # GNU binutils
+ #
++# CT_BINUTILS_V_2_23_1 is not set
+ CT_BINUTILS_V_2_22=y
+ # CT_BINUTILS_V_2_21_53 is not set
+ # CT_BINUTILS_V_2_21_1a is not set
+ # CT_BINUTILS_V_2_20_1a is not set
+ # CT_BINUTILS_V_2_19_1a is not set
+ # CT_BINUTILS_V_2_18a is not set
++# CT_BINUTILS_CUSTOM is not set
+ CT_BINUTILS_VERSION="2.22"
+ CT_BINUTILS_2_22_or_later=y
+ CT_BINUTILS_2_21_or_later=y
+@@ -280,19 +299,25 @@
+ CT_BINUTILS_FOR_TARGET_BFD=y
+ 
+ #
++# binutils other options
++#
++
++#
+ # C compiler
+ #
+ CT_CC="gcc"
+-CT_CC_VERSION="4.6.3"
++CT_CC_VERSION="4.5.3"
++CT_CC_CORE_PASSES_NEEDED=y
+ CT_CC_gcc=y
+ # CT_CC_GCC_SHOW_LINARO is not set
++# CT_CC_V_4_7_2 is not set
+ # CT_CC_V_4_7_1 is not set
+ # CT_CC_V_4_7_0 is not set
+-CT_CC_V_4_6_3=y
++# CT_CC_V_4_6_3 is not set
+ # CT_CC_V_4_6_2 is not set
+ # CT_CC_V_4_6_1 is not set
+ # CT_CC_V_4_6_0 is not set
+-# CT_CC_V_4_5_3 is not set
++CT_CC_V_4_5_3=y
+ # CT_CC_V_4_5_2 is not set
+ # CT_CC_V_4_5_1 is not set
+ # CT_CC_V_4_5_0 is not set
+@@ -312,12 +337,12 @@
+ # CT_CC_V_4_3_1 is not set
+ # CT_CC_V_4_2_4 is not set
+ # CT_CC_V_4_2_2 is not set
++# CT_CC_CUSTOM is not set
+ CT_CC_GCC_4_2_or_later=y
+ CT_CC_GCC_4_3_or_later=y
+ CT_CC_GCC_4_4_or_later=y
++CT_CC_GCC_4_5=y
+ CT_CC_GCC_4_5_or_later=y
+-CT_CC_GCC_4_6=y
+-CT_CC_GCC_4_6_or_later=y
+ CT_CC_GCC_HAS_GRAPHITE=y
+ CT_CC_GCC_HAS_LTO=y
+ CT_CC_GCC_HAS_PKGVERSION_BUGURL=y
+@@ -325,7 +350,7 @@
+ CT_CC_GCC_USE_GMP_MPFR=y
+ CT_CC_GCC_USE_PPL_CLOOG=y
+ CT_CC_GCC_USE_MPC=y
+-CT_CC_GCC_HAS_LIBQUADMATH=y
++CT_CC_GCC_USE_LIBELF=y
+ # CT_CC_LANG_FORTRAN is not set
+ CT_CC_SUPPORT_CXX=y
+ CT_CC_SUPPORT_FORTRAN=y
+@@ -366,7 +391,6 @@
+ # CT_CC_GCC_LIBMUDFLAP is not set
+ # CT_CC_GCC_LIBGOMP is not set
+ # CT_CC_GCC_LIBSSP is not set
+-# CT_CC_GCC_LIBQUADMATH is not set
+ 
+ #
+ # Misc. obscure options.
+@@ -382,12 +406,11 @@
+ #
+ CT_LIBC="uClibc"
+ CT_LIBC_VERSION="0.9.33.2"
+-# CT_LIBC_eglibc is not set
+-CT_LIBC_uClibc=y
+ # CT_LIBC_glibc is not set
+-CT_LIBC_none_AVAILABLE=y
++CT_LIBC_uClibc=y
++# CT_LIBC_eglibc is not set
+ CT_LIBC_mingw_AVAILABLE=y
+-CT_LIBC_eglibc_AVAILABLE=y
++CT_LIBC_glibc_AVAILABLE=y
+ CT_LIBC_newlib_AVAILABLE=y
+ CT_LIBC_uClibc_AVAILABLE=y
+ CT_LIBC_UCLIBC_V_0_9_33_2=y
+@@ -400,8 +423,7 @@
+ # CT_LIBC_UCLIBC_V_0_9_30_2 is not set
+ # CT_LIBC_UCLIBC_V_0_9_30_1 is not set
+ # CT_LIBC_UCLIBC_V_0_9_30 is not set
+-# CT_LIBC_UCLIBC_V_snapshot is not set
+-# CT_LIBC_UCLIBC_V_specific_date is not set
++# CT_LIBC_UCLIBC_CUSTOM is not set
+ CT_LIBC_UCLIBC_0_9_32_or_later=y
+ CT_LIBC_UCLIBC_0_9_30_or_later=y
+ CT_LIBC_UCLIBC_PARALLEL=y
+@@ -414,8 +436,9 @@
+ # CT_LIBC_UCLIBC_DEBUG_LEVEL_2 is not set
+ # CT_LIBC_UCLIBC_DEBUG_LEVEL_3 is not set
+ CT_LIBC_UCLIBC_DEBUG_LEVEL=0
+-CT_LIBC_UCLIBC_CONFIG_FILE="/opt/ct-ng-1.16.0/uClibc-0.9.33.2/.config"
+-CT_LIBC_glibc_AVAILABLE=y
++CT_LIBC_UCLIBC_CONFIG_FILE="${CST_BASE_DIR}/archive-patches/apollo/uClibc-0.9.33.2-config"
++CT_LIBC_none_AVAILABLE=y
++CT_LIBC_eglibc_AVAILABLE=y
+ CT_LIBC_SUPPORT_THREADS_ANY=y
+ CT_LIBC_SUPPORT_NPTL=y
+ CT_LIBC_SUPPORT_LINUXTHREADS=y
+@@ -440,11 +463,6 @@
+ #
+ # Debug facilities
+ #
+-CT_DEBUG_ltrace=y
+-CT_LTRACE_V_0_5_3=y
+-# CT_LTRACE_V_0_5_2 is not set
+-CT_LTRACE_VERSION="0.5.3"
+-CT_LTRACE_0_5_3_or_later=y
+ CT_DEBUG_gdb=y
+ CT_GDB_CROSS=y
+ # CT_GDB_CROSS_STATIC is not set
+@@ -470,11 +488,17 @@
+ # CT_GDB_V_7_0_1a is not set
+ # CT_GDB_V_7_0a is not set
+ # CT_GDB_V_6_8a is not set
++# CT_GDB_CUSTOM is not set
+ CT_GDB_7_2_or_later=y
+ CT_GDB_7_0_or_later=y
+ CT_GDB_HAS_PKGVERSION_BUGURL=y
+ CT_GDB_INSTALL_GDBINIT=y
+ CT_GDB_VERSION="7.4.1"
++CT_DEBUG_ltrace=y
++CT_LTRACE_V_0_5_3=y
++# CT_LTRACE_V_0_5_2 is not set
++CT_LTRACE_VERSION="0.5.3"
++CT_LTRACE_0_5_3_or_later=y
+ # CT_DEBUG_duma is not set
+ CT_DEBUG_dmalloc=y
+ CT_DMALLOC_V_5_5_2=y
+@@ -495,12 +519,14 @@
+ CT_PPL_NEEDED=y
+ CT_CLOOG_NEEDED=y
+ CT_MPC_NEEDED=y
++CT_LIBELF_NEEDED=y
+ CT_COMPLIBS=y
+ CT_GMP=y
+ CT_MPFR=y
+ CT_PPL=y
+ CT_CLOOG=y
+ CT_MPC=y
++CT_LIBELF=y
+ CT_LIBELF_TARGET=y
+ CT_GMP_V_5_0_2=y
+ # CT_GMP_V_5_0_1 is not set
+@@ -536,10 +562,6 @@
+ # CT_MPC_V_0_8_1 is not set
+ # CT_MPC_V_0_7 is not set
+ CT_MPC_VERSION="0.9"
+-
+-#
+-# libelf version needed to build for target
+-#
+ CT_LIBELF_V_0_8_13=y
+ # CT_LIBELF_V_0_8_12 is not set
+ CT_LIBELF_VERSION="0.8.13"

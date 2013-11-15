@@ -1,0 +1,37 @@
+--- a/crypto/bio/bss_dgram.c.org	2013-08-19 06:40:57.113774005 +0200
++++ b/crypto/bio/bss_dgram.c	2013-08-19 06:41:42.198778726 +0200
+@@ -429,12 +429,6 @@
+ 				&sockopt_val, sizeof(sockopt_val))) < 0)
+ 				perror("setsockopt");
+ 			break;
+-		case AF_INET6:
+-			sockopt_val = IPV6_PMTUDISC_DO;
+-			if ((ret = setsockopt(b->num, IPPROTO_IPV6, IPV6_MTU_DISCOVER,
+-				&sockopt_val, sizeof(sockopt_val))) < 0)
+-				perror("setsockopt");
+-			break;
+ 		default:
+ 			ret = -1;
+ 			break;
+@@ -470,21 +464,6 @@
+ 				ret = data->mtu;
+ 				}
+ 			break;
+-		case AF_INET6:
+-			if ((ret = getsockopt(b->num, IPPROTO_IPV6, IPV6_MTU, (void *)&sockopt_val,
+-				&sockopt_len)) < 0 || sockopt_val < 0)
+-				{
+-				ret = 0;
+-				}
+-			else
+-				{
+-				/* we assume that the transport protocol is UDP and no
+-				 * IPV6 options are used.
+-				 */
+-				data->mtu = sockopt_val - 8 - 40;
+-				ret = data->mtu;
+-				}
+-			break;
+ 		default:
+ 			ret = 0;
+ 			break;

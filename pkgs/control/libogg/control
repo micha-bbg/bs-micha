@@ -1,0 +1,11 @@
+Package: libogg
+Version: @VER@-1
+Description: Library to Create, Decode and work with OGG Bitstreams
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.xiph.org/ogg/
+Source:
+Depends: @DEP@
+Provides: @PROV@

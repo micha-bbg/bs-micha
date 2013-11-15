@@ -1,0 +1,30 @@
+--- a/makefile.org	2013-04-29 16:27:05.000000000 +0200
++++ b/makefile	2013-08-28 12:09:36.101524004 +0200
+@@ -1,14 +1,23 @@
+ #
+ # Makefile for UNIX - unrar
+ 
+-# Linux using GCC
+-CXX=g++
++# Cross-compile using GCC
++CXX=$(CROSS)g++
+ CXXFLAGS=-O2
+ LIBFLAGS=-fPIC
+ DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP
+-STRIP=strip
++STRIP=$(CROSS)strip
+ LDFLAGS=-pthread
+-DESTDIR=/usr
++DESTDIR=$(DEST)
++
++# Linux using GCC
++#CXX=g++
++#CXXFLAGS=-O2
++#LIBFLAGS=-fPIC
++#DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP
++#STRIP=strip
++#LDFLAGS=-pthread
++#DESTDIR=/usr
+ 
+ # Linux using LCC
+ #CXX=lcc

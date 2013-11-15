@@ -1,0 +1,71 @@
+#!/bin/sh
+
+addPATH()
+{
+	[ "$1" = "" ] && return
+	[ -d $1 ] || return
+	if [ "$PATH" = "" ]; then
+		PATH=$1
+	else
+		PATH=${PATH}:$1
+	fi
+}
+
+PATH=
+# /var/sbin has highest priority...
+addPATH /var/sbin
+addPATH /var/bin
+
+# /opt/*/bin and /opt/*/sbin come next
+_tmp_1=$(echo /opt/*/bin)
+if test "$_tmp_1" != "/opt/*/bin"; then
+	PATH=${PATH}:${_tmp_1// /:}
+fi
+_tmp_1=$(echo /opt/*/sbin)
+if test "$_tmp_1" != "/opt/*/sbin"; then
+	PATH=${PATH}:${_tmp_1// /:}
+fi
+
+addPATH /usr/local/sbin
+addPATH /usr/local/bin
+addPATH /usr/sbin
+addPATH /usr/bin
+
+# default /bin and /sbin come last
+export PATH=${PATH}:/bin:/sbin
+
+# if ldconfig did not work, set up LD_LIBRARY_PATH
+if test -e /etc/ld.so.conf -a ! -e /etc/ld.so.cache; then
+	_tmp_1=$(cat /etc/ld.so.conf)
+	if test "$_tmp_1"; then
+		_tmp_3=
+		for _tmp_2 in $_tmp_1; do
+			if test "$_tmp_3" = ""; then
+				_tmp_3=$_tmp_2
+			else
+				_tmp_3=${_tmp_3}:$_tmp_2
+			fi
+		done
+		export LD_LIBRARY_PATH=$_tmp_3
+	fi
+fi
+
+unset _tmp_1
+unset _tmp_2
+unset _tmp_3
+
+export TZ=$(cat /etc/TZ)
+
+# hostname in prompt...
+PS1='\\h:\\w \\$ '
+
+alias ll='ls -al'
+alias c='cat'
+alias d='date'
+alias g='grep'
+alias m='more'
+alias h='history'
+alias f='file'
+
+#alias ldd='/lib/ld-*.so --list'
+#alias ldd='/lib/ld-uClibc-0.9.33.2.so --list'

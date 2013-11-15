@@ -1,0 +1,81 @@
+# The type of box to build for.
+# either "nevis" or "apollo"
+# default (if empty) is "nevis"
+#PLATFORM=apollo
+
+# for apollo platform only, either "tank" or "trinity"
+# default (if empty) is "tank"
+#BOXMODEL=trinity
+
+# CROSS_BASE = $(BASE_DIR)/$(CROSS_PATH)
+# default (if empty) is "cross"
+#CROSS_PATH = cross
+
+# empty: arm-cx2450x-linux-gnueabi
+#TARGET_NEVIS=arm-cx2450x-linux-gnueabi
+#
+# empty: arm-pnx8400-linux-uclibcgnueabi
+#TARGET_APOLLO=arm-pnx8400-linux-uclibcgnueabi
+
+
+# if /usr/share/libtool/config/config.guess does not supply a valid
+# build type, specify it here. THIS IS A WORKAROUND. Use with caution.
+# BUILD=x86_64-unknown-linux-gnu
+
+# default (if empty) is "neutrino-hd"
+#FLAVOUR = neutrino-hd
+
+# either "cst" or "sf" or "privat"
+# default (if empty) is "cst"
+GIT_SOURCE = privat
+# either "git" or "http" or "ssh"
+# default (if empty) is "git"
+#GIT_PROTO = ssh
+
+# default (if empty) is "next-cc"
+#NEUTRINO_BRANCH_APOLLO = next-cc
+#NEUTRINO_BRANCH_NEVIS  = next-cc
+
+# default (if empty) is "next-cc"
+#NEUTRINO_WORK_BRANCH_APOLLO = next-cc
+#NEUTRINO_WORK_BRANCH_NEVIS  = next-cc
+
+#
+# configure the directory where "make dist-pkgs"
+# PKG_DEST_DIR = /srv/www/dist/$(PLATFORM)
+
+#
+# the name used to replace "@MAINT@" in the opkg control files
+# defaults to your name from the passwd GECOS field
+#
+MAINTAINER = micha-bbg
+
+#
+# if you want to use a different source directory, set N_HD_SOURCE here.
+# e.g. check out some test branch to source/nhd-test, then uncomment the
+# following. WARNING: "make update-neutrino" will cease to work, you'll
+# have to do this manually.
+#
+N_HD_SOURCE_NEVIS   = $(BASE_DIR)/source/neutrino-hd
+N_HD_SOURCE_APOLLO  = $(BASE_DIR)/source/neutrino-hd
+
+SOURCE_DRIVERS      = cst-public-drivers
+SOURCE_NEUTRINO     = cst-public-gui-neutrino
+SOURCE_FFMPEG       = cst-public-libraries-ffmpeg
+SOURCE_KERNEL       = cst-public-linux-kernel
+SOURCE_TOOLS        = cst-public-tools
+#SOURCE_FIRMWARE     = firmware-test
+
+# default (if empty) is "2.6.34.13"
+KVERSION_NEVIS = 2.6.34.13
+
+# default (if empty) is "2.6.34"
+KVERSION_APOLLO = 2.6.34
+
+# crosstool-ng versions
+CT_VER_NEVIS  = 1.19.0
+CT_VER_APOLLO = 1.19.0
+
+# default (if empty) is "/Data/Cross/build-tools"
+# Path for host-buld-tools (make, m4, autoconf, automake, libtool)
+#BUILD_TOOLS = /Data/Cross/build-tools

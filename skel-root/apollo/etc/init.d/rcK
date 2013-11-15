@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PATH=/var/bin:/bin:/var/sbin:/sbin
+
+killall syslogd
+umount -a -r
+swapoff -a
+
+. /etc/init.d/functions
+run_initscripts stop

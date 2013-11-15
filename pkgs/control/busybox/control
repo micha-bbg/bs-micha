@@ -1,0 +1,10 @@
+Package: busybox
+Version: @VER@-1
+Description: The Swiss Army Knife of Embedded Linux
+Section: base
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://busybox.net
+Source:
+Depends: libc.so.6

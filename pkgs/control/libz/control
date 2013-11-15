@@ -1,0 +1,11 @@
+Package: libz
+Version: @VER@-1
+Description: Zlib Compression Library
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.zlib.net/
+Source:
+Depends:
+Provides: libz.so.1

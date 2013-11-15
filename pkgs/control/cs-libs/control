@@ -1,0 +1,11 @@
+Package: cs-libs
+Version: @VER@-1
+Description: Libraries for Coolstream HD1 Hardware
+Section: base/drivers
+Priority: required
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://coolstreamtech.com/
+Source:
+Provides: @PROV@
+Depends:

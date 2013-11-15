@@ -1,0 +1,73 @@
+--- a/config-1.16-apollo-uclibc
++++ b/.config
+@@ -22,10 +22,10 @@
+ #
+ # Paths
+ #
+-CT_LOCAL_TARBALLS_DIR="/opt/cross/downloads"
++CT_LOCAL_TARBALLS_DIR="${CST_BASE_DIR}/download"
+ CT_SAVE_TARBALLS=y
+ CT_WORK_DIR="${CT_TOP_DIR}/targets"
+-CT_PREFIX_DIR="/opt/arm/${CT_TARGET}"
++CT_PREFIX_DIR="${CST_BASE_DIR}/cross"
+ CT_INSTALL_DIR="${CT_PREFIX_DIR}"
+ # CT_RM_RF_PREFIX_DIR is not set
+ # CT_REMOVE_DOCS is not set
+@@ -60,7 +60,7 @@
+ #
+ # Build behavior
+ #
+-CT_PARALLEL_JOBS=8
++CT_PARALLEL_JOBS=2
+ CT_LOAD=0
+ CT_USE_PIPES=y
+ CT_EXTRA_FLAGS_FOR_HOST=""
+@@ -226,7 +226,7 @@
+ # CT_KERNEL_V_2_6_31_14 is not set
+ # CT_KERNEL_V_2_6_27_62 is not set
+ CT_KERNEL_LINUX_CUSTOM=y
+-CT_KERNEL_LINUX_CUSTOM_LOCATION="/opt/src/linux-2.6.34/"
++CT_KERNEL_LINUX_CUSTOM_LOCATION="${CST_BASE_DIR}/download/linux-${CST_KERNEL_LINUX_CUSTOM}.tar.bz2"
+ 
+ #
+ # Common kernel options
+@@ -283,16 +283,16 @@
+ # C compiler
+ #
+ CT_CC="gcc"
+-CT_CC_VERSION="4.6.3"
++CT_CC_VERSION="4.5.3"
+ CT_CC_gcc=y
+ # CT_CC_GCC_SHOW_LINARO is not set
+ # CT_CC_V_4_7_1 is not set
+ # CT_CC_V_4_7_0 is not set
+-CT_CC_V_4_6_3=y
++# CT_CC_V_4_6_3 is not set
+ # CT_CC_V_4_6_2 is not set
+ # CT_CC_V_4_6_1 is not set
+ # CT_CC_V_4_6_0 is not set
+-# CT_CC_V_4_5_3 is not set
++CT_CC_V_4_5_3=y
+ # CT_CC_V_4_5_2 is not set
+ # CT_CC_V_4_5_1 is not set
+ # CT_CC_V_4_5_0 is not set
+@@ -316,8 +316,8 @@
+ CT_CC_GCC_4_3_or_later=y
+ CT_CC_GCC_4_4_or_later=y
+ CT_CC_GCC_4_5_or_later=y
+-CT_CC_GCC_4_6=y
+-CT_CC_GCC_4_6_or_later=y
++# CT_CC_GCC_4_6 is not set
++# CT_CC_GCC_4_6_or_later is not set
+ CT_CC_GCC_HAS_GRAPHITE=y
+ CT_CC_GCC_HAS_LTO=y
+ CT_CC_GCC_HAS_PKGVERSION_BUGURL=y
+@@ -414,7 +414,7 @@
+ # CT_LIBC_UCLIBC_DEBUG_LEVEL_2 is not set
+ # CT_LIBC_UCLIBC_DEBUG_LEVEL_3 is not set
+ CT_LIBC_UCLIBC_DEBUG_LEVEL=0
+-CT_LIBC_UCLIBC_CONFIG_FILE="/opt/ct-ng-1.16.0/uClibc-0.9.33.2/.config"
++CT_LIBC_UCLIBC_CONFIG_FILE="${CST_BASE_DIR}/archive-patches/tank/uClibc-0.9.33.2-config"
+ CT_LIBC_glibc_AVAILABLE=y
+ CT_LIBC_SUPPORT_THREADS_ANY=y
+ CT_LIBC_SUPPORT_NPTL=y

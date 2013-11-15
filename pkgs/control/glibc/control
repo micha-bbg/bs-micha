@@ -1,0 +1,11 @@
+Package: glibc
+Version: @VER@-1
+Description: The GNU C library
+Section: base/libraries
+Priority: required
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.gnu.org/software/libc/
+Source:
+Depends:
+Provides: @PROV@

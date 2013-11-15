@@ -1,0 +1,10 @@
+--- a/fbshot.c.org	2013-09-01 10:59:30.639630527 +0200
++++ b/fbshot.c	2013-09-01 11:00:08.939634538 +0200
+@@ -45,6 +45,7 @@
+ #include <sys/utsname.h>
+ 
+ #include <sys/vt.h>
++#include <zlib.h>
+ #include <png.h>
+ #include <linux/fb.h> 
+ 
