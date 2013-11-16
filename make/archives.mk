@@ -196,3 +196,6 @@ $(ARCHIVE)/libtool-$(LIBTOOL_VER).tar.xz:
 #libsigc++: typesafe Callback Framework for C++
 $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz:
 	$(WGET) http://ftp.gnome.org/pub/GNOME/sources/libsigc++/$(LIBSIGCPP_MAJOR).$(LIBSIGCPP_MINOR)/libsigc++-$(LIBSIGCPP_VER).tar.xz
+
+$(ARCHIVE)/u-boot-2009.03.tar.bz2:
+	$(WGET) http://ftp.denx.de/pub/u-boot/u-boot-2009.03.tar.bz2

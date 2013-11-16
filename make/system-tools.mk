@@ -417,7 +417,23 @@ $(D)/wget: $(D)/e2fsprogs $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
 	$(REMOVE)/wget-$(WGET_VER) $(PKGPREFIX)
 	touch $@
 
-system-tools: $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g
+
+mkimage: $(HOSTPREFIX)/bin/mkimage
+
+$(HOSTPREFIX)/bin/mkimage: cs-uboot
+
+$(D)/cs-uboot: $(ARCHIVE)/u-boot-2009.03.tar.bz2 $(PATCHES)/u-boot-2009.3-CST.diff
+	$(REMOVE)/u-boot-2009.03
+	$(UNTAR)/u-boot-2009.03.tar.bz2
+	set -e; cd $(BUILD_TMP)/u-boot-2009.03; \
+		$(PATCH)/u-boot-2009.3-CST.diff; \
+		make coolstream_hdx_config; \
+		$(MAKE)
+	cp -a $(BUILD_TMP)/u-boot-2009.03/tools/mkimage $(HOSTPREFIX)/bin
+	touch $@
+
+
+system-tools: $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g mkimage
 system-tools-opt: $(D)/samba2 $(D)/ntp
 system-tools-all: system-tools system-tools-opt
 
