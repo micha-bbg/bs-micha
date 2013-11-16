@@ -75,7 +75,12 @@ ID3TAG_SUBVER=b
 MAD_VER=0.15.1b
 
 # freetype; free, high-quality and portable Font engine
-FREETYPE_VER=2.5.0.1
+FREETYPE_MAJOR=2
+FREETYPE_MINOR=5
+FREETYPE_MICRO=0
+FREETYPE_NANO=1
+FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR).$(FREETYPE_MICRO)
+FREETYPE_VER=$(FREETYPE_VER_PATH).$(FREETYPE_NANO)
 FREETYPE_VER_OLD=2.3.12
 
 # libjpeg-turbo; a derivative of libjpeg for x86 and x86-64 processors which uses SIMD instructions (MMX, SSE2, etc.) to accelerate baseline JPEG compression and decompression

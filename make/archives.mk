@@ -72,7 +72,8 @@ $(ARCHIVE)/libid3tag-$(ID3TAG_VER)$(ID3TAG_SUBVER).tar.gz:
 	$(WGET) http://downloads.sourceforge.net/project/mad/libid3tag/$(ID3TAG_VER)$(ID3TAG_SUBVER)/libid3tag-$(ID3TAG_VER)$(ID3TAG_SUBVER).tar.gz
 
 $(ARCHIVE)/freetype-$(FREETYPE_VER).tar.bz2:
-	$(WGET) http://www.tuxbox.org/cvsdata/files/freetype-$(FREETYPE_VER).tar.bz2
+	$(WGET) http://sourceforge.net/projects/freetype/files/freetype2/$(FREETYPE_VER_PATH)/freetype-$(FREETYPE_VER).tar.bz2/download
+	mv $(ARCHIVE)/download $(ARCHIVE)/freetype-$(FREETYPE_VER).tar.bz2
 
 $(ARCHIVE)/libjpeg-turbo-$(JPEG_TURBO_VER).tar.gz:
 	$(WGET) http://sourceforge.net/projects/libjpeg-turbo/files/$(JPEG_TURBO_VER)/libjpeg-turbo-$(JPEG_TURBO_VER).tar.gz
