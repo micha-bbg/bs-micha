@@ -4,7 +4,7 @@ NEUTRINO_DEPS  = libcurl libid3tag libmad libjpeg ffmpeg libdvbsi++ freetype gif
 NEUTRINO_DEPS += openthreads
 NEUTRINO_DEPS += lua
 NEUTRINO_DEPS += openssl
-#NEUTRINO_DEPS += libiconv
+NEUTRINO_DEPS += libiconv
 NEUTRINO_PKG_DEPS =
 
 neutrino-deps: $(NEUTRINO_DEPS)

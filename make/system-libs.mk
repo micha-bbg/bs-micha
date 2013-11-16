@@ -590,6 +590,7 @@ $(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz
 	pushd $(BUILD_TMP)/libiconv-$(ICONV_VER) && \
+		$(PATCH)/libiconv-1-fixes.patch; \
 		$(CONFIGURE) --build=$(BUILD) --host=$(TARGET) --target=$(TARGET) --prefix= --datarootdir=/.remove && \
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(TARGETPREFIX)
