@@ -594,6 +594,7 @@ $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 		$(CONFIGURE) --build=$(BUILD) --host=$(TARGET) --target=$(TARGET) --prefix= --datarootdir=/.remove && \
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(TARGETPREFIX)
+	$(REWRITE_LIBTOOL)/libiconv.la
 	rm -fr $(TARGETPREFIX)/.remove
 	$(REMOVE)/libiconv-$(ICONV_VER)
 	touch $@
