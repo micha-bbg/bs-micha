@@ -758,6 +758,9 @@ $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 			\
 			--prefix= \
 			--mandir=/.remove; \
+		sed -i "s,-I/usr/include, ,"  Makefile; \
+		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
+		sed -i "s,-I/include , ,"  Makefile; \
 		$(MAKE) all; \
 		mkdir -p $(HOSTPREFIX)/bin; \
 		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)," < sdl-config > $(HOSTPREFIX)/bin/sdl-config; \
@@ -774,7 +777,7 @@ $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/SDL-$(LIBSDL_VER) $(PKGPREFIX)
 	touch $@
 
-$(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL | $(TARGETPREFIX)
+$(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL $(D)/freetype | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER) $(PKGPREFIX)
 	$(UNTAR)/SDL_ttf-$(SDL_TTF_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER); \
@@ -783,6 +786,10 @@ $(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL | $(TARGETPREFIX
 			--disable-static \
 			--prefix= \
 			--mandir=/.remove; \
+		sed -i "s,-I/usr/include, ,"  Makefile; \
+		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
+		sed -i "s,-I/include , ,"  Makefile; \
+		sed -i "s,-L/lib , ,"  Makefile; \
 		$(MAKE) all; \
 		make install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
@@ -811,6 +818,10 @@ $(D)/SDL-mixer: $(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz $(D)/SDL | $(TARGET
 			--disable-static \
 			--prefix= \
 			--mandir=/.remove; \
+		sed -i "s,-I/usr/include, ,"  Makefile; \
+		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
+		sed -i "s,-I/include , ,"  Makefile; \
+		sed -i "s,-L/lib , ,"  Makefile; \
 		$(MAKE) all; \
 		make install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
