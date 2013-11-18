@@ -199,3 +199,13 @@ $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz:
 
 $(ARCHIVE)/u-boot-2009.03.tar.bz2:
 	$(WGET) http://ftp.denx.de/pub/u-boot/u-boot-2009.03.tar.bz2
+
+$(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz:
+	$(WGET) http://www.libsdl.org/release/SDL-$(LIBSDL_VER).tar.gz
+
+$(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz:
+	$(WGET) http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-$(SDL_TTF_VER).tar.gz
+
+$(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz:
+	$(WGET) http://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-$(SDL_MIXER_VER).tar.gz
+

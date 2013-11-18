@@ -711,3 +711,113 @@ $(D)/libsigc++: $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz | $(TARGETPREFIX)
 	$(REMOVE)/libsigc++-$(LIBSIGCPP_VER)
 	rm -rf $(PKGPREFIX)
 	touch $@
+
+$(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL-$(LIBSDL_VER)
+	$(UNTAR)/SDL-$(LIBSDL_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL-$(LIBSDL_VER); \
+		$(CONFIGURE) \
+			--disable-assembly \
+			--disable-video \
+			--disable-joystick \
+			--disable-cdrom \
+			--disable-arts \
+			--disable-arts-shared \
+			--disable-nas \
+			--disable-nas-shared \
+			--disable-diskaudio \
+			--disable-dummyaudio \
+			--disable-mintaudio \
+			--disable-video-x11 \
+			--disable-x11-shared \
+			--disable-dga \
+			--disable-video-dga \
+			--disable-video-x11-dgamouse \
+			--disable-video-x11-vm \
+			--disable-video-x11-xv \
+			--disable-video-x11-xinerama \
+			--disable-video-x11-xme \
+			--disable-video-x11-xrandr \
+			--disable-video-photon \
+			--disable-video-cocoa \
+			--disable-video-fbcon \
+			--disable-video-directfb \
+			--disable-video-ps2gs \
+			--disable-video-ps3 \
+			--disable-video-svga \
+			--disable-video-vgl \
+			--disable-video-wscons \
+			--disable-video-xbios \
+			--disable-video-gem \
+			--disable-video-dummy \
+			--disable-video-opengl \
+			--disable-osmesa-shared \
+			--disable-input-events \
+			--disable-input-tslib \
+			--disable-static \
+			\
+			--prefix= \
+			--mandir=/.remove; \
+		$(MAKE) all; \
+		mkdir -p $(HOSTPREFIX)/bin; \
+		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)," < sdl-config > $(HOSTPREFIX)/bin/sdl-config; \
+		chmod 755 $(HOSTPREFIX)/bin/sdl-config; \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove $(PKGPREFIX)/share
+	rm -f $(PKGPREFIX)/bin/sdl-config
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/sdl.pc
+	$(REWRITE_LIBTOOL)/libSDL.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL-$(LIBSDL_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER) $(PKGPREFIX)
+	$(UNTAR)/SDL_ttf-$(SDL_TTF_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER); \
+		$(CONFIGURE) \
+			--disable-sdltest \
+			--disable-static \
+			--prefix= \
+			--mandir=/.remove; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX)
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/SDL_ttf.pc
+	$(REWRITE_LIBTOOL)/libSDL_ttf.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/SDL-mixer: $(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz $(D)/SDL | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL_mixer-$(SDL_MIXER_VER) $(PKGPREFIX)
+	$(UNTAR)/SDL_mixer-$(SDL_MIXER_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL_mixer-$(SDL_MIXER_VER); \
+		$(CONFIGURE) \
+			--enable-music-ogg-tremor \
+			--disable-music-mod \
+			--disable-music-midi \
+			--disable-music-timidity-midi \
+			--disable-music-native-midi \
+			--disable-music-fluidsynth-midi \
+			--disable-music-mp3-shared \
+			--disable-smpegtest \
+			--disable-sdltest \
+			--disable-static \
+			--prefix= \
+			--mandir=/.remove; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX)
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/SDL_mixer.pc
+	$(REWRITE_LIBTOOL)/libSDL_mixer.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL_mixer-$(SDL_MIXER_VER) $(PKGPREFIX)
+	touch $@
