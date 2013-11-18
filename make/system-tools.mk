@@ -76,7 +76,7 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		$(PATCH)/busybox-1.18-hack-init-s-console.patch; \
 		$(PATCH)/busybox-mdev-1.21.c.diff; \
 		$(PATCH)/busybox-1.20-ifupdown.c.diff; \
-		cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21-1.config .config; \
+		cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21.config .config; \
 		sed -i -e 's#^CONFIG_PREFIX.*#CONFIG_PREFIX="$(PKGPREFIX)"#' .config; \
 		grep -q DBB_BT=AUTOCONF_TIMESTAMP Makefile.flags && \
 		sed -i 's#AUTOCONF_TIMESTAMP#"\\"$(PLATFORM)\\""#' Makefile.flags || true; \
