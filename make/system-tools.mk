@@ -17,7 +17,7 @@ $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	cp -frd $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
 	rm -fr $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
-	$(OPKG_SH) $(CONTROL_DIR)/vsftpd
+	PKG_VER=$(VSFTPD_VER) $(OPKG_SH) $(CONTROL_DIR)/vsftpd
 	$(REMOVE)/vsftpd-$(VSFTPD_VER) $(PKGPREFIX)
 	touch $@
 

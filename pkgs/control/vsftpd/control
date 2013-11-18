@@ -1,5 +1,5 @@
 Package: vsftpd
-Version: 2.3.5-1
+Version: @VER@-1
 Description: FTP Daemon
 Section: base
 Priority: optional
