@@ -717,7 +717,6 @@ $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 	$(UNTAR)/SDL-$(LIBSDL_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL-$(LIBSDL_VER); \
 		$(CONFIGURE) \
-			--disable-assembly \
 			--disable-video \
 			--disable-joystick \
 			--disable-cdrom \
@@ -758,9 +757,6 @@ $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 			\
 			--prefix= \
 			--mandir=/.remove; \
-		sed -i "s,-I/usr/include, ,"  Makefile; \
-		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
-		sed -i "s,-I/include , ,"  Makefile; \
 		$(MAKE) all; \
 		mkdir -p $(HOSTPREFIX)/bin; \
 		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)," < sdl-config > $(HOSTPREFIX)/bin/sdl-config; \
@@ -771,6 +767,7 @@ $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/sdl.pc
 	$(REWRITE_LIBTOOL)/libSDL.la
+	$(REWRITE_LIBTOOL)/libSDLmain.la
 	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
 	rm -f $(PKGPREFIX)/lib/*.a $(PKGPREFIX)/lib/*.la
 	## pkg bauen...
@@ -818,10 +815,6 @@ $(D)/SDL-mixer: $(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz $(D)/SDL | $(TARGET
 			--disable-static \
 			--prefix= \
 			--mandir=/.remove; \
-		sed -i "s,-I/usr/include, ,"  Makefile; \
-		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
-		sed -i "s,-I/include , ,"  Makefile; \
-		sed -i "s,-L/lib , ,"  Makefile; \
 		$(MAKE) all; \
 		make install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
