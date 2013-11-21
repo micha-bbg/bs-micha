@@ -664,6 +664,8 @@ $(D)/libnl: $(ARCHIVE)/libnl-$(LIBNL_VER).tar.gz | $(TARGETPREFIX)
 #CFLAGS="-I/usr/include/libnl3"
 # make BINDIR=/sbin LIBDIR=/lib
 
+## Fix me
+
 #$(D)/libnl
 $(D)/wpa_supplicant: $(ARCHIVE)/wpa_supplicant-$(WPA_SUPPLICANT_VER).tar.gz $(D)/openssl | $(TARGETPREFIX)
 	$(REMOVE)/wpa_supplicant-$(WPA_SUPPLICANT_VER)
@@ -712,49 +714,143 @@ $(D)/libsigc++: $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)
 	touch $@
 
+SDL2_CONFIGURE = \
+	--enable-video-directfb \
+	--enable-alsa \
+	--disable-joystick \
+	--disable-cdrom \
+	--disable-esd \
+	--disable-oss \
+	--disable-alsa-shared \
+	--disable-video-x11 \
+	--disable-arts \
+	--disable-arts-shared \
+	--disable-nas \
+	--disable-nas-shared \
+	--disable-diskaudio \
+	--disable-mintaudio \
+	--disable-alsatest \
+	--disable-pulseaudio-shared \
+	--disable-pulseaudio \
+	--disable-events \
+	--disable-joystick \
+	--disable-haptic
+
+$(D)/SDL2: $(ARCHIVE)/SDL2-$(LIBSDL2_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL2-$(LIBSDL2_VER) $(PKGPREFIX)
+	$(UNTAR)/SDL2-$(LIBSDL2_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL2-$(LIBSDL2_VER); \
+		$(CONFIGURE) \
+			$(SDL2_CONFIGURE) \
+			--prefix= \
+			--mandir=/.remove; \
+		$(MAKE); \
+		mkdir -p $(HOSTPREFIX)/bin; \
+		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)," < sdl2-config > $(HOSTPREFIX)/bin/sdl2-config; \
+		chmod 755 $(HOSTPREFIX)/bin/sdl2-config; \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove $(PKGPREFIX)/share
+	rm -f $(PKGPREFIX)/bin/sdl2-config
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/sdl2.pc
+	$(REWRITE_LIBTOOL)/libSDL2.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL2-$(LIBSDL2_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/SDL2-ttf: $(ARCHIVE)/SDL2_ttf-$(SDL2_TTF_VER).tar.gz $(D)/SDL2 $(D)/freetype | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL2_ttf-$(SDL2_TTF_VER) $(PKGPREFIX)
+	$(UNTAR)/SDL2_ttf-$(SDL2_TTF_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL2_ttf-$(SDL2_TTF_VER); \
+		$(CONFIGURE) \
+			--disable-static \
+			--prefix= \
+			--mandir=/.remove; \
+		sed -i "s,-I/usr/include, ,"  Makefile; \
+		sed -i "s,-I/include/freetype2,-I$(TARGETPREFIX)/include/freetype2,"  Makefile; \
+		sed -i "s,-I/include , ,"  Makefile; \
+		sed -i "s,-L/lib , ,"  Makefile; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX)
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/SDL2_ttf.pc
+	$(REWRITE_LIBTOOL)/libSDL2_ttf.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL2_ttf-$(SDL2_TTF_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/SDL2-mixer: $(ARCHIVE)/SDL2_mixer-$(SDL2_MIXER_VER).tar.gz $(D)/SDL2 | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/SDL2_mixer-$(SDL2_MIXER_VER) $(PKGPREFIX)
+	$(UNTAR)/SDL2_mixer-$(SDL2_MIXER_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/SDL2_mixer-$(SDL2_MIXER_VER); \
+		$(CONFIGURE) \
+			--disable-music-ogg-tremor \
+			--disable-music-mod \
+			--disable-music-midi \
+			--disable-music-mp3-smpeg \
+			--disable-music-mp3-smpeg-shared \
+			--disable-smpegtest \
+			--enable-music-mp3-mad-gpl \
+			--disable-static \
+			--prefix= \
+			--mandir=/.remove; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX)
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/SDL2_mixer.pc
+	$(REWRITE_LIBTOOL)/libSDL2_mixer.la
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.la
+	## pkg bauen...
+	rm -fr $(BUILD_TMP)/SDL2_mixer-$(SDL2_MIXER_VER) $(PKGPREFIX)
+	touch $@
+
+SDL_CONFIGURE = \
+	--disable-joystick \
+	--disable-cdrom \
+	--disable-arts \
+	--disable-arts-shared \
+	--disable-nas \
+	--disable-nas-shared \
+	--disable-diskaudio \
+	--disable-dummyaudio \
+	--disable-mintaudio \
+	--disable-video-x11 \
+	--disable-x11-shared \
+	--disable-dga \
+	--disable-video-dga \
+	--disable-video-x11-dgamouse \
+	--disable-video-x11-vm \
+	--disable-video-x11-xv \
+	--disable-video-x11-xinerama \
+	--disable-video-x11-xme \
+	--disable-video-x11-xrandr \
+	--disable-video-photon \
+	--disable-video-cocoa \
+	--disable-video-ps2gs \
+	--disable-video-ps3 \
+	--disable-video-svga \
+	--disable-video-vgl \
+	--disable-video-wscons \
+	--disable-video-xbios \
+	--disable-video-gem \
+	--disable-video-dummy \
+	--disable-video-opengl \
+	--disable-osmesa-shared \
+	--disable-input-events \
+	--disable-input-tslib
+
 $(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/SDL-$(LIBSDL_VER)
 	$(UNTAR)/SDL-$(LIBSDL_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL-$(LIBSDL_VER); \
 		$(CONFIGURE) \
-			--disable-video \
-			--disable-joystick \
-			--disable-cdrom \
-			--disable-arts \
-			--disable-arts-shared \
-			--disable-nas \
-			--disable-nas-shared \
-			--disable-diskaudio \
-			--disable-dummyaudio \
-			--disable-mintaudio \
-			--disable-video-x11 \
-			--disable-x11-shared \
-			--disable-dga \
-			--disable-video-dga \
-			--disable-video-x11-dgamouse \
-			--disable-video-x11-vm \
-			--disable-video-x11-xv \
-			--disable-video-x11-xinerama \
-			--disable-video-x11-xme \
-			--disable-video-x11-xrandr \
-			--disable-video-photon \
-			--disable-video-cocoa \
-			--disable-video-fbcon \
-			--disable-video-directfb \
-			--disable-video-ps2gs \
-			--disable-video-ps3 \
-			--disable-video-svga \
-			--disable-video-vgl \
-			--disable-video-wscons \
-			--disable-video-xbios \
-			--disable-video-gem \
-			--disable-video-dummy \
-			--disable-video-opengl \
-			--disable-osmesa-shared \
-			--disable-input-events \
-			--disable-input-tslib \
+			$(SDL_CONFIGURE) \
 			--disable-static \
-			\
 			--prefix= \
 			--mandir=/.remove; \
 		$(MAKE) all; \
@@ -779,7 +875,6 @@ $(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL $(D)/freetype | 
 	$(UNTAR)/SDL_ttf-$(SDL_TTF_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER); \
 		$(CONFIGURE) \
-			--disable-sdltest \
 			--disable-static \
 			--prefix= \
 			--mandir=/.remove; \
@@ -794,6 +889,8 @@ $(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL $(D)/freetype | 
 	$(REWRITE_LIBTOOL)/libSDL_ttf.la
 	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
 	rm -f $(PKGPREFIX)/lib/*.la
+	cp -f $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER)/.libs/showfont /Data/coolstream/neutrino-update/NewImage/3.80
+	cp -f $(TARGETPREFIX)/lib/libSDL_ttf-2.0.so.0.10.1 /Data/coolstream/neutrino-update/NewImage/3.80
 	## pkg bauen...
 	rm -fr $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER) $(PKGPREFIX)
 	touch $@
@@ -811,7 +908,6 @@ $(D)/SDL-mixer: $(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz $(D)/SDL | $(TARGET
 			--disable-music-fluidsynth-midi \
 			--disable-music-mp3-shared \
 			--disable-smpegtest \
-			--disable-sdltest \
 			--disable-static \
 			--prefix= \
 			--mandir=/.remove; \

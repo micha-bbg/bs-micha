@@ -36,6 +36,7 @@ N_CONFIG_OPTS =
 #N_CONFIG_OPTS += --disable-upnp
 N_CONFIG_OPTS += --enable-giflib
 N_CONFIG_OPTS += --enable-pip
+N_CONFIG_OPTS += --enable-testmenu
 
 # choose between static and dynamic libtremor. As long as nothing else
 # uses libtremor, static usage does not really hurt and is compatible
