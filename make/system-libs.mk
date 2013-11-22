@@ -889,8 +889,6 @@ $(D)/SDL-ttf: $(ARCHIVE)/SDL_ttf-$(SDL_TTF_VER).tar.gz $(D)/SDL $(D)/freetype | 
 	$(REWRITE_LIBTOOL)/libSDL_ttf.la
 	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig
 	rm -f $(PKGPREFIX)/lib/*.la
-	cp -f $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER)/.libs/showfont /Data/coolstream/neutrino-update/NewImage/3.80
-	cp -f $(TARGETPREFIX)/lib/libSDL_ttf-2.0.so.0.10.1 /Data/coolstream/neutrino-update/NewImage/3.80
 	## pkg bauen...
 	rm -fr $(BUILD_TMP)/SDL_ttf-$(SDL_TTF_VER) $(PKGPREFIX)
 	touch $@
