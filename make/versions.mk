@@ -79,7 +79,12 @@ FREETYPE_MINOR=5
 FREETYPE_MICRO=0
 FREETYPE_NANO=1
 FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR).$(FREETYPE_MICRO)
+ifeq ($(FREETYPE_NANO), n/a)
+FREETYPE_VER=$(FREETYPE_VER_PATH)
+else
 FREETYPE_VER=$(FREETYPE_VER_PATH).$(FREETYPE_NANO)
+endif
+
 FREETYPE_VER_OLD=2.3.12
 
 # libjpeg-turbo; a derivative of libjpeg for x86 and x86-64 processors which uses SIMD instructions (MMX, SSE2, etc.) to accelerate baseline JPEG compression and decompression
