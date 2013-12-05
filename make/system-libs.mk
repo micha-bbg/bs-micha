@@ -386,7 +386,7 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPRE
 		git checkout --track -b coolstream origin/coolstream; \
 	else \
 		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		git checkout coolstream; \
+		git checkout master; \
 		git pull; \
 	fi;
 	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
