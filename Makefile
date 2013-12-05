@@ -110,6 +110,7 @@ include make/flashimage.mk
 include make/rootfs.mk
 include make/crosstool.mk
 include make/tuxwetter.mk
+-include make/micha-seine.mk
 
 update-self:
 	git pull

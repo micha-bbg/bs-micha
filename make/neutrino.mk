@@ -17,6 +17,7 @@ N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 N_CFLAGS += -fno-strict-aliasing -rdynamic 
 N_CFLAGS += -D__STDC_FORMAT_MACROS
+N_CFLAGS += -fmax-errors=10
 
 ifeq ($(PLATFORM), apollo)
 N_CFLAGS += -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard -DFB_HW_ACCELERATION
