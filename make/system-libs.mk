@@ -295,6 +295,8 @@ FFMPEG_CONFIGURE = \
 --enable-parser=vc1 \
 --enable-parser=dvdsub \
 --enable-parser=dvbsub \
+--enable-parser=flac \
+--enable-parser=vorbis \
 --disable-decoders \
 --enable-decoder=dca \
 --enable-decoder=dvdsub \
@@ -306,6 +308,11 @@ FFMPEG_CONFIGURE = \
 --enable-decoder=subviewer1 \
 --enable-decoder=xsub \
 --enable-decoder=pgssub \
+--enable-decoder=mp3 \
+--enable-decoder=flac \
+--enable-decoder=vorbis \
+--enable-decoder=aac \
+--enable-decoder=mjpeg \
 --disable-demuxers \
 --enable-demuxer=aac \
 --enable-demuxer=ac3 \
@@ -324,6 +331,10 @@ FFMPEG_CONFIGURE = \
 --enable-demuxer=flv \
 --enable-demuxer=rm \
 --enable-demuxer=rtsp \
+--enable-demuxer=hls \
+--enable-demuxer=dts \
+--enable-demuxer=ogg \
+--enable-demuxer=flac \
 --disable-encoders \
 --disable-muxers \
 --disable-ffplay \
@@ -338,6 +349,8 @@ FFMPEG_CONFIGURE = \
 --enable-protocol=rtmpe \
 --enable-protocol=rtmps \
 --enable-protocol=rtmpte \
+--enable-protocol=mmsh \
+--enable-protocol=mmst \
 --enable-bsfs \
 --enable-swresample \
 --disable-postproc \
@@ -349,7 +362,6 @@ FFMPEG_CONFIGURE = \
 --disable-devices \
 --disable-mmx \
 --disable-altivec \
---disable-zlib \
 --enable-bzlib \
 --disable-static \
 --enable-shared \
