@@ -30,7 +30,7 @@ ifeq ($(PLATFORM), apollo)
 TARGET_APOLLO               ?= arm-pnx8400-linux-uclibcgnueabi
 TARGET                       = $(TARGET_APOLLO)
 N_HD_SOURCE                  = $(N_HD_SOURCE_APOLLO)
-KVERSION_APOLLO             ?= 2.6.34
+KVERSION_APOLLO             ?= 2.6.34.14
 KVERSION                     = $(KVERSION_APOLLO)
 CROSSTOOL-NG_VER             = $(CT_VER_APOLLO)
 NEUTRINO_BRANCH_APOLLO      ?= next-cc
@@ -69,7 +69,7 @@ GITSOURCE       = git://git.slknet.de/git
 else ifeq ($(GIT_PROTO), http)
 GITSOURCE       = http://git.slknet.de/git
 else
-GITSOURCE       = ssh://git@slknet.de:64123/git
+GITSOURCE       = ssh://gitovh
 endif # GIT_PROTO
 endif # GIT_SOURCE
 

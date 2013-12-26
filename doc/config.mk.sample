@@ -69,8 +69,8 @@ SOURCE_TOOLS        = cst-public-tools
 # default (if empty) is "2.6.34.13"
 KVERSION_NEVIS = 2.6.34.13
 
-# default (if empty) is "2.6.34"
-KVERSION_APOLLO = 2.6.34
+# default (if empty) is "2.6.34.14"
+KVERSION_APOLLO = 2.6.34.14
 
 # crosstool-ng versions
 CT_VER_NEVIS  = 1.19.0
