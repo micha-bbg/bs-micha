@@ -50,6 +50,9 @@ NEUTRINO_DEPS += libvorbisidec
 N_CONFIG_OPTS += --enable-flac
 NEUTRINO_DEPS += libFLAC
 
+# enable ffmpeg audio decoder in neutrino
+N_CONFIG_OPTS += --enable-ffmpegdec
+
 NEUTRINO_DEPS2 += $(TARGETPREFIX)/bin/fbshot
 
 # the original build script links against openssl, but it is not needed at all.
