@@ -1,13 +1,13 @@
 #Makefile to build NEUTRINO
 
-NEUTRINO_DEPS  = libcurl libid3tag libmad libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
+AUDIODEC = ffmpeg
+
+NEUTRINO_DEPS  = libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
 NEUTRINO_DEPS += openthreads
 NEUTRINO_DEPS += lua
 NEUTRINO_DEPS += openssl
 NEUTRINO_DEPS += libiconv
 NEUTRINO_PKG_DEPS =
-
-neutrino-deps: $(NEUTRINO_DEPS)
 
 #N_CFLAGS   = -Wall -W -Wshadow -g -O2 -fno-strict-aliasing -rdynamic -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 #N_CPPFLAGS = -I$(TARGETPREFIX)/include
@@ -39,6 +39,12 @@ N_CONFIG_OPTS += --enable-giflib
 N_CONFIG_OPTS += --enable-pip
 N_CONFIG_OPTS += --enable-testmenu
 
+ifeq ($(AUDIODEC), ffmpeg)
+# enable ffmpeg audio decoder in neutrino
+N_CONFIG_OPTS += --enable-ffmpegdec
+else
+NEUTRINO_DEPS += libid3tag libmad
+
 # choose between static and dynamic libtremor. As long as nothing else
 # uses libtremor, static usage does not really hurt and is compatible
 # with the "original" image
@@ -49,11 +55,11 @@ NEUTRINO_DEPS += libvorbisidec
 # enable FLAC decoder in neutrino
 N_CONFIG_OPTS += --enable-flac
 NEUTRINO_DEPS += libFLAC
-
-# enable ffmpeg audio decoder in neutrino
-N_CONFIG_OPTS += --enable-ffmpegdec
+endif
 
 NEUTRINO_DEPS2 += $(TARGETPREFIX)/bin/fbshot
+
+neutrino-deps: $(NEUTRINO_DEPS)
 
 # the original build script links against openssl, but it is not needed at all.
 # libcurl is picked up by configure anyway, so not needed here.
@@ -138,6 +144,7 @@ endif
 		sed -i "s/@DEP@/$$DEP/" $(BUILD_TMP)/neutrino-control/control
 	sed -i 's/^\(Depends:.*\)$$/\1, cs-drivers/' $(BUILD_TMP)/neutrino-control/control
 	install -p -m 0755 $(TARGETPREFIX)/bin/fbshot $(PKGPREFIX)/bin/
+	ln -s usr/share $(PKGPREFIX)/share
 	find $(PKGPREFIX)/share/tuxbox/neutrino/locale/ -type f \
 		! -name deutsch.locale ! -name english.locale | xargs --no-run-if-empty rm
 	# ignore the .version file for package  comparison
