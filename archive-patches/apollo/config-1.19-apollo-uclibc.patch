@@ -1,15 +1,5 @@
---- a/config-1.16-apollo-uclibc	2013-10-15 11:02:47.000000000 +0200
-+++ b/.config	2013-10-15 13:26:20.000000000 +0200
-@@ -1,7 +1,7 @@
- #
- # Automatically generated make config: don't edit
--# crosstool-NG 1.16.0 Configuration
--# Mon Nov 19 16:33:06 2012
-+# crosstool-NG 1.19.0 Configuration
-+# Tue Oct 15 13:26:20 2013
- #
- CT_CONFIGURE_has_xz=y
- CT_CONFIGURE_has_cvs=y
+--- a/config-1.16-apollo-uclibc	2013-12-26 21:57:16.000000000 +0100
++++ b/.config	2013-12-26 22:25:59.000000000 +0100
 @@ -17,15 +17,17 @@
  #
  # CT_OBSOLETE is not set
@@ -45,7 +35,7 @@
  #
 -CT_PARALLEL_JOBS=8
 -CT_LOAD=0
-+CT_PARALLEL_JOBS=6
++CT_PARALLEL_JOBS=4
 +CT_LOAD=""
  CT_USE_PIPES=y
 -CT_EXTRA_FLAGS_FOR_HOST=""
@@ -168,7 +158,7 @@
  CT_BINUTILS_VERSION="2.22"
  CT_BINUTILS_2_22_or_later=y
  CT_BINUTILS_2_21_or_later=y
-@@ -280,15 +300,25 @@
+@@ -280,22 +300,37 @@
  CT_BINUTILS_FOR_TARGET_BFD=y
  
  #
@@ -180,23 +170,36 @@
  #
  CT_CC="gcc"
 -CT_CC_VERSION="4.6.3"
-+CT_CC_VERSION="4.8.1"
++CT_CC_VERSION="linaro-4.7-2013.06-1"
 +CT_CC_CORE_PASSES_NEEDED=y
  CT_CC_gcc=y
- # CT_CC_GCC_SHOW_LINARO is not set
-+CT_CC_V_4_8_1=y
+-# CT_CC_GCC_SHOW_LINARO is not set
++CT_CC_GCC_SHOW_LINARO=y
++# CT_CC_V_linaro_4_8 is not set
++# CT_CC_V_4_8_1 is not set
 +# CT_CC_V_4_8_0 is not set
++CT_CC_V_linaro_4_7=y
 +# CT_CC_V_4_7_3 is not set
 +# CT_CC_V_4_7_2 is not set
  # CT_CC_V_4_7_1 is not set
  # CT_CC_V_4_7_0 is not set
 -CT_CC_V_4_6_3=y
++# CT_CC_V_linaro_4_6 is not set
 +# CT_CC_V_4_6_4 is not set
 +# CT_CC_V_4_6_3 is not set
  # CT_CC_V_4_6_2 is not set
  # CT_CC_V_4_6_1 is not set
  # CT_CC_V_4_6_0 is not set
-@@ -312,18 +342,23 @@
++# CT_CC_V_linaro_4_5 is not set
+ # CT_CC_V_4_5_3 is not set
+ # CT_CC_V_4_5_2 is not set
+ # CT_CC_V_4_5_1 is not set
+ # CT_CC_V_4_5_0 is not set
++# CT_CC_V_linaro_4_4 is not set
+ # CT_CC_V_4_4_7 is not set
+ # CT_CC_V_4_4_6 is not set
+ # CT_CC_V_4_4_5 is not set
+@@ -312,18 +347,22 @@
  # CT_CC_V_4_3_1 is not set
  # CT_CC_V_4_2_4 is not set
  # CT_CC_V_4_2_2 is not set
@@ -207,9 +210,8 @@
  CT_CC_GCC_4_5_or_later=y
 -CT_CC_GCC_4_6=y
  CT_CC_GCC_4_6_or_later=y
++CT_CC_GCC_4_7=y
 +CT_CC_GCC_4_7_or_later=y
-+CT_CC_GCC_4_8=y
-+CT_CC_GCC_4_8_or_later=y
  CT_CC_GCC_HAS_GRAPHITE=y
 +CT_CC_GCC_USE_GRAPHITE=y
  CT_CC_GCC_HAS_LTO=y
@@ -222,7 +224,7 @@
  CT_CC_GCC_USE_MPC=y
  CT_CC_GCC_HAS_LIBQUADMATH=y
  # CT_CC_LANG_FORTRAN is not set
-@@ -356,13 +391,11 @@
+@@ -356,13 +395,11 @@
  #
  # Optimisation features
  #
@@ -237,7 +239,7 @@
  # CT_CC_GCC_LIBMUDFLAP is not set
  # CT_CC_GCC_LIBGOMP is not set
  # CT_CC_GCC_LIBSSP is not set
-@@ -376,6 +409,11 @@
+@@ -376,18 +413,22 @@
  CT_CC_GCC_SJLJ_EXCEPTIONS=m
  CT_CC_GCC_LDBL_128=m
  # CT_CC_GCC_BUILD_ID is not set
@@ -249,7 +251,22 @@
  
  #
  # C-library
-@@ -400,8 +438,7 @@
+ #
+ CT_LIBC="uClibc"
+ CT_LIBC_VERSION="0.9.33.2"
+-# CT_LIBC_eglibc is not set
+-CT_LIBC_uClibc=y
+ # CT_LIBC_glibc is not set
+-CT_LIBC_none_AVAILABLE=y
++CT_LIBC_uClibc=y
++# CT_LIBC_eglibc is not set
+ CT_LIBC_mingw_AVAILABLE=y
+-CT_LIBC_eglibc_AVAILABLE=y
++CT_LIBC_glibc_AVAILABLE=y
+ CT_LIBC_newlib_AVAILABLE=y
+ CT_LIBC_uClibc_AVAILABLE=y
+ CT_LIBC_UCLIBC_V_0_9_33_2=y
+@@ -400,8 +441,7 @@
  # CT_LIBC_UCLIBC_V_0_9_30_2 is not set
  # CT_LIBC_UCLIBC_V_0_9_30_1 is not set
  # CT_LIBC_UCLIBC_V_0_9_30 is not set
@@ -259,16 +276,19 @@
  CT_LIBC_UCLIBC_0_9_32_or_later=y
  CT_LIBC_UCLIBC_0_9_30_or_later=y
  CT_LIBC_UCLIBC_PARALLEL=y
-@@ -414,7 +451,7 @@
+@@ -414,8 +454,9 @@
  # CT_LIBC_UCLIBC_DEBUG_LEVEL_2 is not set
  # CT_LIBC_UCLIBC_DEBUG_LEVEL_3 is not set
  CT_LIBC_UCLIBC_DEBUG_LEVEL=0
 -CT_LIBC_UCLIBC_CONFIG_FILE="/opt/ct-ng-1.16.0/uClibc-0.9.33.2/.config"
+-CT_LIBC_glibc_AVAILABLE=y
 +CT_LIBC_UCLIBC_CONFIG_FILE="${CST_BASE_DIR}/archive-patches/apollo/uClibc-0.9.33.2-config"
- CT_LIBC_glibc_AVAILABLE=y
++CT_LIBC_none_AVAILABLE=y
++CT_LIBC_eglibc_AVAILABLE=y
  CT_LIBC_SUPPORT_THREADS_ANY=y
  CT_LIBC_SUPPORT_NPTL=y
-@@ -440,51 +477,11 @@
+ CT_LIBC_SUPPORT_LINUXTHREADS=y
+@@ -440,51 +481,11 @@
  #
  # Debug facilities
  #
@@ -324,19 +344,8 @@
  
  #
  # Companion libraries
-@@ -492,22 +489,23 @@
- CT_COMPLIBS_NEEDED=y
- CT_GMP_NEEDED=y
- CT_MPFR_NEEDED=y
--CT_PPL_NEEDED=y
-+CT_ISL_NEEDED=y
- CT_CLOOG_NEEDED=y
- CT_MPC_NEEDED=y
- CT_COMPLIBS=y
- CT_GMP=y
- CT_MPFR=y
--CT_PPL=y
-+CT_ISL=y
+@@ -501,13 +502,14 @@
+ CT_PPL=y
  CT_CLOOG=y
  CT_MPC=y
 -CT_LIBELF_TARGET=y
@@ -351,37 +360,25 @@
  CT_MPFR_V_3_1_0=y
  # CT_MPFR_V_3_0_1 is not set
  # CT_MPFR_V_3_0_0 is not set
-@@ -515,22 +513,13 @@
- # CT_MPFR_V_2_4_1 is not set
- # CT_MPFR_V_2_4_0 is not set
- CT_MPFR_VERSION="3.1.0"
--CT_PPL_V_0_11_2=y
--# CT_PPL_V_0_11_1 is not set
--# CT_PPL_V_0_11 is not set
--# CT_PPL_V_0_10_2 is not set
--CT_PPL_VERSION="0.11.2"
--CT_PPL_0_11=y
--CT_PPL_NEEDS_LIBPWL=y
--CT_CLOOG_V_0_15_11=y
--# CT_CLOOG_V_0_15_10 is not set
--# CT_CLOOG_V_0_15_9 is not set
--# CT_CLOOG_V_0_15_8 is not set
--# CT_CLOOG_V_0_15_7 is not set
--# CT_CLOOG_V_0_15_6 is not set
--CT_CLOOG_VERSION="0.15.11"
--CT_CLOOG_0_15_1x=y
--CT_CLOOG_NEEDS_AUTORECONF=y
-+CT_ISL_V_0_11_1=y
-+CT_ISL_VERSION="0.11.1"
-+CT_CLOOG_V_0_18_0=y
-+CT_CLOOG_VERSION="0.18.0"
-+CT_CLOOG_0_18_or_later=y
+@@ -522,6 +524,8 @@
+ CT_PPL_VERSION="0.11.2"
+ CT_PPL_0_11=y
+ CT_PPL_NEEDS_LIBPWL=y
++# CT_ISL_V_0_11_1 is not set
++# CT_CLOOG_V_0_18_0 is not set
+ CT_CLOOG_V_0_15_11=y
+ # CT_CLOOG_V_0_15_10 is not set
+ # CT_CLOOG_V_0_15_9 is not set
+@@ -531,6 +535,8 @@
+ CT_CLOOG_VERSION="0.15.11"
+ CT_CLOOG_0_15_1x=y
+ CT_CLOOG_NEEDS_AUTORECONF=y
 +# CT_MPC_V_1_0_1 is not set
 +# CT_MPC_V_1_0 is not set
  CT_MPC_V_0_9=y
  # CT_MPC_V_0_8_2 is not set
  # CT_MPC_V_0_8_1 is not set
-@@ -538,13 +527,6 @@
+@@ -538,13 +544,6 @@
  CT_MPC_VERSION="0.9"
  
  #
@@ -395,3 +392,17 @@
  # Companion libraries common options
  #
  # CT_COMPLIBS_CHECK is not set
+@@ -556,7 +555,12 @@
+ #
+ # READ HELP before you say 'Y' below !!!
+ #
+-# CT_COMP_TOOLS is not set
++CT_COMP_TOOLS=y
++CT_COMP_TOOLS_make=y
++CT_COMP_TOOLS_m4=y
++CT_COMP_TOOLS_autoconf=y
++CT_COMP_TOOLS_automake=y
++CT_COMP_TOOLS_libtool=y
+ 
+ #
+ # Test suite
