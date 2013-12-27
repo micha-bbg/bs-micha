@@ -171,6 +171,9 @@ $(ARCHIVE)/linux-2.6.34.13.tar.bz2:
 $(ARCHIVE)/linux-2.6.34.tar.bz2:
 	$(WGET) https://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.bz2
 
+$(ARCHIVE)/linux-2.6.34.14.tar.bz2:
+	$(WGET) https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.34/linux-2.6.34.14.tar.bz2
+
 $(ARCHIVE)/linux-2.6.26.8.tar.bz2:
 	$(WGET) http://ftp.linux.org.uk/pub/linux/linux-2.6/linux-2.6.26.8.tar.bz2
 

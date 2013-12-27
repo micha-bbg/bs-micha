@@ -45,7 +45,7 @@ crosstool-nevis: $(ARCHIVE)/linux-2.6.26.8.tar.bz2
 
 #	$(REMOVE)/crosstool-ng-$(CROSSTOOL-NG_VER)
 
-crosstool-apollo: $(ARCHIVE)/linux-2.6.34.tar.bz2
+crosstool-apollo: $(ARCHIVE)/linux-2.6.34.14.tar.bz2
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL-NG_VER); \
 		cp $(PATCHES)/999-ppl-0_11_2-fix-configure-for-64bit-host.patch patches/ppl/0.11.2; \
 		cp $(PATCHES)/$(PLATFORM)/900-pull-socket_type-h-from-eglibc.patch patches/uClibc/0.9.33.2; \
@@ -61,7 +61,7 @@ crosstool-apollo: $(ARCHIVE)/linux-2.6.34.tar.bz2
 		fi; \
 		export CST_BASE_DIR=$(BASE_DIR); \
 		export CST_BUILD_TMP=$(BUILD_TMP); \
-		export CST_KERNEL_LINUX_CUSTOM=2.6.34; \
+		export CST_KERNEL_LINUX_CUSTOM=2.6.34.14; \
 		./configure --enable-local; MAKELEVEL=0 make; chmod 0755 ct-ng; \
 		./ct-ng oldconfig; \
 		./ct-ng build

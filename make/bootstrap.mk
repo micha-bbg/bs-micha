@@ -61,9 +61,8 @@ cst-firmware: | $(TARGETPREFIX)
 
 cst-modules-apollo: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX)/lib/modules; \
-
-#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX)/lib/modules; \
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX)/lib/modules; \
+#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX)/lib/modules; \
 
 cst-modules-nevis: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX)/lib/modules/$(KVERSION)-nevis
