@@ -1,13 +1,13 @@
 #Makefile to build NEUTRINO
 
 AUDIODEC = ffmpeg
-
-NEUTRINO_DEPS  = libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
-NEUTRINO_DEPS += openthreads
-NEUTRINO_DEPS += lua
-NEUTRINO_DEPS += openssl
-NEUTRINO_DEPS += libiconv
+NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
+NEUTRINO_DEPS += libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
+NEUTRINO_DEPS += openthreads lua openssl libiconv
+NEUTRINO_DEPS += wpa_supplicant parted timezone
 NEUTRINO_PKG_DEPS =
+
+
 
 #N_CFLAGS   = -Wall -W -Wshadow -g -O2 -fno-strict-aliasing -rdynamic -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 #N_CPPFLAGS = -I$(TARGETPREFIX)/include

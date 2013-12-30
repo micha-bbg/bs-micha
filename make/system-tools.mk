@@ -433,13 +433,13 @@ $(D)/cs-uboot: $(ARCHIVE)/u-boot-2009.03.tar.bz2 $(PATCHES)/u-boot-2009.3-CST.di
 	touch $@
 
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += mkimage
 endif
 
 system-tools: $(SYSTEM_TOOLS)
-system-tools-opt: $(D)/samba2 $(D)/ntp
+system-tools-opt: $(D)/samba2
 system-tools-all: system-tools system-tools-opt
 
 PHONY += system-tools system-tools-opt system-tools-all
