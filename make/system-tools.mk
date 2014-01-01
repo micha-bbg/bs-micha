@@ -432,8 +432,34 @@ $(D)/cs-uboot: $(ARCHIVE)/u-boot-2009.03.tar.bz2 $(PATCHES)/u-boot-2009.3-CST.di
 	cp -a $(BUILD_TMP)/u-boot-2009.03/tools/mkimage $(HOSTPREFIX)/bin
 	touch $@
 
+$(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/openvpn-$(OPENVPN_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/openvpn-$(OPENVPN_VER); \
+		$(CONFIGURE) \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--target=$(TARGET) \
+			--disable-lzo \
+			--prefix= \
+			; \
+		$(MAKE); \
+		cp openvpn $(TARGETPREFIX)/sbin
+		$(TARGET)-strip $(TARGETPREFIX)/sbin/openvpn
+	$(REMOVE)/openvpn-$(OPENVPN_VER)
+	touch $@
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp
+$(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/killproc-$(KILLPROC_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/killproc-$(KILLPROC_VER); \
+		$(PATCH)/killproc.diff; \
+		$(MAKE); \
+		cp killproc $(TARGETPREFIX)/sbin
+		$(TARGET)-strip $(TARGETPREFIX)/sbin/killproc
+	$(REMOVE)/killproc-$(KILLPROC_VER)
+	touch $@
+
+
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += mkimage
 endif

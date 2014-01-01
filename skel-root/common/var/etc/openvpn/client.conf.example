@@ -1,0 +1,32 @@
+
+#lport 5001
+#rport 5001
+#bind
+
+proto udp
+dev tap
+
+ca /var/etc/openvpn/cert/ca.crt
+cert /var/etc/openvpn/cert/xxx.crt
+key /var/etc/openvpn/cert/xx.key
+tls-auth /var/etc/openvpn/cert/static1.key 1
+
+tls-client
+ns-cert-type server
+remote cserver.dyndns-work.com 15290
+#nobind
+ifconfig 192.168.xxx.xxx 255.255.255.0
+
+tun-mtu 1500
+mssfix
+daemon
+cipher BF-CBC
+keepalive 10 120
+resolv-retry infinite
+persist-tun
+persist-key
+tun-mtu-extra 32
+
+verb 3
+#log /tmp/client.log
+#status /tmp/client-status.log
