@@ -452,6 +452,7 @@ $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/killproc-$(KILLPROC_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/killproc-$(KILLPROC_VER); \
 		$(PATCH)/killproc.diff; \
+		export TARGET_X=$(TARGET); \
 		$(MAKE); \
 		cp killproc $(TARGETPREFIX)/sbin
 		$(TARGET)-strip $(TARGETPREFIX)/sbin/killproc

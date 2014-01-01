@@ -4,7 +4,7 @@
  	 CFLAGS = $(RPM_OPT_FLAGS) $(COPTS) $(DEBUG) $(INC) -D_GNU_SOURCE -Wall -pipe
  	  CLOOP = -funroll-loops
  	     CC = gcc
-+	     CC = arm-pnx8400-linux-uclibcgnueabi-gcc
++	     CC = $(TARGET_X)-gcc
  	     RM = rm -f
  	  MKDIR = mkdir -p
  	  RMDIR = rm -rf
