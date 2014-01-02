@@ -83,7 +83,7 @@ fi
 
 if [ -e /var/etc/.load_wlan_drivers ] ; then
 	echo ""
-	if [ "$OLD_KRNL" = "1"]; then
+	if [ "$OLD_KRNL" = "1" ]; then
 		im net/wireless/cfg80211.ko
 		im net/wireless/lib80211.ko
 		im net/wireless/8192cu/8192cu.ko
