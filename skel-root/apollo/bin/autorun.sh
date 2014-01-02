@@ -4,8 +4,10 @@ export PATH=${PATH}:/var/bin:/var/plugins
 USE_GDB=0
 
 echo ""
-echo "Starting oscam..."
-oscam -b -c /var/keys -w 0
+if [ -x /bin/oscam ]; then
+	echo "Starting oscam..."
+	/bin/oscam -b -c /var/keys -w 0
+fi
 
 if [ "$USE_GDB" = "1" ]; then
 	echo ""
@@ -19,7 +21,6 @@ echo ""
 echo "### Starting NEUTRINO ###"
 cd /tmp
 /bin/neutrino
-# > /dev/null 2> /dev/null
 
 /bin/sync
 /bin/sync
