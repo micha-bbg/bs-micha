@@ -5,7 +5,7 @@ PATH=/var/bin:/bin:/var/sbin:/sbin
 
 KRNL_VER=$(uname -r)
 echo "Using kernel $KRNL_VER"
-if [ "$KRNL_VER" = "2.6.34" }; then
+if [ "$KRNL_VER" = "2.6.34" ]; then
 	OLD_KRNL=1
 else
 	OLD_KRNL=0
