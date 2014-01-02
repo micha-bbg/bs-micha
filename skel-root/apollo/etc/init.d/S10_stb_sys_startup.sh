@@ -29,29 +29,29 @@ mp()
 
 echo ""
 #im kernel/drivers/net/tun
-mp lnxplatnativeDrv
-mp lnxKKALDrv
-mp lnxnotifyqDrv
-mp lnxplatDrv
-mp lnxdebugDrv
-mp lnxscsDrv
-mp lnxcssDrv
-mp lnxtmasDrv
-mp lnxtmvssDrvGPL
-mp lnxtmvssDrv
+#mp lnxplatnativeDrv
+#mp lnxKKALDrv
+#mp lnxnotifyqDrv
+#mp lnxplatDrv
+#mp lnxscsDrv
+#mp lnxcssDrv
+#mp lnxtmasDrv
+#mp lnxtmvssDrvGPL
+#mp lnxtmvssDrv
 mp lnxpvrDrv
 mp lnxdvbciDrv
+mp lnxdebugDrv
 mp framebuffer cnxtfb_standalone=1 cnxtfb_hdwidth=1280 cnxtfb_hdheight=720 cnxtfb_autoscale_sd=2
 
 if [ -f /opt/.load_3ddrivers ] ; then
 	echo ""
-	mp pvrsrvkm
-	mp pvrnxpdc
-	mp pvrvssbc
+	im extra/pvrsrvkm.ko
+	im extra/pvrnxpdc.ko
+	im extra/pvrvssbc.ko
 fi
 
 echo ""
-mp control
+#mp control
 mp frontpanel
 create_node "cs_display"
 ln -sf /dev/cs_display /dev/display
@@ -61,13 +61,13 @@ logoview --background --timeout=20 --logo=/var/share/icons/logo-bbg.jpg
 
 echo ""
 
-mp dvb-core
-mp typhoon
-mp a8296
-mp av201x
-mp sharp780x
-mp avl6211
-mp dvb_api_prop
+#mp dvb-core
+#mp typhoon
+#mp a8296
+#mp av201x
+#mp sharp780x
+#mp avl6211
+#mp dvb_api_prop
 mp dvb_api
 mp cifs
 
