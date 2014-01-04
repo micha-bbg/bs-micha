@@ -460,9 +460,9 @@ $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
 	touch $@
 
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn
 ifeq ($(PLATFORM), nevis)
-SYSTEM_TOOLS += $(D)/openvpn mkimage
+SYSTEM_TOOLS += mkimage
 endif
 
 system-tools: $(SYSTEM_TOOLS)
