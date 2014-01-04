@@ -4,7 +4,7 @@ AUDIODEC = ffmpeg
 NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
 NEUTRINO_DEPS += libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
 NEUTRINO_DEPS += openthreads lua openssl libiconv
-NEUTRINO_DEPS += wpa_supplicant parted timezone
+NEUTRINO_DEPS += wpa_supplicant parted
 NEUTRINO_PKG_DEPS =
 
 
