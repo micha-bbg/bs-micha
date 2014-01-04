@@ -459,8 +459,26 @@ $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/killproc-$(KILLPROC_VER)
 	touch $@
 
+$(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
+	$(UNTAR)/ncftp-$(NCFTP_VER)-src.tar.bz2
+	set -e; cd $(BUILD_TMP)/ncftp-$(NCFTP_VER); \
+		CC=$(TARGET)-gcc $(BUILDENV) \
+		./configure $(CONFIGURE_OPTS) \
+			--target=$(TARGET) \
+			--prefix= \
+			; \
+		$(MAKE); \
+		cp bin/ncftp $(TARGETPREFIX)/bin; \
+		cp bin/ncftpget $(TARGETPREFIX)/bin; \
+		cp bin/ncftpput $(TARGETPREFIX)/bin
+		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftp
+		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpget
+		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpput
+	$(REMOVE)/ncftp-$(NCFTP_VER)
+	touch $@
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn
+
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += mkimage
 endif

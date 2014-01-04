@@ -228,3 +228,6 @@ $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.gz:
 
 $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz:
 	$(WGET) ftp://ftp.suse.de/pub/projects/init/killproc-$(KILLPROC_VER).tar.gz
+
+$(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2:
+	$(WGET) ftp://ftp.ncftp.com/ncftp/ncftp-$(NCFTP_VER)-src.tar.bz2
