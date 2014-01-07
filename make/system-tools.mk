@@ -480,7 +480,7 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp
 ifeq ($(PLATFORM), nevis)
-SYSTEM_TOOLS += mkimage
+SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage
 endif
 
 system-tools: $(SYSTEM_TOOLS)
