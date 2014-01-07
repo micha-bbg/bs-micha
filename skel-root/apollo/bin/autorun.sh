@@ -4,10 +4,7 @@ export PATH=${PATH}:/var/bin:/var/plugins
 USE_GDB=0
 
 echo ""
-if [ -x /bin/oscam ]; then
-	echo "Starting oscam..."
-	/bin/oscam -b -c /var/keys -w 0
-fi
+service camd restart
 
 if [ "$USE_GDB" = "1" ]; then
 	echo ""
@@ -26,11 +23,11 @@ cd /tmp
 /bin/sync
 
 if [ -e /tmp/.reboot ] ; then
-    /bin/dt -t"Rebooting..."
-    /sbin/reboot -f
+	/bin/dt -t"Rebooting..."
+	/sbin/reboot -f
 else
-    /bin/dt -t"Panic..."
-    echo "Panic..."
-#    sleep 15
-#    /sbin/reboot -f
+	/bin/dt -t"Panic..."
+	echo "Panic..."
+#	sleep 15
+#	/sbin/reboot -f
 fi
