@@ -468,10 +468,8 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 			--prefix= \
 			; \
 		$(MAKE); \
-		cp bin/ncftp $(TARGETPREFIX)/bin; \
 		cp bin/ncftpget $(TARGETPREFIX)/bin; \
 		cp bin/ncftpput $(TARGETPREFIX)/bin
-		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftp
 		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpget
 		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpput
 	$(REMOVE)/ncftp-$(NCFTP_VER)
