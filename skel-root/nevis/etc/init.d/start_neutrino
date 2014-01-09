@@ -1,51 +1,96 @@
 #!/bin/sh
-export PATH=/sbin:/bin:/usr/bin:/usr/sbin
 
-# because of the rsync-excludes, this might be necessary:
-for i in tuxtxt zapit links; do
-	[ -e /var/tuxbox/config/$i ] || mkdir -p /var/tuxbox/config/$i
-done
-[ -e /share/fonts/neutrino.ttf ] || ln -s md_khmurabi_10.ttf /share/fonts/neutrino.ttf
+########################################################
+#                                                      #
+#    start_neutrino, v 3.30 07.01.2014 by micha-bbg    #
+#                                                      #
+########################################################
 
-MESSAGE=:
-type -p drivertool > /dev/null && MESSAGE="drivertool VFD_SET_TEXT"
+BOX_USER=User
+BOX_USER=$(sed -e "/^cheffe/!d;{s/.*=//g;}" /.version)
 
-# spark: find out if we are running on HDMI or on SCART...
-if [ -e /sys/class/stmcoredisplay/hdmi0.0/hotplug ]; then
-	read H < /sys/class/stmcoredisplay/hdmi0.0/hotplug
-	if [ "$H" = n ]; then
-		if ! [ -e /var/tuxbox/config/neutrino.conf ]; then
-			# first boot... set framebuffer to the correct resolution
-			echo "pal" > /proc/stb/video/videomode
+USE_GDB=0
+#[ "$BOX_USER" = "Micha" ] && USE_GDB=1
+
+USE_LOG=0
+#[ "$BOX_USER" = "Micha" ] && USE_LOG=1
+#[ "$BOX_USER" = "Achim" ] && USE_LOG=1
+
+export PATH=/var/sbin:/var/bin:/sbin:/bin:/usr/bin:/usr/sbin
+export TZ=$(cat /etc/TZ)
+
+. /var/sbin/load-sysconfig.sh
+
+#{ sleep 18; camd_start.sh restart; } &
+camd_start.sh restart
+
+_tmp1=$(LoadSysconfig "update_server")
+if [ "$_tmp1" = "1" ]; then
+	if [ ! -e /tmp/.no_internet ] ; then
+		if ! pidof cifsd > /dev/null; then
+			{ sleep 30; service cifs start; } &
 		fi
-		export NEUTRINO_DEFAULT_SCART=yes
 	fi
-	echo
-	echo "HDMI detected: $H"
-	echo "NEUTRINO_DEFAULT_SCART: ${NEUTRINO_DEFAULT_SCART:-no}"
-	echo
 fi
 
-# touch /tmp/norestart
-until neutrino; do
-	RET=$?
-	echo "Neutrino exited with exit code $RET"
-	$MESSAGE "neutrino:$RET"
-	while [ -e /tmp/norestart ]; do # for debugging: stop the restart loop
-		sleep 1;
-	done
-	if [ $RET = 1 ]; then
-		touch /tmp/.halt
-		break;
+if [ "$USE_GDB" = "1" ]; then
+	rm -f /tmp/.boxcheck
+	echo ""
+	echo ""
+	echo "Neutrino debugging with GDB"
+	echo ""
+	gdbserver :5555 neutrino
+	exit 0
+fi
+
+#START_PARAM="-v 1"
+START_PARAM=
+if [ "$USE_LOG" = "1" ]; then
+	LOG_FILE=/tmp/media/disk_system/log
+	mkdir -p $LOG_FILE
+	USE_LOG=0
+	if [ -d $LOG_FILE ]; then
+		LOG_FILE=$LOG_FILE/n_log_${BOX_USER}_$(date +%Y-%m-%d_%H.%M.%S).txt
+		USE_LOG=1
+	fi
+fi
+
+while :
+do
+	if [ "$USE_LOG" = "1" ]; then
+		echo ""; echo ""
+		echo "start neutrino $START_PARAM > $LOG_FILE"
+		neutrino $START_PARAM > $LOG_FILE 2>&1
+	else
+		echo ""; echo ""
+		echo "start neutrino $START_PARAM"
+		neutrino $START_PARAM
+	fi
+	if [ ! "$?" = "0" ]; then
+		break
+	fi
+	if [ ! -e /tmp/.neutrino_restart ]; then # gets created by neutrino
+		break
+	else
+		echo ""
+		echo "==================================================="
+		echo "=== [start_neutrino] Now restarting neutrino... ==="
+		echo "==================================================="
+		echo ""
+		rm -f /tmp/.neutrino_restart
+		/bin/sync
 	fi
 done
 
-$MESSAGE "start_n ends"
+echo "Neutrino exited with exit code $?"
+
+rm -f /tmp/.boxcheck
+touch /tmp/.camdstop
+camd_start.sh stop
+
+/bin/sync
+/bin/sync
+
 if [ -e /tmp/.reboot ]; then # gets created by neutrino
-	$MESSAGE "rebooting..."
 	reboot
-fi
-if [ -e /tmp/.halt ]; then
-	$MESSAGE "shutting down..."
-	poweroff
 fi
