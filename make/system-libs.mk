@@ -575,8 +575,6 @@ $(D)/tzcode: $(ARCHIVE)/tzcode$(TZ_VER).tar.gz
 		$(BUILDENV) \
 		$(MAKE) CC=$(TARGET)-gcc; \
 		$(MAKE) install TOPDIR=$(TARGETPREFIX)/TZ; \
-	
-
 
 # no package, since the library is only built statically
 $(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
@@ -586,7 +584,8 @@ $(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER); \
 		$(PATCH)/lua-5.2.1-luaposix.patch; \
 		tar xf $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2; \
-		cd luaposix-$(LUAPOSIX_VER); cp lposix.c lua52compat.h ../src/; cd ..; \
+		cp $(BUILD_TMP)/lua-$(LUA_VER)/luaposix-$(LUAPOSIX_VER)/ext/include/lua52compat.h $(BUILD_TMP)/lua-$(LUA_VER)/src/; \
+		cp $(BUILD_TMP)/lua-$(LUA_VER)/luaposix-$(LUAPOSIX_VER)/ext/posix/posix.c $(BUILD_TMP)/lua-$(LUA_VER)/src/lposix.c; \
 		sed -i 's/<config.h>/"config.h"/' src/lposix.c; \
 		sed -i '/^#define/d' src/lua52compat.h; \
 		sed -i 's@^#define LUA_ROOT.*@#define LUA_ROOT "/"@' src/luaconf.h; \

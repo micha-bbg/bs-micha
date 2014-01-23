@@ -103,7 +103,8 @@ LIBDVBSI_VER=0.3.6
 LUA_VER=5.2.1
 
 # luaposix: posix bindings for lua
-LUAPOSIX_VER=5.1.28
+#LUAPOSIX_VER=5.1.28
+LUAPOSIX_VER=31
 
 # libvorbisidec;  libvorbisidec is an Ogg Vorbis audio decoder (also known as "tremor") with no floating point arithmatic
 VORBISIDEC_SVN=18153
