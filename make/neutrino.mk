@@ -37,6 +37,7 @@ N_CONFIG_OPTS =
 #N_CONFIG_OPTS += --disable-upnp
 N_CONFIG_OPTS += --enable-giflib
 N_CONFIG_OPTS += --enable-pip
+N_CONFIG_OPTS += --enable-lua
 N_CONFIG_OPTS += --enable-testmenu
 
 ifeq ($(AUDIODEC), ffmpeg)
