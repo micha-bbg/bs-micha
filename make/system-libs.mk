@@ -592,6 +592,7 @@ $(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 		sed -i '/^#define LUA_USE_READLINE/d' src/luaconf.h; \
 		sed -i 's/ -lreadline//' src/Makefile; \
 		sed -i 's|man/man1|.remove|' Makefile; \
+		$(PATCH)/lua-5.2.1-luaposix-alloca.patch; \
 		$(MAKE) linux CC=$(TARGET)-gcc LDFLAGS="-L$(TARGETPREFIX)/lib" ; \
 		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX)
 	rm -rf $(TARGETPREFIX)/.remove

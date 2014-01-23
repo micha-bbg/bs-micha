@@ -1,0 +1,19 @@
+--- a/src/lposix.c.org	2013-09-09 09:15:14.000000000 +0200
++++ b/src/lposix.c	2014-01-23 12:32:47.649690473 +0100
+@@ -44,6 +44,7 @@
+ #include <sys/resource.h>
+ #include <sys/time.h>
+ #include <termios.h>
++#include <alloca.h>
+ #if _POSIX_VERSION >= 200112L
+ #include <sys/socket.h>
+ #include <sys/types.h>
+@@ -3352,7 +3353,7 @@
+ static int sockaddr_to_lua(lua_State *L, int family, struct sockaddr *sa)
+ {
+ 	char addr[INET6_ADDRSTRLEN];
+-	int port;
++	int port = 0;
+ 	struct sockaddr_in *sa4;
+ 	struct sockaddr_in6 *sa6;
+ 
