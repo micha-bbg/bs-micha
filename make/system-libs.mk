@@ -577,7 +577,7 @@ $(D)/tzcode: $(ARCHIVE)/tzcode$(TZ_VER).tar.gz
 		$(MAKE) install TOPDIR=$(TARGETPREFIX)/TZ; \
 
 # no package, since the library is only built statically
-$(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
+$(D)/lua_static: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 	$(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 $(PATCHES)/lua-5.2.1-luaposix.patch
 	$(REMOVE)/lua-$(LUA_VER)
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
@@ -597,6 +597,49 @@ $(D)/lua: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX)
 	rm -rf $(TARGETPREFIX)/.remove
 	$(REMOVE)/lua-$(LUA_VER)
+	touch $@
+
+$(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/lua-$(LUA_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER) && \
+		$(PATCH)/lua-01-fix-coolstream-build.patch && \
+		$(PATCH)/lua-02-shared-libs-for-lua.patch && \
+		$(PATCH)/lua-03-lua-pc.patch && \
+		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
+		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX)
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so.$(LUA_VER)
+	cd $(TARGETPREFIX)/lib; ln -sf liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so
+	install -m 0644 -D $(BUILD_TMP)/lua-$(LUA_VER)/etc/lua.pc $(PKG_CONFIG_PATH)/lua.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/lua.pc
+	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove
+	touch $@ 
+
+$(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/lua-$(LUA_VER).tar.gz
+	cd $(BUILD_TMP)/lua-$(LUA_VER) && \
+		$(PATCH)/lua-01-fix-coolstream-build.patch && \
+		$(MAKE) linux
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/lua $@
+	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove
+
+$(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPREFIX)
+	$(UNTAR)/luaposix-$(LUAPOSIX_VER).tar.bz2
+	set -e; cd $(BUILD_TMP)/luaposix-$(LUAPOSIX_VER); \
+		$(PATCH)/luaposix-fix-build.patch && \
+		export LUA=$(HOSTPREFIX)/bin/lua-$(LUA_VER) && \
+		autoreconf -fi && \
+		$(CONFIGURE) --prefix= \
+			--exec-prefix= \
+			--libdir=$(TARGETPREFIX)/lib/lua/$(LUA_ABIVER) \
+			--datarootdir=$(TARGETPREFIX)/share/lua/$(LUA_ABIVER) \
+			--mandir=$(TARGETPREFIX)/.remove \
+			--docdir=$(TARGETPREFIX)/.remove \
+			--enable-silent-rules \
+			--without-ncurses \
+			--without-ncursesw && \
+		$(MAKE) && \
+		$(MAKE) install
+	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove
 	touch $@
 
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
