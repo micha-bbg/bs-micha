@@ -627,6 +627,7 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	$(UNTAR)/luaposix-$(LUAPOSIX_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/luaposix-$(LUAPOSIX_VER); \
 		$(PATCH)/luaposix-fix-build.patch && \
+		$(PATCH)/luaposix-fix-docdir-build.patch; \
 		export LUA=$(HOSTPREFIX)/bin/lua-$(LUA_VER) && \
 		autoreconf -fi && \
 		$(CONFIGURE) --prefix= \
@@ -636,7 +637,6 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 			--mandir=$(TARGETPREFIX)/.remove \
 			--docdir=$(TARGETPREFIX)/.remove \
 			--enable-silent-rules \
-			--without-ncurses \
 			--without-ncursesw && \
 		$(MAKE) && \
 		$(MAKE) install
