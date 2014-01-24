@@ -584,8 +584,9 @@ $(D)/lua_static: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER); \
 		$(PATCH)/lua-5.2.1-luaposix.patch; \
 		tar xf $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2; \
-		cp $(BUILD_TMP)/lua-$(LUA_VER)/luaposix-$(LUAPOSIX_VER)/ext/include/lua52compat.h $(BUILD_TMP)/lua-$(LUA_VER)/src/; \
-		cp $(BUILD_TMP)/lua-$(LUA_VER)/luaposix-$(LUAPOSIX_VER)/ext/posix/posix.c $(BUILD_TMP)/lua-$(LUA_VER)/src/lposix.c; \
+		cd luaposix-$(LUAPOSIX_VER); \
+		cp ext/include/lua52compat.h ../src/; \
+		cp ext/posix/posix.c ../src/lposix.c; cd ..; \
 		sed -i 's/<config.h>/"config.h"/' src/lposix.c; \
 		sed -i '/^#define/d' src/lua52compat.h; \
 		sed -i 's@^#define LUA_ROOT.*@#define LUA_ROOT "/"@' src/luaconf.h; \
