@@ -12,12 +12,13 @@ NEUTRINO_PKG_DEPS =
 #N_CFLAGS   = -Wall -W -Wshadow -g -O2 -fno-strict-aliasing -rdynamic -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 #N_CPPFLAGS = -I$(TARGETPREFIX)/include
 
-N_CFLAGS  = -Wall -Werror -Wextra -Wshadow 
+N_CFLAGS  = -Wall -Werror -Wextra -Wshadow
+#N_CFLAGS += -Wconversion
+N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 N_CFLAGS += -fno-strict-aliasing -rdynamic 
 N_CFLAGS += -D__STDC_FORMAT_MACROS
-N_CFLAGS += -fmax-errors=10
 #N_CFLAGS += -DDYNAMIC_LUAPOSIX
 
 ifeq ($(PLATFORM), apollo)
