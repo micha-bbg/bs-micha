@@ -101,7 +101,7 @@ LIBDVBSI_VER=0.3.6
 
 # lua: easily embeddable scripting language
 LUA_ABIVER=5.2
-LUA_VER=$(LUA_ABIVER).1
+LUA_VER=$(LUA_ABIVER).3
 
 # luaposix: posix bindings for lua
 #LUAPOSIX_VER=5.1.28
