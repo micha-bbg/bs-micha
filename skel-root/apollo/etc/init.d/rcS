@@ -1,5 +1,11 @@
 #!/bin/sh
 
+## 0 = no reset
+## 1 = reset /var-init => /var in image
+## 2 = reset /var-init => mounted /var
+## 3 = Backup mounted /var => /var-init
+RESET_VAR=0
+
 PATH=/var/bin:/bin:/var/sbin:/sbin
 
 # reset colors, to not hurt my eyes...
@@ -21,6 +27,28 @@ mount -t devpts devpts /dev/pts
 mkdir -p /dev/shm/usb
 mount -t usbfs none /proc/bus/usb
 mkdir -p /tmp/dev
+
+if [ "$RESET_VAR" = "1" -a -d /var-init ]; then
+	echo "[$0] Set org. /var to default from /var-init"
+	if [ -e /var ]; then
+		[ -e /var.bak ] && rm -fr /var.bak
+		sync
+		mv /var /var.bak
+		sync
+		[ -e /var.bak/epg ] && rm -fr /var.bak/epg
+		sync
+		mkdir -p /var.bak/epg
+		sync
+	fi
+	[ -e /var-init/epg ] && rm -fr /var-init/epg
+	sync
+	mkdir -p /var-init/epg
+	sync
+	cp -frd /var-init /var
+	sync
+fi
+
+VAR_MOUNTED=0
 DEV=$(grep -w var /proc/mtd | cut -f 0 -s -d :)
 BNR=$(echo $DEV | cut -c${#DEV})
 if [ "$DEV" -a "$BNR" ]; then
@@ -29,8 +57,26 @@ if [ "$DEV" -a "$BNR" ]; then
 			[ -e /var ] || mkdir /var
 			echo "mounting /dev/mtdblock${BNR} to /var"
 			mount -t jffs2 /dev/mtdblock${BNR} /var
+			sync
+			VAR_MOUNTED=1
 		;;
 	esac
+fi
+
+if [ "$RESET_VAR" = "2" -a -d /var-init -a "$VAR_MOUNTED" = "1" ]; then
+	echo "[$0] Set mounted /var to default from /var-init"
+	cp -frd /var-init/* /var
+	sync
+elif [ "$RESET_VAR" = "3" ]; then
+	echo "[$0] Backup mounted /var to /var-init"
+	[ -e /var-init ] && rm -fr /var-init
+	sync
+	cp -frd /var /var-init
+	sync
+	[ -e /var-init/epg ] && rm -fr /var-init/epg
+	sync
+	mkdir -p /var-init/epg
+	sync
 fi
 
 #mount -a
