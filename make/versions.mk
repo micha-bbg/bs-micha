@@ -120,9 +120,10 @@ FLAC_VER = 1.3.0
 FFMPEG_VER=1.2
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=0.9.8
-#OPENSSL_SUBVER=q
-OPENSSL_SUBVER=y
+#OPENSSL_VER=0.9.8
+#OPENSSL_SUBVER=y
+OPENSSL_VER=1.0.0
+OPENSSL_SUBVER=l
 
 # libogg; encoding, decoding of the ogg file format
 OGG_VER=1.3.0

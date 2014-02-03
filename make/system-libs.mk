@@ -260,8 +260,6 @@ $(D)/libjpeg-turbo-$(JPEG_TURBO_VER): $(ARCHIVE)/libjpeg-turbo-$(JPEG_TURBO_VER)
 $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz
 	set -e; cd $(BUILD_TMP)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER); \
-#		patch -p1 < $(PATCHES)/openssl_bss_dgram.c.diff; \
-		sed -i -e "/AF_INET6/,/break/d" crypto/bio/bss_dgram.c; \
 		sed -i 's/#define DATE.*/#define DATE \\"($(PLATFORM))\\""; \\/' crypto/Makefile; \
 		CC=$(TARGET)-gcc \
 		./Configure shared no-hw no-engine linux-generic32 --prefix=/ --openssldir=/.remove; \
@@ -271,13 +269,20 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/openssl.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcrypto.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libssl.pc
-	rm -r $(TARGETPREFIX)/.remove $(TARGETPREFIX)/bin/openssl $(TARGETPREFIX)/bin/c_rehash
-	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
+	pushd $(TARGETPREFIX)/lib && \
+	ln -sf libcrypto.so.$(OPENSSL_VER) libcrypto.so.0.9.7 && \
+	ln -sf libssl.so.$(OPENSSL_VER) libssl.so.0.9.7 && \
+	ln -sf libcrypto.so.$(OPENSSL_VER) libcrypto.so.0.9.8 && \
+	ln -sf libssl.so.$(OPENSSL_VER) libssl.so.0.9.8 && \
 	chmod 0755 $(TARGETPREFIX)/lib/libcrypto.so.* $(TARGETPREFIX)/lib/libssl.so.*
 	rm -rf $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
-	cp -a $(TARGETPREFIX)/lib/lib{crypto,ssl}.so.$(OPENSSL_VER) $(PKGPREFIX)/lib
-	$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
+	cp -a $(TARGETPREFIX)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)/lib
+	PKG_VER=$(OPENSSL_VER)$(OPENSSL_SUBVER) \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
+	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
+	rm -r $(TARGETPREFIX)/.remove $(TARGETPREFIX)/bin/openssl $(TARGETPREFIX)/bin/c_rehash
 	rm -rf $(PKGPREFIX)
 	touch $@
 
