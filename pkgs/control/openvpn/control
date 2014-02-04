@@ -1,0 +1,11 @@
+Package: openvpn
+Version: @VER@-1
+Description: FULL-featured SSL VPN solution using a TUN/TAP interface
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage:
+Source:
+Depends: @DEP@
+Provides:

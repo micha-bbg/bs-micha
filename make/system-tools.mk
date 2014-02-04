@@ -445,7 +445,13 @@ $(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.g
 		$(MAKE); \
 		cp openvpn $(TARGETPREFIX)/sbin
 		$(TARGET)-strip $(TARGETPREFIX)/sbin/openvpn
-	$(REMOVE)/openvpn-$(OPENVPN_VER)
+	rm -rf $(PKGPREFIX)
+	mkdir -p $(PKGPREFIX)/sbin
+	cp $(TARGETPREFIX)/sbin/openvpn $(PKGPREFIX)/sbin
+	PKG_VER=$(OPENVPN_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/openvpn
+	$(REMOVE)/openvpn-$(OPENVPN_VER) $(PKGPREFIX)
 	touch $@
 
 $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
