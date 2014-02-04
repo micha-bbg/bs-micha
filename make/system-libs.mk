@@ -111,13 +111,21 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/zlib | $(TARG
 		chmod 755 $(HOSTPREFIX)/bin/curl-config; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm $(PKGPREFIX)/bin/curl-config
+	mkdir -p $(PKGPREFIX)/usr
+	mv $(PKGPREFIX)/share $(PKGPREFIX)/usr
+	ln -sf usr/share $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(REMOVE)/pkg-lib; mkdir $(BUILD_TMP)/pkg-lib
-	cd $(PKGPREFIX) && rm -r include lib/pkgconfig lib/*.so lib/*a .remove/ && mv lib $(BUILD_TMP)/pkg-lib
-	PKG_VER=$(CURL_VER) $(OPKG_SH) $(CONTROL_DIR)/curl/curl
+	cd $(PKGPREFIX) && rm -rf share usr include lib/pkgconfig lib/*.so lib/*a .remove/ && mv lib $(BUILD_TMP)/pkg-lib
+	PKG_VER=$(CURL_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/curl/curl
 	rm -rf $(PKGPREFIX)/*
 	mv $(BUILD_TMP)/pkg-lib/* $(PKGPREFIX)/
-	PKG_VER=$(CURL_VER) $(OPKG_SH) $(CONTROL_DIR)/curl/libcurl
+	PKG_VER=$(CURL_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/curl/libcurl
 	$(REWRITE_LIBTOOL)/libcurl.la
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcurl.pc
 	rm -rf $(TARGETPREFIX)/.remove

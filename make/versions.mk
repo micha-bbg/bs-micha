@@ -64,7 +64,7 @@ PNG_VER=1.5.17
 #PNG_VER=1.6.1
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.33.0
+CURL_VER=7.35.0
 
 # libdid3tag; writing, reading and manipulating ID3 tags
 ID3TAG_VER=0.15.1
