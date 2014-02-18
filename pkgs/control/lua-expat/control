@@ -1,0 +1,11 @@
+Package: lua-expat
+Version: @VER@-1
+Description: LuaExpat is a SAX XML parser based on the Expat library.
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.keplerproject.org/luaexpat/
+Source:
+Depends: @DEP@
+Provides:

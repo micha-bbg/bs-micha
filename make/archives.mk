@@ -231,3 +231,10 @@ $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz:
 
 $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2:
 	$(WGET) ftp://ftp.ncftp.com/ncftp/ncftp-$(NCFTP_VER)-src.tar.bz2
+
+$(ARCHIVE)/expat-$(EXPAT_VER).tar.gz:
+	$(WGET) http://sourceforge.net/projects/expat/files/expat/$(EXPAT_VER)/expat-$(EXPAT_VER).tar.gz/download
+	mv -f $(ARCHIVE)/download $(ARCHIVE)/expat-$(EXPAT_VER).tar.gz
+
+$(ARCHIVE)/luaexpat-$(LUA_EXPAT_VER).tar.gz:
+	$(WGET) http://matthewwild.co.uk/projects/luaexpat/luaexpat-$(LUA_EXPAT_VER).tar.gz

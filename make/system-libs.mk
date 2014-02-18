@@ -1011,3 +1011,47 @@ $(D)/SDL-mixer: $(ARCHIVE)/SDL_mixer-$(SDL_MIXER_VER).tar.gz $(D)/SDL | $(TARGET
 	## pkg bauen...
 	rm -fr $(BUILD_TMP)/SDL_mixer-$(SDL_MIXER_VER) $(PKGPREFIX)
 	touch $@
+
+
+$(D)/expat: $(ARCHIVE)/expat-$(EXPAT_VER).tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/expat-$(EXPAT_VER) $(PKGPREFIX)
+	$(UNTAR)/expat-$(EXPAT_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/expat-$(EXPAT_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--mandir=/.remove \
+			; \
+		$(MAKE); \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/include $(PKGPREFIX)/lib/*.la $(PKGPREFIX)/lib/*.a
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/expat.pc
+	$(REWRITE_LIBTOOL)/libexpat.la
+	PKG_VER=$(EXPAT_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/expat
+	rm -fr $(BUILD_TMP)/expat-$(EXPAT_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/lua-expat: $(ARCHIVE)/luaexpat-$(LUA_EXPAT_VER).tar.gz $(D)/expat | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/luaexpat-$(LUA_EXPAT_VER) $(PKGPREFIX)
+	$(UNTAR)/luaexpat-$(LUA_EXPAT_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/luaexpat-$(LUA_EXPAT_VER); \
+		rm makefile*; \
+		patch -p1 < $(PATCHES)/lua-expat-makefile.diff; \
+		patch -p1 < $(PATCHES)/lua-expat-1.3.0-lua-5.2.patch; \
+		patch -p1 < $(PATCHES)/lua-expat-lua-5.2-test-fix.patch; \
+		$(MAKE) \
+		CC=$(TARGET)-gcc LUA_V=$(LUA_ABIVER) LDFLAGS=-L$(TARGETPREFIX)/lib \
+		LUA_INC=-I$(TARGETPREFIX)/include EXPAT_INC=-I$(TARGETPREFIX)/include; \
+		$(MAKE) install LUA_LDIR=$(PKGPREFIX)/share/lua/$(LUA_ABIVER) LUA_CDIR=$(PKGPREFIX)/lib/lua/$(LUA_ABIVER)
+	cp -a $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
+	cp -a $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
+	rm -fr $(PKGPREFIX)/share/lua/$(LUA_ABIVER)/lxp/tests
+	PKG_VER=1.3.0 \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/lua-expat
+	rm -fr $(BUILD_TMP)/luaexpat-$(LUA_EXPAT_VER) $(PKGPREFIX)
+	touch $@
