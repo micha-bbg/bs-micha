@@ -2,9 +2,11 @@
 
 ########################################################
 #                                                      #
-#    start_neutrino, v 3.30 07.01.2014 by micha-bbg    #
+#    start_neutrino, v 3.31 16.02.2014 by micha-bbg    #
 #                                                      #
 ########################################################
+
+/bin/dt2 -t"NeutrinoHD wird gestartet"
 
 BOX_USER=User
 BOX_USER=$(sed -e "/^cheffe/!d;{s/.*=//g;}" /.version)
