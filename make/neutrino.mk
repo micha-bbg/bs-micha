@@ -20,6 +20,7 @@ N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 N_CFLAGS += -fno-strict-aliasing -rdynamic 
 N_CFLAGS += -D__STDC_FORMAT_MACROS
 #N_CFLAGS += -DDYNAMIC_LUAPOSIX
+N_CFLAGS += -DASSUME_MDEV
 
 ifeq ($(PLATFORM), apollo)
 N_CFLAGS += -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard -DFB_HW_ACCELERATION
