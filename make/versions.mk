@@ -63,9 +63,6 @@ PNG_VER=1.5.17
 #PNG_VER_X=16
 #PNG_VER=1.6.1
 
-# curl; command line tool for transferring data with URL syntax
-CURL_VER=7.35.0
-
 # libdid3tag; writing, reading and manipulating ID3 tags
 ID3TAG_VER=0.15.1
 ID3TAG_SUBVER=b
@@ -121,12 +118,6 @@ FLAC_VER = 1.3.0
 
 # libffmpeg; complete, cross-platform solution to record, convert and stream audio and video
 FFMPEG_VER=1.2
-
-# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-#OPENSSL_VER=0.9.8
-#OPENSSL_SUBVER=y
-OPENSSL_VER=1.0.0
-OPENSSL_SUBVER=l
 
 # libogg; encoding, decoding of the ogg file format
 OGG_VER=1.3.0
@@ -226,3 +217,23 @@ OPENVPN_VER=2.1.4
 KILLPROC_VER=2.13
 
 NCFTP_VER=3.2.5
+
+ifeq ($(PLATFORM), nevis)
+
+# curl; command line tool for transferring data with URL syntax
+CURL_VER=7.33.0
+
+# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
+OPENSSL_VER=0.9.8
+OPENSSL_SUBVER=y
+endif
+
+ifeq ($(PLATFORM), apollo)
+
+# curl; command line tool for transferring data with URL syntax
+CURL_VER=7.35.0
+
+# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
+OPENSSL_VER=1.0.0
+OPENSSL_SUBVER=l
+endif
