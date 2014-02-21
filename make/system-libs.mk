@@ -1055,3 +1055,26 @@ $(D)/lua-expat: $(ARCHIVE)/luaexpat-$(LUA_EXPAT_VER).tar.gz $(D)/expat | $(TARGE
 			$(OPKG_SH) $(CONTROL_DIR)/lua-expat
 	rm -fr $(BUILD_TMP)/luaexpat-$(LUA_EXPAT_VER) $(PKGPREFIX)
 	touch $@
+
+$(D)/lua-socket: $(ARCHIVE)/luasocket-master.zip | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/luasocket-master $(PKGPREFIX)
+	cd $(BUILD_TMP); \
+		unzip -q $(ARCHIVE)/luasocket-master.zip
+	set -e; cd $(BUILD_TMP)/luasocket-master; \
+		patch -p1 < $(PATCHES)/luasocket-makefile.patch; \
+		$(MAKE) \
+		CC=$(TARGET)-gcc LD_linux=$(TARGET)-gcc LUAV=$(LUA_ABIVER) PLAT=linux COMPAT=COMPAT \
+		LUAINC_linux=$(TARGETPREFIX)/include LUALIB_linux=$(TARGETPREFIX)/lib LUAPREFIX_linux=; \
+		$(MAKE) install \
+		LUAV=5.2 LUAPREFIX_linux= \
+		CDIR_linux=$(PKGPREFIX)/lib/lua/$(LUA_ABIVER) LDIR_linux=$(PKGPREFIX)/share/lua/$(LUA_ABIVER); \
+	PKG_VER=$(LUA_SOCKET_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/lua-socket
+	cp -a $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
+	cp -a $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
+	mkdir -p $(TARGETPREFIX)/share/doc/lua/lua-socket
+	cp -a $(BUILD_TMP)/luasocket-master/samples $(TARGETPREFIX)/share/doc/lua/lua-socket
+	cp -a $(BUILD_TMP)/luasocket-master/test $(TARGETPREFIX)/share/doc/lua/lua-socket
+	rm -fr $(BUILD_TMP)/luasocket-master $(PKGPREFIX)
+	touch $@

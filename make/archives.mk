@@ -238,3 +238,7 @@ $(ARCHIVE)/expat-$(EXPAT_VER).tar.gz:
 
 $(ARCHIVE)/luaexpat-$(LUA_EXPAT_VER).tar.gz:
 	$(WGET) http://matthewwild.co.uk/projects/luaexpat/luaexpat-$(LUA_EXPAT_VER).tar.gz
+
+$(ARCHIVE)/luasocket-master.zip:
+	$(WGET) https://github.com/diegonehab/luasocket/archive/master.zip
+	mv $(ARCHIVE)/master.zip $(ARCHIVE)/luasocket-master.zip

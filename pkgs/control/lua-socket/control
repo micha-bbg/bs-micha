@@ -1,0 +1,11 @@
+Package: lua-socket
+Version: @VER@-1
+Description: TCP/UDP socket library for the Lua language
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://w3.impa.br/~diego/software/luasocket/
+Source:
+Depends: @DEP@
+Provides:
