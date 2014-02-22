@@ -150,7 +150,7 @@ endif
 	install -p -m 0755 $(TARGETPREFIX)/bin/fbshot $(PKGPREFIX)/bin/
 	ln -s usr/share $(PKGPREFIX)/share
 	find $(PKGPREFIX)/share/tuxbox/neutrino/locale/ -type f \
-		! -name deutsch.locale ! -name english.locale | xargs --no-run-if-empty rm
+		! -name deutsch.locale ! -name english.locale ! -name nederlands.locale ! -name slovak.locale | xargs --no-run-if-empty rm
 	# ignore the .version file for package  comparison
 	DONT_STRIP=$(NEUTRINO_NOSTRIP) CMP_IGNORE="/.version" $(OPKG_SH) $(BUILD_TMP)/neutrino-control
 	rm -rf $(PKGPREFIX)
