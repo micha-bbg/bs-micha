@@ -326,6 +326,8 @@ FFMPEG_CONFIGURE = \
 --enable-decoder=vorbis \
 --enable-decoder=aac \
 --enable-decoder=mjpeg \
+--enable-decoder=pcm_s16le \
+--enable-decoder=pcm_s16le_planar \
 --disable-demuxers \
 --enable-demuxer=aac \
 --enable-demuxer=ac3 \
@@ -346,48 +348,54 @@ FFMPEG_CONFIGURE = \
 --enable-demuxer=rtsp \
 --enable-demuxer=hls \
 --enable-demuxer=dts \
+--enable-demuxer=wav \
 --enable-demuxer=ogg \
 --enable-demuxer=flac \
+--enable-demuxer=srt \
 --disable-encoders \
 --disable-muxers \
 --disable-ffplay \
 --disable-ffmpeg \
 --disable-ffserver \
+--disable-static \
 --disable-filters \
 --disable-protocols \
 --enable-protocol=file \
 --enable-protocol=http \
---enable-protocol=rtp \
 --enable-protocol=rtmp \
 --enable-protocol=rtmpe \
 --enable-protocol=rtmps \
 --enable-protocol=rtmpte \
 --enable-protocol=mmsh \
 --enable-protocol=mmst \
+--enable-protocol=bluray \
 --enable-bsfs \
+--disable-devices \
 --enable-swresample \
 --disable-postproc \
 --disable-swscale \
+--disable-mmx     \
+--disable-altivec  \
+--enable-libbluray \
 --enable-network \
+--enable-cross-compile \
+--enable-shared \
+--enable-bzlib \
+--enable-debug \
+--enable-stripping \
 --target-os=linux \
 --arch=arm \
---disable-neon \
---disable-devices \
---disable-mmx \
---disable-altivec \
---enable-bzlib \
---disable-static \
---enable-shared \
---enable-cross-compile \
---enable-gpl
+--disable-neon
 endif # ifeq ($(BOXARCH), arm)
 
 ifeq ($(PLATFORM), apollo)
-FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard"
+FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include"
+export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
 endif
 
 ifeq ($(PLATFORM), nevis)
-FFMPEG_CONFIGURE += --cpu=armv6
+FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include"
+export CFLAGS=-march=armv6
 endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
@@ -396,7 +404,7 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPRE
 	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
 		make $(CST_GIT)/cst-public-libraries-ffmpeg; \
 		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		git checkout --track -b coolstream origin/coolstream; \
+		git checkout master; \
 	else \
 		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
 		git checkout master; \
@@ -407,11 +415,12 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPRE
 	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
 		sed -i '/\(__DATE__\|__TIME__\)/d' ffprobe.c; # remove build time \
 		sed -i -e 's/__DATE__/""/' -e 's/__TIME__/""/' cmdutils.c; \
+		$(BUILDENV) \
 		./configure \
 			$(FFMPEG_CONFIGURE) \
 			--logfile=Config.log \
+			--extra-ldflags="-lfreetype -lpng -lz -L$(TARGETPREFIX)/lib" \
 			--cross-prefix=$(TARGET)- \
-			--enable-debug --enable-stripping \
 			--mandir=/.remove \
 			--prefix=/; \
 		$(MAKE); \
