@@ -1,0 +1,11 @@
+Package: libxslt
+Version: @VER@-1
+Description: XSLT library
+Section: extras/libraries
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.xmlsoft.org/
+Source:
+Depends: @DEP@
+Provides: @PROV@

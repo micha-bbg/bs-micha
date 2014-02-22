@@ -242,3 +242,12 @@ $(ARCHIVE)/luaexpat-$(LUA_EXPAT_VER).tar.gz:
 $(ARCHIVE)/luasocket-master.zip:
 	$(WGET) https://github.com/diegonehab/luasocket/archive/master.zip
 	mv $(ARCHIVE)/master.zip $(ARCHIVE)/luasocket-master.zip
+
+$(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz:
+	$(WGET) ftp://xmlsoft.org/libxml2/libxml2-$(LIBXML2_VER).tar.gz
+
+$(ARCHIVE)/libxslt-git-snapshot.tar.gz:
+	$(WGET) ftp://xmlsoft.org/libxml2/libxslt-git-snapshot.tar.gz
+
+$(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2:
+	$(WGET) http://ftp.videolan.org/pub/videolan/libbluray/$(LIBBLURAY_VER)/libbluray-$(LIBBLURAY_VER).tar.bz2

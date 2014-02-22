@@ -114,3 +114,107 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 				$(OPKG_SH) $(CONTROL_DIR)/xupnpd
 	rm -rf $(PKGPREFIX)
 	touch $@
+
+$(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
+	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/libxml2-$(LIBXML2_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--enable-shared \
+			--disable-static \
+			--datarootdir=/.remove \
+			--without-python \
+			--without-debug \
+			--without-sax1 \
+			--without-legacy \
+			--without-catalog \
+			--without-docbook \
+			--without-lzma \
+			--without-schematron; \
+		$(MAKE) && \
+		$(MAKE) install DESTDIR=$(PKGPREFIX);
+	mv $(PKGPREFIX)/bin/xml2-config $(HOSTPREFIX)/bin
+	rm -fr $(PKGPREFIX)/lib/*.sh
+	rm -fr $(PKGPREFIX)/.remove
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -fr $(PKGPREFIX)/lib/*.la
+	rm -fr $(PKGPREFIX)/include
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libxml-2.0.pc $(HOSTPREFIX)/bin/xml2-config
+	sed -i 's/^\(Libs:.*\)/\1 -lz/' $(PKG_CONFIG_PATH)/libxml-2.0.pc
+	$(REWRITE_LIBTOOL)/libxml2.la
+	PKG_VER=$(LIBXML2_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libxml2
+	$(REMOVE)/libxml2-$(LIBXML2_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/libxslt: $(D)/libxml2 $(ARCHIVE)/libxslt-git-snapshot.tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/libxslt-git-snapshot.tar.gz $(PKGPREFIX)
+	$(UNTAR)/libxslt-git-snapshot.tar.gz
+	set -e; cd $(BUILD_TMP)/libxslt-$(LIBXSLT_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--enable-shared \
+			--disable-static \
+			--datarootdir=/.remove \
+			--without-crypto \
+			--without-python \
+			--with-libxml-include-prefix=$(TARGETPREFIX)/include/libxml2 \
+			--with-libxml-libs-prefix=$(TARGETPREFIX)/lib; \
+		$(MAKE); \
+		$(MAKE) install DESTDIR=$(PKGPREFIX)
+	mv $(PKGPREFIX)/bin/xslt-config $(HOSTPREFIX)/bin
+	rm -fr $(PKGPREFIX)/lib/*.sh
+	rm -fr $(PKGPREFIX)/.remove
+	rm -fr $(PKGPREFIX)/lib/libxslt-plugins/
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -fr $(PKGPREFIX)/lib/*.la
+	rm -fr $(PKGPREFIX)/include
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libexslt.pc $(HOSTPREFIX)/bin/xslt-config
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libxslt.pc
+	$(REWRITE_LIBTOOL)/libexslt.la
+	$(REWRITE_LIBTOOL)/libxslt.la
+	PKG_VER=$(LIBXML2_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libxslt
+	$(REMOVE)/libxslt-$(LIBXSLT_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/libbluray: $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(D)/freetype | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(PKGPREFIX)
+	$(UNTAR)/libbluray-$(LIBBLURAY_VER).tar.bz2
+	set -e; cd $(BUILD_TMP)/libbluray-$(LIBBLURAY_VER); \
+		$(PATCH)/libbluray-0001-Optimized-file-I-O-for-chained-usage-with-libavforma.patch; \
+		$(PATCH)/libbluray-0003-Added-bd_get_clip_infos.patch; \
+		$(PATCH)/libbluray-0005-Don-t-abort-demuxing-if-the-disc-looks-encrypted.patch; \
+			$(CONFIGURE) \
+				--prefix= \
+				--enable-shared \
+				--disable-static \
+				--disable-extra-warnings \
+				--disable-doxygen-doc \
+				--disable-doxygen-dot \
+				--disable-doxygen-html \
+				--disable-doxygen-ps \
+				--disable-doxygen-pdf \
+				--disable-examples \
+				--without-libxml2; \
+			$(MAKE); \
+			$(MAKE) install DESTDIR=$(PKGPREFIX)
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -fr $(PKGPREFIX)/lib/*.la
+	rm -fr $(PKGPREFIX)/include
+	PKG_VER=$(LIBBLURAY_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libbluray
+	$(REWRITE_LIBTOOL)/libbluray.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libbluray.pc
+	$(REMOVE)/libbluray-$(LIBBLURAY_VER) $(PKGPREFIX)
+	touch $@
