@@ -48,7 +48,7 @@ $(HOSTPREFIX)/bin/glib-genmarshal: | $(HOSTPREFIX)/bin
 	$(REMOVE)/glib-$(GLIB_VER)
 
 #http://www.dbox2world.net/board293-coolstream-hd1/board314-coolstream-development/9363-idee-midnight-commander/
-$(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(D)/zlib $(D)/libiconv $(D)/libffi | $(TARGETPREFIX)
+$(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(D)/zlib $(D)/libffi | $(TARGETPREFIX)
 	type -p glib-genmarshal || $(MAKE) $(HOSTPREFIX)/bin/glib-genmarshal
 	rm -fr $(BUILD_TMP)/glib-$(GLIB_VER)
 	$(UNTAR)/glib-$(GLIB_VER).tar.xz
@@ -108,7 +108,7 @@ $(D)/libffi: $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/libffi-$(LIBFFI_VER)
 	touch $@
 
-$(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+$(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/gettext-$(GETTEXT_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/gettext-$(GETTEXT_VER); \
 		$(CONFIGURE) \
@@ -171,7 +171,7 @@ $(D)/gmp: $(ARCHIVE)/gmp-$(GMP_VER).tar.xz | $(TARGETPREFIX)
 	touch $@
 
 
-$(D)/samba3: $(ARCHIVE)/samba-$(SAMBA3_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+$(D)/samba3: $(ARCHIVE)/samba-$(SAMBA3_VER).tar.gz | $(TARGETPREFIX)
 #	$(UNTAR)/samba-$(SAMBA3_VER).tar.gz
 	cd $(BUILD_TMP)/samba-$(SAMBA3_VER) && \
 #		$(PATCH)/samba-3.3.9.diff && \

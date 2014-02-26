@@ -688,17 +688,20 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
 	touch $@
 
+ifeq ($(PLATFORM), apollo)
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz
-	pushd $(BUILD_TMP)/libiconv-$(ICONV_VER) && \
+	set -e; cd $(BUILD_TMP)/libiconv-$(ICONV_VER); \
 		$(PATCH)/libiconv-1-fixes.patch; \
-		$(CONFIGURE) --build=$(BUILD) --host=$(TARGET) --target=$(TARGET) --prefix= --datarootdir=/.remove && \
-		$(MAKE) && \
-		$(MAKE) install DESTDIR=$(TARGETPREFIX)
+		$(CONFIGURE) --target=$(TARGET) --enable-static --enable-shared \
+			--prefix= --datarootdir=/.remove --bindir=/.remove ; \
+		$(MAKE) ; \
+		make install DESTDIR=$(TARGETPREFIX)
+	rm -rf $(TARGETPREFIX)/.remove
 	$(REWRITE_LIBTOOL)/libiconv.la
-	rm -fr $(TARGETPREFIX)/.remove
 	$(REMOVE)/libiconv-$(ICONV_VER)
 	touch $@
+endif
 
 $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)
@@ -837,7 +840,7 @@ SDL2_CONFIGURE = \
 	--disable-joystick \
 	--disable-haptic
 
-$(D)/SDL2: $(ARCHIVE)/SDL2-$(LIBSDL2_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+$(D)/SDL2: $(ARCHIVE)/SDL2-$(LIBSDL2_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/SDL2-$(LIBSDL2_VER) $(PKGPREFIX)
 	$(UNTAR)/SDL2-$(LIBSDL2_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL2-$(LIBSDL2_VER); \
@@ -945,7 +948,7 @@ SDL_CONFIGURE = \
 	--disable-input-events \
 	--disable-input-tslib
 
-$(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+$(D)/SDL: $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/SDL-$(LIBSDL_VER)
 	$(UNTAR)/SDL-$(LIBSDL_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/SDL-$(LIBSDL_VER); \

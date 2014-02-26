@@ -115,7 +115,7 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)
 	touch $@
 
-$(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz $(D)/libiconv | $(TARGETPREFIX)
+$(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
 	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/libxml2-$(LIBXML2_VER); \

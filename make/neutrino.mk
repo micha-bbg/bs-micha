@@ -3,8 +3,11 @@
 AUDIODEC = ffmpeg
 NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
 NEUTRINO_DEPS += libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
-NEUTRINO_DEPS += openthreads lua openssl libiconv
+NEUTRINO_DEPS += openthreads lua openssl
 NEUTRINO_DEPS += wpa_supplicant parted
+ifeq ($(PLATFORM), apollo)
+NEUTRINO_DEPS += libiconv
+endif
 NEUTRINO_PKG_DEPS =
 
 
