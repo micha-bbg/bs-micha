@@ -400,7 +400,8 @@ $(D)/wget: $(D)/e2fsprogs $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
 			--disable-nls \
 			--disable-opie \
 			--disable-digest \
-			--without-ssl \
+			--with-ssl=openssl \
+			--with-libssl-prefix=$(TARGETPREFIX) \
 			--build=$(BUILD) \
 			--host=$(TARGET) \
 			--target=$(TARGET) \
