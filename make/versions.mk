@@ -1,6 +1,6 @@
 
 # opkg; a lightweight package management system based on Ipkg
-OPKG_VER=0.2.0
+OPKG_VER=0.2.2
 
 ## for recent versions, the SVN trunk rev is used:
 #OPKG_SVN=635

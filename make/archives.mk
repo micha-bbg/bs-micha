@@ -1,6 +1,7 @@
 
 $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz:
-	$(WGET) http://opkg.googlecode.com/files/opkg-$(OPKG_VER).tar.gz
+	$(WGET) http://git.yoctoproject.org/cgit/cgit.cgi/opkg/snapshot/opkg-$(OPKG_VER).tar.gz
+#	$(WGET) http://opkg.googlecode.com/files/opkg-$(OPKG_VER).tar.gz
 
 $(ARCHIVE)/opkg-$(OPKG_SVN_VER).tar.gz:
 	set -e; cd $(BUILD_TMP); \

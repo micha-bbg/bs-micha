@@ -2,7 +2,7 @@
 $(DEPDIR)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
-		$(PATCH)/opkg-$(OPKG_VER)-dont-segfault.diff; \
+		$(PATCH)/opkg-0.2.0-dont-segfault.diff; \
 		autoreconf -v --install; \
 		echo ac_cv_func_realloc_0_nonnull=yes >> config.cache; \
 		$(CONFIGURE) \
@@ -18,6 +18,7 @@ $(DEPDIR)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		$(MAKE) all exec_prefix=; \
 		make install prefix=$(PKGPREFIX); \
 		make distclean; \
+		CFLAGS= \
 		./configure \
 		--prefix= \
 		--disable-curl \
@@ -28,16 +29,19 @@ $(DEPDIR)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		cp -a src/opkg-cl $(HOSTPREFIX)/bin
 	install -d -m 0755 $(PKGPREFIX)/var/lib/opkg
 	install -d -m 0755 $(PKGPREFIX)/etc/opkg
-	echo "# example config file, copy to opkg.conf and edit" > $(PKGPREFIX)/etc/opkg/opkg.conf.example
-	echo "src server http://server/dist/$(PLATFORM)" >> $(PKGPREFIX)/etc/opkg/opkg.conf.example
-	echo "# add an optional cache directory, important if too few  flash memory is available!" >> $(PKGPREFIX)/etc/opkg/opkg.conf.example
-	echo "# directory must be exists, before executing of opkg" >> $(PKGPREFIX)/etc/opkg/opkg.conf.example
-	echo "option cache /tmp/media/sda1/.opkg" >> $(PKGPREFIX)/etc/opkg/opkg.conf.example
+	ln -sf opkg-cl $(PKGPREFIX)/bin/opkg # convenience symlink
+	OPKG_EXAMPLE=$(PKGPREFIX)/etc/opkg/opkg.conf.example; \
+		echo "# example config file, copy to opkg.conf and edit"					 > $$OPKG_EXAMPLE; \
+		echo "src server http://server/dist/$(PLATFORM)"						>> $$OPKG_EXAMPLE; \
+		echo "# add an optional cache directory, important if not enough flash memory is available!"	>> $$OPKG_EXAMPLE; \
+		echo "# directory must exist before executing of opkg"						>> $$OPKG_EXAMPLE; \
+		echo "option cache /tmp/media/sda1/.opkg"							>> $$OPKG_EXAMPLE
 	$(REMOVE)/opkg-$(OPKG_VER) $(PKGPREFIX)/.remove
 	cp -fr $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
 	rm -fr $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libopkg.pc
+	$(REWRITE_LIBTOOL)/libopkg.la
 	rm -rf $(PKGPREFIX)/lib $(PKGPREFIX)/include
 	PKG_VER=$(OPKG_VER) $(OPKG_SH) $(CONTROL_DIR)/opkg
 	rm -rf $(PKGPREFIX)
