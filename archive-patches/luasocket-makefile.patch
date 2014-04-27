@@ -9,7 +9,7 @@
 -LDFLAGS_linux=-O -shared -fpic -o 
 -LD_linux=gcc
 +CFLAGS_linux= -I$(LUAINC) $(DEF) $(OPTFLAGS) \
-+	-fvisibility=hidden
++	-fvisibility=hidden -fPIC
 +LDFLAGS_linux=$(OPTFLAGS) -shared -o
 +LD_linux?=gcc
  SOCKET_linux=usocket.o
