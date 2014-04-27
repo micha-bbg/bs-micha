@@ -133,7 +133,7 @@ $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
 	cp -a --remove-destination $(PKGPREFIX)/* $(TARGETPREFIX)/
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/uuid.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
-	cd $(PKGPREFIX) && rm sbin/badblocks sbin/dumpe2fs sbin/blkid sbin/logsave \
+	cd $(PKGPREFIX) && rm sbin/badblocks sbin/dumpe2fs sbin/logsave \
 		sbin/e2undo sbin/filefrag sbin/e2freefrag bin/chattr bin/lsattr bin/uuidgen \
 		lib/*.so && rm -r lib/pkgconfig include && rm -f lib/*.a
 	PKG_VER=$(E2FSPROGS_VER) $(OPKG_SH) $(CONTROL_DIR)/e2fsprogs
