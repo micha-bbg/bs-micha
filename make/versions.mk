@@ -119,10 +119,10 @@ VORBISIDEC_VER_APPEND=.orig
 FLAC_VER = 1.3.0
 
 # libffmpeg; complete, cross-platform solution to record, convert and stream audio and video
+FFMPEG_VER=2.3.3
 ifeq ($(PLATFORM), nevis)
 FFMPEG_VER=1.2
 endif
-FFMPEG_VER=2.3.3
 
 # libogg; encoding, decoding of the ogg file format
 OGG_VER=1.3.0

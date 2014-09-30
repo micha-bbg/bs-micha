@@ -420,7 +420,8 @@ ifeq ($(PLATFORM), apollo)
 FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
 --enable-decoder=h264 \
 --enable-decoder=vc1 \
---enable-demuxer=hds
+--enable-demuxer=hds \
+--extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
 export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
 #FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_WORK_BRANCH = work-$(FFMPEG_VER)
@@ -428,7 +429,8 @@ FFMPEG_DEPS = $(D)/libxml2
 endif
 
 ifeq ($(PLATFORM), nevis)
-FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include"
+FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include" \
+--extra-ldflags="-lfreetype -lpng -lz -L$(TARGETPREFIX)/lib"
 export CFLAGS=-march=armv6
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_DEPS =
@@ -458,7 +460,6 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz
 		./configure \
 			$(FFMPEG_CONFIGURE) \
 			--logfile=Config.log \
-			--extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib" \
 			--cross-prefix=$(TARGET)- \
 			--mandir=/.remove \
 			--prefix=/; \
