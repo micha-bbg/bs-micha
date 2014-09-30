@@ -15,7 +15,7 @@ NEUTRINO_PKG_DEPS =
 #N_CFLAGS   = -Wall -W -Wshadow -g -O2 -fno-strict-aliasing -rdynamic -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 #N_CPPFLAGS = -I$(TARGETPREFIX)/include
 
-N_CFLAGS  = -Wall -Werror -Wextra -Wshadow
+N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
 N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
@@ -31,20 +31,21 @@ HW_TYPE = --with-boxtype=coolstream --with-boxmodel=apollo
 endif
 
 ifeq ($(PLATFORM), nevis)
-N_CPPFLAGS += -DUSE_NEVIS_GXA
+N_CFLAGS += -DUSE_NEVIS_GXA
 HW_TYPE = --with-boxtype=coolstream
 endif
 
 #N_CFLAGS += -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)/include/linux/dvb -I$(TARGETPREFIX)/include/include/freetype2
 
 N_CPPFLAGS = -I$(TARGETPREFIX)/include
+N_CPPFLAGS += -Werror -Wsign-compare
 
 N_CONFIG_OPTS =
 #N_CONFIG_OPTS += --disable-upnp
 N_CONFIG_OPTS += --enable-giflib
 N_CONFIG_OPTS += --enable-pip
 N_CONFIG_OPTS += --enable-lua
-N_CONFIG_OPTS += --enable-testmenu
+N_CONFIG_OPTS += --enable-testing
 
 ifeq ($(AUDIODEC), ffmpeg)
 # enable ffmpeg audio decoder in neutrino
@@ -74,6 +75,7 @@ neutrino-deps: $(NEUTRINO_DEPS)
 
 N_LDFLAGS =
 #N_LDFLAGS = -L$(TARGETPREFIX)/lib -lcurl -lssl -lcrypto -ldl
+N_LDFLAGS += -L$(TARGETPREFIX)/lib
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
 
 # finally we can build outside of the source directory
