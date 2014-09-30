@@ -629,6 +629,7 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		$(PATCH)/lua-01-fix-coolstream-build.patch && \
 		$(PATCH)/lua-02-shared-libs-for-lua.patch && \
 		$(PATCH)/lua-03-lua-pc.patch && \
+		$(PATCH)/lua-lvm.c.diff && \
 		sed -i 's/^V=.*/V= $(LUA_ABIVER)/' etc/lua.pc && \
 		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc && \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
