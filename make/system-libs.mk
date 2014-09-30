@@ -486,48 +486,6 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz
 	$(REMOVE)/ffmpeg-$(FFMPEG_VER) $(PKGPREFIX)
 	touch $@
 
-$(D)/ffmpegOLD-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
-	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
-		make $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		git checkout master; \
-	else \
-		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		git checkout master; \
-		git pull; \
-	fi;
-	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
-	cp -aL $(CST_GIT)/cst-public-libraries-ffmpeg $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
-	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
-		sed -i '/\(__DATE__\|__TIME__\)/d' ffprobe.c; # remove build time \
-		sed -i -e 's/__DATE__/""/' -e 's/__TIME__/""/' cmdutils.c; \
-		$(BUILDENV) \
-		./configure \
-			$(FFMPEG_CONFIGURE) \
-			--logfile=Config.log \
-			--extra-ldflags="-lfreetype -lpng -lz -L$(TARGETPREFIX)/lib" \
-			--cross-prefix=$(TARGET)- \
-			--mandir=/.remove \
-			--prefix=/; \
-		$(MAKE); \
-		make install DESTDIR=$(PKGPREFIX)
-	rm -rf $(PKGPREFIX)/share
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	cp $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h $(TARGETPREFIX)/lib/ffmpeg-version.h
-	cp $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h $(PKGPREFIX)/lib/ffmpeg-version.h
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavfilter.pc
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavdevice.pc
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavformat.pc
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavcodec.pc
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavutil.pc
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswresample.pc
-	test -e $(PKG_CONFIG_PATH)/libswscale.pc && $(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswscale.pc || true
-	rm -rf $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/lib/*.so $(PKGPREFIX)/.remove
-	PKG_VER=$(FFMPEG_VER) PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-		$(OPKG_SH) $(CONTROL_DIR)/ffmpeg
-	$(REMOVE)/ffmpeg-$(FFMPEG_VER) $(PKGPREFIX)
-	touch $@
-
 ncurses-prereq:
 	@if $(MAKE) find-tic find-infocmp ; then \
 		true; \
@@ -717,10 +675,7 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		$(PATCH)/lua-03-lua-pc.patch && \
 		$(PATCH)/lua-lvm.c.diff && \
 		sed -i 's/^V=.*/V= $(LUA_ABIVER)/' etc/lua.pc && \
-		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc; \
-		if [ "$(PLATFORM)" = "apollo" ]; then \
-			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
-		fi; \
+		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc; && \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
 		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX) && \
 		$(MAKE) install INSTALL_TOP=$(PKGPREFIX)
@@ -788,7 +743,6 @@ $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 		$(MAKE) ; \
 		make install DESTDIR=$(TARGETPREFIX)
 	rm -rf $(TARGETPREFIX)/.remove
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/fuse.pc
 	$(REWRITE_LIBTOOL)/libiconv.la
 	$(REMOVE)/libiconv-$(ICONV_VER)
 	touch $@
