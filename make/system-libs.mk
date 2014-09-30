@@ -294,6 +294,38 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	rm -rf $(PKGPREFIX)
 	touch $@
 
+$(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
+	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/libxml2-$(LIBXML2_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--enable-shared \
+			--disable-static \
+			--datarootdir=/.remove \
+			--without-python \
+			--without-debug \
+			--without-docbook \
+			--without-catalog \
+		$(MAKE) && \
+		$(MAKE) install DESTDIR=$(PKGPREFIX);
+	mv $(PKGPREFIX)/bin/xml2-config $(HOSTPREFIX)/bin
+	rm -fr $(PKGPREFIX)/lib/*.sh
+	rm -fr $(PKGPREFIX)/.remove
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -fr $(PKGPREFIX)/lib/*.la
+	rm -fr $(PKGPREFIX)/include
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libxml-2.0.pc $(HOSTPREFIX)/bin/xml2-config
+	sed -i 's/^\(Libs:.*\)/\1 -lz/' $(PKG_CONFIG_PATH)/libxml-2.0.pc
+	$(REWRITE_LIBTOOL)/libxml2.la
+	PKG_VER=$(LIBXML2_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libxml2
+	$(REMOVE)/libxml2-$(LIBXML2_VER) $(PKGPREFIX)
+	touch $@
+
 ifeq ($(BOXARCH), arm)
 FFMPEG_CONFIGURE = \
 --disable-parsers \
@@ -354,9 +386,7 @@ FFMPEG_CONFIGURE = \
 --enable-demuxer=srt \
 --disable-encoders \
 --disable-muxers \
---disable-ffplay \
---disable-ffmpeg \
---disable-ffserver \
+--disable-programs \
 --disable-static \
 --disable-filters \
 --disable-protocols \
@@ -368,7 +398,6 @@ FFMPEG_CONFIGURE = \
 --enable-protocol=rtmpte \
 --enable-protocol=mmsh \
 --enable-protocol=mmst \
---enable-protocol=bluray \
 --enable-bsfs \
 --disable-devices \
 --enable-swresample \
@@ -376,7 +405,6 @@ FFMPEG_CONFIGURE = \
 --disable-swscale \
 --disable-mmx     \
 --disable-altivec  \
---enable-libbluray \
 --enable-network \
 --enable-cross-compile \
 --enable-shared \
@@ -389,18 +417,75 @@ FFMPEG_CONFIGURE = \
 endif # ifeq ($(BOXARCH), arm)
 
 ifeq ($(PLATFORM), apollo)
-FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include"
+FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
+--enable-decoder=h264 \
+--enable-decoder=vc1 \
+--enable-demuxer=hds
 export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
+#FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
+FFMPEG_WORK_BRANCH = work-$(FFMPEG_VER)
+FFMPEG_DEPS = $(D)/libxml2
 endif
 
 ifeq ($(PLATFORM), nevis)
 FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include"
 export CFLAGS=-march=armv6
+FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
+FFMPEG_DEPS =
 endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
 	touch $@
-$(D)/ffmpeg-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
+$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
+	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
+		echo "******************************************************"; \
+		echo "* cst-public-libraries-ffmpeg missing, please create *"; \
+		echo "* an cst-public-libraries-ffmpeg repo on your system *"; \
+		echo "******************************************************"; \
+		false; \
+	else \
+		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
+		git checkout $(FFMPEG_WORK_BRANCH); \
+	fi;
+	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
+	cp -aL $(CST_GIT)/cst-public-libraries-ffmpeg $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
+	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
+		if [ "$(PLATFORM)" = "nevis" ]; then \
+			sed -i '/\(__DATE__\|__TIME__\)/d' ffprobe.c; # remove build time \
+			sed -i -e 's/__DATE__/""/' -e 's/__TIME__/""/' cmdutils.c; \
+		fi; \
+		$(BUILDENV) \
+		./configure \
+			$(FFMPEG_CONFIGURE) \
+			--logfile=Config.log \
+			--extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib" \
+			--cross-prefix=$(TARGET)- \
+			--mandir=/.remove \
+			--prefix=/; \
+		$(MAKE); \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -rf $(PKGPREFIX)/share
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	if ! test -e $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h; then \
+		set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
+			./version.sh ./ version.h; \
+	fi;
+	cp $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h $(TARGETPREFIX)/lib/ffmpeg-version.h
+	cp $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h $(PKGPREFIX)/lib/ffmpeg-version.h
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavfilter.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavdevice.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavformat.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavcodec.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libavutil.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswresample.pc
+	test -e $(PKG_CONFIG_PATH)/libswscale.pc && $(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswscale.pc || true
+	rm -rf $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/lib/*.so $(PKGPREFIX)/.remove
+	PKG_VER=$(FFMPEG_VER) PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/ffmpeg
+	$(REMOVE)/ffmpeg-$(FFMPEG_VER) $(PKGPREFIX)
+	touch $@
+
+$(D)/ffmpegOLD-$(FFMPEG_VER): $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
 	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
 		make $(CST_GIT)/cst-public-libraries-ffmpeg; \
 		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
@@ -631,7 +716,10 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		$(PATCH)/lua-03-lua-pc.patch && \
 		$(PATCH)/lua-lvm.c.diff && \
 		sed -i 's/^V=.*/V= $(LUA_ABIVER)/' etc/lua.pc && \
-		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc && \
+		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc; \
+		if [ "$(PLATFORM)" = "apollo" ]; then \
+			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
+		fi; \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
 		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX) && \
 		$(MAKE) install INSTALL_TOP=$(PKGPREFIX)
@@ -699,6 +787,7 @@ $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 		$(MAKE) ; \
 		make install DESTDIR=$(TARGETPREFIX)
 	rm -rf $(TARGETPREFIX)/.remove
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/fuse.pc
 	$(REWRITE_LIBTOOL)/libiconv.la
 	$(REMOVE)/libiconv-$(ICONV_VER)
 	touch $@

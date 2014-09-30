@@ -119,42 +119,6 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)
 	touch $@
 
-$(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
-	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
-	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
-	set -e; cd $(BUILD_TMP)/libxml2-$(LIBXML2_VER); \
-		$(CONFIGURE) \
-			--prefix= \
-			--enable-shared \
-			--disable-static \
-			--datarootdir=/.remove \
-			--without-python \
-			--without-debug \
-			--without-sax1 \
-			--without-legacy \
-			--without-catalog \
-			--without-docbook \
-			--without-lzma \
-			--without-schematron; \
-		$(MAKE) && \
-		$(MAKE) install DESTDIR=$(PKGPREFIX);
-	mv $(PKGPREFIX)/bin/xml2-config $(HOSTPREFIX)/bin
-	rm -fr $(PKGPREFIX)/lib/*.sh
-	rm -fr $(PKGPREFIX)/.remove
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	rm -fr $(PKGPREFIX)/lib/pkgconfig
-	rm -fr $(PKGPREFIX)/lib/*.la
-	rm -fr $(PKGPREFIX)/include
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libxml-2.0.pc $(HOSTPREFIX)/bin/xml2-config
-	sed -i 's/^\(Libs:.*\)/\1 -lz/' $(PKG_CONFIG_PATH)/libxml-2.0.pc
-	$(REWRITE_LIBTOOL)/libxml2.la
-	PKG_VER=$(LIBXML2_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-		$(OPKG_SH) $(CONTROL_DIR)/libxml2
-	$(REMOVE)/libxml2-$(LIBXML2_VER) $(PKGPREFIX)
-	touch $@
-
 $(D)/libxslt: $(D)/libxml2 $(ARCHIVE)/libxslt-git-snapshot.tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/libxslt-git-snapshot.tar.gz $(PKGPREFIX)
 	$(UNTAR)/libxslt-git-snapshot.tar.gz
