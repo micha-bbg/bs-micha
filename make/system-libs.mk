@@ -423,8 +423,7 @@ FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=
 --enable-demuxer=hds \
 --extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
 export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
-#FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_WORK_BRANCH = work-$(FFMPEG_VER)
+FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_DEPS = $(D)/libxml2
 endif
 
@@ -448,6 +447,7 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz
 	else \
 		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
 		git checkout $(FFMPEG_WORK_BRANCH); \
+		git pull; \
 	fi;
 	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
 	cp -aL $(CST_GIT)/cst-public-libraries-ffmpeg $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
