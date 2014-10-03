@@ -295,7 +295,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	touch $@
 
 ifeq ($(PLATFORM), nevis)
-NEVIS_XML2_NO_ICONV = --without-iconv
+NEVIS_XML2_FLAGS = --without-iconv --with-minimum
 endif
 
 $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
@@ -311,7 +311,7 @@ $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
 			--without-debug \
 			--without-docbook \
 			--without-catalog \
-			$(NEVIS_XML2_NO_ICONV) \
+			$(NEVIS_XML2_FLAGS) \
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(PKGPREFIX);
 	mv $(PKGPREFIX)/bin/xml2-config $(HOSTPREFIX)/bin
