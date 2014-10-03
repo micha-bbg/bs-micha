@@ -1,0 +1,11 @@
+Package: libiconv
+Version: @VER@-1
+Description: libiconv: a library to convert encodings
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.gnu.org/software/libiconv
+Source:
+Depends: @DEP@
+Provides: @PROV@

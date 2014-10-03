@@ -294,6 +294,10 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	rm -rf $(PKGPREFIX)
 	touch $@
 
+ifeq ($(PLATFORM), nevis)
+NEVIS_XML2_NO_ICONV = --without-iconv
+endif
+
 $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
 	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
@@ -307,6 +311,7 @@ $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
 			--without-debug \
 			--without-docbook \
 			--without-catalog \
+			$(NEVIS_XML2_NO_ICONV) \
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(PKGPREFIX);
 	mv $(PKGPREFIX)/bin/xml2-config $(HOSTPREFIX)/bin
@@ -384,6 +389,7 @@ FFMPEG_CONFIGURE = \
 --enable-demuxer=ogg \
 --enable-demuxer=flac \
 --enable-demuxer=srt \
+--enable-demuxer=hds \
 --disable-encoders \
 --disable-muxers \
 --disable-programs \
@@ -420,19 +426,19 @@ ifeq ($(PLATFORM), apollo)
 FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
 --enable-decoder=h264 \
 --enable-decoder=vc1 \
---enable-demuxer=hds \
 --extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
 export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS = $(D)/libxml2
+FFMPEG_DEPS = $(D)/libxml2 $(D)/libiconv
 endif
 
 ifeq ($(PLATFORM), nevis)
 FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include" \
---extra-ldflags="-lfreetype -lpng -lz -L$(TARGETPREFIX)/lib"
+--disable-iconv \
+--extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
 export CFLAGS=-march=armv6
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS =
+FFMPEG_DEPS = $(D)/libxml2
 endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
@@ -452,14 +458,10 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz
 	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
 	cp -aL $(CST_GIT)/cst-public-libraries-ffmpeg $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
 	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
-		if [ "$(PLATFORM)" = "nevis" ]; then \
-			sed -i '/\(__DATE__\|__TIME__\)/d' ffprobe.c; # remove build time \
-			sed -i -e 's/__DATE__/""/' -e 's/__TIME__/""/' cmdutils.c; \
-		fi; \
 		$(BUILDENV) \
 		./configure \
 			$(FFMPEG_CONFIGURE) \
-			--logfile=Config.log \
+			--logfile=$(BUILD_TMP)/Config-ffmpeg-$(FFMPEG_VER).log \
 			--cross-prefix=$(TARGET)- \
 			--mandir=/.remove \
 			--prefix=/; \
@@ -738,16 +740,26 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 
 ifeq ($(PLATFORM), apollo)
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
+	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/libiconv-$(ICONV_VER); \
 		$(PATCH)/libiconv-1-fixes.patch; \
 		$(CONFIGURE) --target=$(TARGET) --enable-static --enable-shared \
 			--prefix= --datarootdir=/.remove --bindir=/.remove ; \
 		$(MAKE) ; \
-		make install DESTDIR=$(TARGETPREFIX)
-	rm -rf $(TARGETPREFIX)/.remove
+		make install DESTDIR=$(PKGPREFIX)
+	cp -frd $(PKGPREFIX)/include/* $(TARGETPREFIX)/include
+	cp -frd $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
+	rm -rf $(PKGPREFIX)/.remove
+	rm -fr $(PKGPREFIX)/include
+	rm -fr $(PKGPREFIX)/lib/*.a
+	rm -fr $(PKGPREFIX)/lib/*.la
 	$(REWRITE_LIBTOOL)/libiconv.la
-	$(REMOVE)/libiconv-$(ICONV_VER)
+	PKG_VER=$(ICONV_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/libiconv
+	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
 	touch $@
 endif
 
