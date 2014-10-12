@@ -1,0 +1,89 @@
+#!/bin/sh
+
+###########################################################
+#                                                         #
+#   openvpn, v 3.14 26.12.2013 by FE-WORLD (FritzErwin)   #
+#                                                         #
+###########################################################
+
+#if [ ! -e /var/etc/.openvpn ]; then
+#  exit 0
+#fi
+
+. /var/sbin/load-sysconfig.sh
+
+OnlineCheck()
+{
+	OCHECK1=google.com
+	i=1
+	ix1=1
+	ix2=$i
+	while expr $i != 0 > /dev/null; do
+		echo "[openvpn] Online Check... (Versuch $ix1/$ix2)"
+		if ping -w 2 -c 1 $OCHECK1 > /dev/null 2>&1; then
+			echo "[openvpn] Online Check ($OCHECK1) O.K."
+#			/bin/dt -t"Check O.K."
+			OCHECK=1
+			break
+		else
+			echo "[openvpn] ping timeout"
+			OCHECK=0
+		fi
+		sleep 1
+		i=`expr $i - 1`
+		ix1=`expr $ix1 + 1`
+	done
+}
+
+_tmp1=$(LoadSysconfig "openvpn")
+if [ "$_tmp1" = "1" ]; then
+	OPENVPN=1
+else
+	OPENVPN=0
+fi
+
+BOX_USER=$(sed -e "/^cheffe/!d;{s/.*=//g;}" /.version)
+
+case $1 in
+	start)
+		if [ "$OPENVPN" = "1" ] ; then
+			/bin/dt -t"online check..."
+#			[ ! "$BOX_USER" = "Micha" ] && OnlineCheck
+			OnlineCheck
+			DEVNET=/dev/net
+			if [ ! -e $DEVNET ] ; then
+				mkdir -p $DEVNET
+				mknod $DEVNET/tun c 10 200
+				chmod 600 $DEVNET/tun
+			fi
+			if [ "$OCHECK" = "1" ] ; then
+				/bin/dt -t"init vpn network..."
+				/var/etc/openvpn/openvpn.sh start
+			else
+				/bin/dt -t"init local network..."
+				if [ -e /var/etc/openvpn/client-loc.conf ]; then
+					/var/etc/openvpn/openvpn.sh start client-loc
+				fi
+				touch /tmp/.no_internet
+			fi
+			sleep 2
+		else
+			/bin/dt -t"init local network..."
+			sleep 2
+		fi
+		camd_start.sh first_start
+#		/bin/dt -t"NeutrinoHD"
+		;;
+	stop)
+		camd_start.sh stop
+		/var/etc/openvpn/openvpn.sh stop
+		;;
+	restart|status|version)
+		/var/etc/openvpn/openvpn.sh $1
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+exit 0

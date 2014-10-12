@@ -1,0 +1,9 @@
+#!/bin/sh
+alias ll='ls -al'
+alias c='cat'
+alias d='date'
+alias g='grep'
+alias m='more'
+alias h='history'
+alias f='file'
+alias recam='camd_start.sh restart'
