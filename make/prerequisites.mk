@@ -75,5 +75,7 @@ neutrino-source: $(N_HD_SOURCE)
 
 cst-sources-apollo: $(CST_GIT)/$(SOURCE_DRIVERS)
 
+cst-sources-kronos: $(CST_GIT)/$(SOURCE_DRIVERS)
+
 cst-sources-nevis: $(CST_GIT)/$(SOURCE_DRIVERS)
 

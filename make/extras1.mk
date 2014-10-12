@@ -1,5 +1,5 @@
 
-$(DEPDIR)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
+$(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
 		$(PATCH)/opkg-0.2.0-dont-segfault.diff; \
@@ -90,7 +90,7 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 		make embedded \
 			CC=$(TARGET)-gcc \
 			STRIP=$(TARGET)-strip \
-			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib"; \
+			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib"; \
 	rm -rf $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/bin
 	cp -a $(SOURCE_DIR)/xupnp/src/xupnpd $(PKGPREFIX)/bin
@@ -99,6 +99,7 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	cp -fd $(SOURCE_DIR)/xupnp/src/playlists/* $(PKGPREFIX)/usr/share/xupnpd/playlists/example > /dev/null 2>&1 || true
 	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/plugins
 	cp -a $(SOURCE_DIR)/xupnp/src/plugins/* $(PKGPREFIX)/usr/share/xupnpd/plugins
+	cp -r $(SOURCE_DIR)/cst-public-plugins-scripts-lua/xupnpd/* $(PKGPREFIX)/usr/share/xupnpd/plugins
 	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/profiles
 	cp -a $(SOURCE_DIR)/xupnp/src/profiles/* $(PKGPREFIX)/usr/share/xupnpd/profiles
 	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/ui
@@ -171,7 +172,8 @@ $(D)/libbluray: $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(D)/freetype | $(
 				--disable-doxygen-ps \
 				--disable-doxygen-pdf \
 				--disable-examples \
-				--without-libxml2; \
+				--without-libxml2 \
+				--without-freetype; \
 			$(MAKE); \
 			$(MAKE) install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)

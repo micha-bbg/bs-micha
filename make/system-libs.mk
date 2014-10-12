@@ -90,10 +90,10 @@ $(D)/giflib-$(GIFLIB_VER): $(ARCHIVE)/giflib-$(GIFLIB_VER).tar.bz2 | $(TARGETPRE
 
 $(D)/libcurl: $(D)/libcurl-$(CURL_VER)
 	touch $@
-$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/zlib | $(TARGETPREFIX)
+$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/zlib | $(TARGETPREFIX)
 	$(UNTAR)/curl-$(CURL_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/curl-$(CURL_VER); \
-		$(CONFIGURE) --prefix=${PREFIX} --build=$(BUILD) --host=$(TARGET) \
+		$(BUILDENV) LIBS="-lssl -lcrypto -lz" ./configure --prefix=${PREFIX} --build=$(BUILD) --host=$(TARGET) \
 			--disable-manual \
 			--disable-file \
 			--disable-rtsp \
@@ -103,7 +103,7 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/zlib | $(TARG
 			--disable-smtp \
 			--enable-shared \
 			--with-random \
-			--without-ssl \
+			--with-ssl=$(TARGETPREFIX) \
 			--mandir=/.remove; \
 		$(MAKE) all; \
 		mkdir -p $(HOSTPREFIX)/bin; \
@@ -209,6 +209,10 @@ $(D)/freetype-$(FREETYPE_VER): $(D)/libpng $(ARCHIVE)/freetype-$(FREETYPE_VER).t
 	$(UNTAR)/freetype-$(FREETYPE_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/freetype-$(FREETYPE_VER); \
 		if ! echo $(FREETYPE_VER) | grep "2.3"; then \
+			if ! -d include/freetype ; then \
+				mkdir -p include/freetype; \
+				ln -sf ../config include/freetype/config; \
+			fi; \
 			$(PATCH)/$(FT_RENDER_PATCH); \
 		fi; \
 		sed -i '/#define FT_CONFIG_OPTION_OLD_INTERNALS/d' include/freetype/config/ftoption.h; \
@@ -427,7 +431,15 @@ FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=
 --enable-decoder=h264 \
 --enable-decoder=vc1 \
 --extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
-export CFLAGS="-mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard"
+FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
+FFMPEG_DEPS = $(D)/libxml2 $(D)/libiconv
+endif
+
+ifeq ($(PLATFORM), kronos)
+FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
+--enable-decoder=h264 \
+--enable-decoder=vc1 \
+--extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_DEPS = $(D)/libxml2 $(D)/libiconv
 endif
@@ -436,14 +448,13 @@ ifeq ($(PLATFORM), nevis)
 FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include" \
 --disable-iconv \
 --extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
-export CFLAGS=-march=armv6
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_DEPS = $(D)/libxml2
 endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
 	touch $@
-$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
+$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
 	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
 		echo "******************************************************"; \
 		echo "* cst-public-libraries-ffmpeg missing, please create *"; \
@@ -669,10 +680,10 @@ $(D)/lua_static: libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz \
 	touch $@
 
 $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(REMOVE)/lua-$(LUA_VER) $(PKGPREFIX)
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER) && \
-		$(PATCH)/lua-01-fix-coolstream-build.patch && \
+		$(PATCH)/$(PLATFORM)/lua-01-fix-coolstream-build.patch && \
 		$(PATCH)/lua-02-shared-libs-for-lua.patch && \
 		$(PATCH)/lua-03-lua-pc.patch && \
 		$(PATCH)/lua-lvm.c.diff && \
@@ -681,23 +692,28 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		if [ "$(PLATFORM)" = "apollo" ]; then \
 			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
 		fi; \
+		if [ "$(PLATFORM)" = "kronos" ]; then \
+			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
+		fi; \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
-		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX) && \
-		$(MAKE) install INSTALL_TOP=$(PKGPREFIX)
-	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so.$(LUA_VER)
-	cd $(TARGETPREFIX)/lib; ln -sf liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so
+		$(MAKE) install INSTALL_TOP=$(PKGPREFIX)$(EXT_LIB_PATH); \
+		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX)$(EXT_LIB_PATH); \
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.so.$(LUA_VER)
+	cd $(TARGETPREFIX)$(EXT_LIB_PATH)/lib; ln -sf liblua.so.$(LUA_VER) $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.so
 	install -m 0644 -D $(BUILD_TMP)/lua-$(LUA_VER)/etc/lua.pc $(PKG_CONFIG_PATH)/lua.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/lua.pc
-	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(PKGPREFIX)/lib/liblua.so.$(LUA_VER)
-	rm -rf $(PKGPREFIX)/.remove
-	rm -rf $(PKGPREFIX)/include
-	rm -f $(PKGPREFIX)/lib/*.a
-	cd $(PKGPREFIX)/lib; ln -sf liblua.so.$(LUA_VER) $(PKGPREFIX)/lib/liblua.so
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(PKGPREFIX)$(EXT_LIB_PATH)/lib/liblua.so.$(LUA_VER)
+	rm -rf $(PKGPREFIX)$(EXT_LIB_PATH)/.remove
+	rm -rf $(PKGPREFIX)$(EXT_LIB_PATH)/include
+	rm -f $(PKGPREFIX)$(EXT_LIB_PATH)/lib/*.a
+	rm -f $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.a
+	rm -rf $(TARGETPREFIX)$(EXT_LIB_PATH)/.remove
+	cd $(PKGPREFIX)$(EXT_LIB_PATH)/lib; ln -sf liblua.so.$(LUA_VER) $(PKGPREFIX)$(EXT_LIB_PATH)/lib/liblua.so
 	PKG_VER=$(LUA_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
 			$(OPKG_SH) $(CONTROL_DIR)/lua
-	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
+	$(REMOVE)/lua-$(LUA_VER) $(PKGPREFIX)
 	touch $@ 
 
 $(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
@@ -717,8 +733,8 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 		export LUA=$(HOSTPREFIX)/bin/lua-$(LUA_VER) && \
 		$(CONFIGURE) --prefix= \
 			--exec-prefix= \
-			--libdir=/lib/lua/$(LUA_ABIVER) \
-			--datarootdir=/share/lua/$(LUA_ABIVER) \
+			--libdir=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
+			--datarootdir=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
 			--mandir=/.remove \
 			--docdir=/.remove \
 			--enable-silent-rules \
@@ -726,19 +742,26 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/.remove
-	cp -frd $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
-	cp -frd $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
+	cp -frd $(PKGPREFIX)$(EXT_LIB_PATH)/lib/* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+	cp -frd $(PKGPREFIX)$(EXT_LIB_PATH)/share/* $(TARGETPREFIX)$(EXT_LIB_PATH)/share
 	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/curses_c.la
 	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/posix_c.la
-	rm -fr $(PKGPREFIX)/lib/lua/$(LUA_ABIVER)/*.la
+	rm -fr $(PKGPREFIX)$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER)/*.la
 	PKG_VER=$(LUA_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
 			$(OPKG_SH) $(CONTROL_DIR)/luaposix
 	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
 	touch $@
 
+HDX=0
 ifeq ($(PLATFORM), apollo)
+HDX=1
+endif
+ifeq ($(PLATFORM), kronos)
+HDX=1
+endif
+ifeq ($(HDX), 1)
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz
@@ -778,7 +801,11 @@ $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
 		rm lib/*.so lib/*.la lib/*.a
 ifeq ($(PLATFORM), apollo)
 	PKG_DEP=" " PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
-else
+endif
+ifeq ($(PLATFORM), kronos)
+	PKG_DEP=" " PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
+endif
+ifeq ($(PLATFORM), nevis)
 	install -m 755 -D $(SCRIPTS)/load-fuse.init \
 		$(PKGPREFIX)/etc/init.d/load-fuse
 	ln -s load-fuse $(PKGPREFIX)/etc/init.d/S56load-fuse

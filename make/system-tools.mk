@@ -80,7 +80,7 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		sed -i -e 's#^CONFIG_PREFIX.*#CONFIG_PREFIX="$(PKGPREFIX)"#' .config; \
 		grep -q DBB_BT=AUTOCONF_TIMESTAMP Makefile.flags && \
 		sed -i 's#AUTOCONF_TIMESTAMP#"\\"$(PLATFORM)\\""#' Makefile.flags || true; \
-		$(MAKE) busybox CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"; \
+		$(BUILDENV) $(MAKE) busybox CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"; \
 		make install CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"
 	install -m 0755 $(SCRIPTS)/run-parts $(PKGPREFIX)/bin
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
@@ -175,7 +175,11 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 
 ifeq ($(PLATFORM), apollo)
 SMB_PREFIX=/usr
-else
+endif
+ifeq ($(PLATFORM), kronos)
+SMB_PREFIX=/usr
+endif
+ifeq ($(PLATFORM), nevis)
 SMB_PREFIX=/opt/pkg
 endif
 $(D)/samba2: $(ARCHIVE)/samba-$(SAMBA2_VER).tar.gz | $(TARGETPREFIX)
@@ -391,7 +395,7 @@ $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/ntp-$(NTP_VER) $(PKGPREFIX)
 	touch $@
 
-$(D)/wget: $(D)/e2fsprogs $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
+$(D)/wget: $(D)/e2fsprogs $(D)/openssl $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
 	$(UNTAR)/wget-$(WGET_VER).tar.xz
 	rm -rf $(PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/wget-$(WGET_VER); \
@@ -402,6 +406,7 @@ $(D)/wget: $(D)/e2fsprogs $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
 			--disable-digest \
 			--with-ssl=openssl \
 			--with-libssl-prefix=$(TARGETPREFIX) \
+			--with-openssl=yes \
 			--build=$(BUILD) \
 			--host=$(TARGET) \
 			--target=$(TARGET) \
@@ -475,15 +480,25 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 			--prefix= \
 			; \
 		$(MAKE); \
+		cp bin/ncftp $(TARGETPREFIX)/bin; \
 		cp bin/ncftpget $(TARGETPREFIX)/bin; \
 		cp bin/ncftpput $(TARGETPREFIX)/bin
+		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftp
 		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpget
 		$(TARGET)-strip $(TARGETPREFIX)/bin/ncftpput
-	$(REMOVE)/ncftp-$(NCFTP_VER)
+	rm -rf $(PKGPREFIX)
+	mkdir -p $(PKGPREFIX)/bin
+	cp $(TARGETPREFIX)/bin/ncftp $(PKGPREFIX)/bin
+	cp $(TARGETPREFIX)/bin/ncftpget $(PKGPREFIX)/bin
+	cp $(TARGETPREFIX)/bin/ncftpput $(PKGPREFIX)/bin
+	PKG_VER=$(NCFTP_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/ncftp
+	$(REMOVE)/ncftp-$(NCFTP_VER) $(PKGPREFIX)
 	touch $@
 
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage
 endif

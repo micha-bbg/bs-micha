@@ -2,10 +2,13 @@
 
 AUDIODEC = ffmpeg
 NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
-NEUTRINO_DEPS += libcurl libjpeg ffmpeg libdvbsi++ freetype giflib libsigc++
-NEUTRINO_DEPS += openthreads lua openssl
+NEUTRINO_DEPS += libcurl libjpeg freetype ffmpeg libdvbsi++ giflib libsigc++
+NEUTRINO_DEPS += openthreads luaposix openssl
 NEUTRINO_DEPS += wpa_supplicant parted
 ifeq ($(PLATFORM), apollo)
+NEUTRINO_DEPS += libiconv
+endif
+ifeq ($(PLATFORM), kronos)
 NEUTRINO_DEPS += libiconv
 endif
 NEUTRINO_PKG_DEPS =
@@ -26,6 +29,11 @@ N_CFLAGS += -D__STDC_FORMAT_MACROS
 N_CFLAGS += -DASSUME_MDEV
 
 ifeq ($(PLATFORM), apollo)
+N_CFLAGS += -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard -DFB_HW_ACCELERATION
+HW_TYPE = --with-boxtype=coolstream --with-boxmodel=apollo
+endif
+
+ifeq ($(PLATFORM), kronos)
 N_CFLAGS += -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard -DFB_HW_ACCELERATION
 HW_TYPE = --with-boxtype=coolstream --with-boxmodel=apollo
 endif
@@ -75,7 +83,7 @@ neutrino-deps: $(NEUTRINO_DEPS)
 
 N_LDFLAGS =
 #N_LDFLAGS = -L$(TARGETPREFIX)/lib -lcurl -lssl -lcrypto -ldl
-N_LDFLAGS += -L$(TARGETPREFIX)/lib
+N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
 
 # finally we can build outside of the source directory
@@ -144,6 +152,9 @@ ifeq ($(PLATFORM), nevis)
 endif
 ifeq ($(PLATFORM), apollo)
 	install -D -m 0755 skel-root/apollo/bin/autorun.sh $(PKGPREFIX)/bin/autorun.sh;
+endif
+ifeq ($(PLATFORM), kronos)
+	install -D -m 0755 skel-root/kronos/bin/autorun.sh $(PKGPREFIX)/bin/autorun.sh;
 endif
 	make $(PKGPREFIX)/.version
 	cp -a $(CONTROL_DIR)/$(NEUTRINO_PKG) $(BUILD_TMP)/neutrino-control

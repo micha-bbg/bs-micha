@@ -24,6 +24,9 @@ NEUTRINO_BRANCH_NEVIS       ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_NEVIS)
 NEUTRINO_WORK_BRANCH_NEVIS  ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_NEVIS)
+EXT_LIB_PATH                 =
+else
+EXT_LIB_PATH                 =/usr
 endif
 
 ifeq ($(PLATFORM), apollo)
@@ -39,6 +42,19 @@ NEUTRINO_WORK_BRANCH_APOLLO ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_APOLLO)
 endif
 
+ifeq ($(PLATFORM), kronos)
+TARGET_KRONOS               ?= arm-pnx8400-linux-uclibcgnueabi
+TARGET                       = $(TARGET_KRONOS)
+N_HD_SOURCE                  = $(N_HD_SOURCE_KRONOS)
+KVERSION_KRONOS             ?= 2.6.34.14
+KVERSION                     = $(KVERSION_KRONOS)
+CROSSTOOL-NG_VER             = $(CT_VER_KRONOS)
+NEUTRINO_BRANCH_KRONOS      ?= next-cc
+NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_KRONOS)
+NEUTRINO_WORK_BRANCH_KRONOS ?= next-cc
+NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
+endif
+
 CROSS_PATH     ?= cross
 CROSS_BASE      = $(BASE_DIR)/$(CROSS_PATH)
 CROSS_DIR       = $(CROSS_BASE)
@@ -49,11 +65,11 @@ GIT_SOURCE     ?= cst
 GIT_PROTO      ?= git
 ifeq ($(GIT_SOURCE), cst)
 ifeq ($(GIT_PROTO), git)
-GITSOURCE       = git://c00lstreamtech.de
+GITSOURCE       = git://coolstreamtech.de
 else ifeq ($(GIT_PROTO), http)
-GITSOURCE       = http://c00lstreamtech.de
+GITSOURCE       = http://coolstreamtech.de
 else
-GITSOURCE       = ssh://git@c00lstreamtech.de
+GITSOURCE       = ssh://git@coolstreamtech.de
 endif # GIT_PROTO
 else ifeq ($(GIT_SOURCE), sf)
 ifeq ($(GIT_PROTO), git)
@@ -116,8 +132,8 @@ PKG_CONFIG = $(HOSTPREFIX)/bin/$(TARGET)-pkg-config
 PKG_CONFIG_PATH = $(TARGETPREFIX)/lib/pkgconfig
 
 # helper-"functions":
-REWRITE_LIBTOOL = sed -i "s,^libdir=.*,libdir='$(TARGETLIB)'," $(TARGETLIB)
-REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)',"
+REWRITE_LIBTOOL = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)$(EXT_LIB_PATH)/lib'," $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)$(EXT_LIB_PATH)',"
 REWRITE_LIBTOOL_OPT = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/opt/pkg/lib'," $(TARGETPREFIX)/opt/pkg/lib
 REWRITE_PKGCONF_OPT = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)/opt/pkg',"
 
