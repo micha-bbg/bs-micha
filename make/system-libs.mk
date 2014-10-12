@@ -209,7 +209,7 @@ $(D)/freetype-$(FREETYPE_VER): $(D)/libpng $(ARCHIVE)/freetype-$(FREETYPE_VER).t
 	$(UNTAR)/freetype-$(FREETYPE_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/freetype-$(FREETYPE_VER); \
 		if ! echo $(FREETYPE_VER) | grep "2.3"; then \
-			if ! -d include/freetype ; then \
+			if [ ! -d include/freetype ]; then \
 				mkdir -p include/freetype; \
 				ln -sf ../config include/freetype/config; \
 			fi; \
@@ -219,12 +219,18 @@ $(D)/freetype-$(FREETYPE_VER): $(D)/libpng $(ARCHIVE)/freetype-$(FREETYPE_VER).t
 		sed -i '/^FONT_MODULES += \(type1\|cid\|pfr\|type42\|pcf\|bdf\)/d' modules.cfg; \
 		$(CONFIGURE) --prefix= --build=$(BUILD) --host=$(TARGET); \
 		$(MAKE) all; \
-		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)," < builds/unix/freetype-config > $(HOSTPREFIX)/bin/freetype-config; \
+		sed -e "s,^prefix=\"\",prefix=," < builds/unix/freetype-config > $(HOSTPREFIX)/bin/freetype-config.tmp; \
+		sed -e "s,^prefix=,prefix=$(TARGETPREFIX)\nSYSROOT=$(TARGETPREFIX)," < $(HOSTPREFIX)/bin/freetype-config.tmp > $(HOSTPREFIX)/bin/freetype-config; \
+		rm -f $(HOSTPREFIX)/bin/freetype-config.tmp; \
 		chmod 755 $(HOSTPREFIX)/bin/freetype-config; \
 		rm -f $(TARGETPREFIX)/lib/libfreetype.so*; \
 		make install libdir=$(TARGETPREFIX)/lib includedir=$(TARGETPREFIX)/include bindir=$(TARGETPREFIX)/bin prefix=$(TARGETPREFIX)
 		if [ -d $(TARGETPREFIX)/include/freetype2/freetype ] ; then \
 			ln -sf ./freetype2/freetype $(TARGETPREFIX)/include/freetype; \
+		else \
+			if [ ! -e $(TARGETPREFIX)/include/freetype ] ; then \
+				ln -sf freetype2 $(TARGETPREFIX)/include/freetype; \
+			fi; \
 		fi; \
 	rm $(TARGETPREFIX)/bin/freetype-config
 	$(REWRITE_LIBTOOL)/libfreetype.la

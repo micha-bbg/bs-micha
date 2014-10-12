@@ -29,7 +29,7 @@ UNRAR_VER = 5.0.10
 BUSYBOX_VER=1.21.0
 
 # wget for retrieving files using HTTP, HTTPS and FTP
-WGET_VER=1.14
+WGET_VER=1.15
 
 # e2fsprogs; filesystem utilities for use with the ext[x] filesystem
 E2FSPROGS_VER=1.42.8
@@ -71,10 +71,14 @@ ID3TAG_SUBVER=b
 MAD_VER=0.15.1b
 
 # freetype; free, high-quality and portable Font engine
+#FREETYPE_MAJOR=2
+#FREETYPE_MINOR=5
+#FREETYPE_MICRO=0
+#FREETYPE_NANO=1
 FREETYPE_MAJOR=2
 FREETYPE_MINOR=5
-FREETYPE_MICRO=0
-FREETYPE_NANO=1
+FREETYPE_MICRO=3
+FREETYPE_NANO=n/a
 FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR).$(FREETYPE_MICRO)
 ifeq ($(FREETYPE_NANO), n/a)
 FREETYPE_VER=$(FREETYPE_VER_PATH)
@@ -234,9 +238,17 @@ OPENSSL_SUBVER=y
 endif
 
 ifeq ($(PLATFORM), apollo)
-
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.35.0
+CURL_VER=7.38.0
+
+# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
+OPENSSL_VER=1.0.0
+OPENSSL_SUBVER=l
+endif
+
+ifeq ($(PLATFORM), kronos)
+# curl; command line tool for transferring data with URL syntax
+CURL_VER=7.38.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.0
