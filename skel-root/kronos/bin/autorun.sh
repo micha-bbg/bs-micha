@@ -1,5 +1,17 @@
 export LD_LIBRARY_PATH=/var/lib
-export PATH=/var/bin:/bin:/usr/bin:/var/sbin:/sbin:/usr/sbin:/var/plugins:/var/tuxbox/plugins
+
+paths="/var/sbin /sbin /usr/sbin /var/bin /bin /usr/bin /var/plugins /var/tuxbox/plugins /lib/tuxbox/plugins /usr/lib/tuxbox/plugins"
+P=
+for i in $paths ;do
+	if [ -d $i ]; then
+		if [ "$P" = "" ]; then
+			P=$i
+		else
+			P=$P:$i
+		fi
+	fi
+done
+export PATH=$P
 
 USE_GDB=0
 
