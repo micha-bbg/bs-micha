@@ -1,0 +1,168 @@
+#!/bin/sh
+
+############################################################
+#                                                          #
+#    bbfa, v 1.24 04.11.2014 by M. Liebmann (micha-bbg)    #
+#  ------------------------------------------------------  #
+#                   Busybox fuer Arme ;)                   #
+#                                                          #
+############################################################
+
+COMMANDS="build ip kanal rec re-openvpn up standby ver"
+
+WORK_PATH=$(pwd)
+PROG_NAME=$(basename $0)
+PROG_PATH=$(dirname $0)
+LOCAL_IP=127.0.0.1
+WGET_CMD="wget -T 5 -O- -q"
+
+Banner() {
+	echo ""
+	echo " [bbfa] * busybox fuer Arme v1.23"
+	echo "----------------------------------"
+}
+
+build() {
+	echo ""
+	git1=$(sed -e '/^builddate=/!d;{s/builddate=//g;}' /.version)
+	git2=$(sed -e '/^builddate_str=/!d;{s/builddate_str=//g;}' /.version)
+	build=$(sed -e '/^neutrino-build=/!d;{s/neutrino-build=//g;}' /.version)
+	echo "Gitversion : $git1"
+	echo "       vom : $git2"
+	echo "     Build : $build"
+	echo ""
+}
+
+rec(){
+	echo ""
+	x=$($WGET_CMD http://$LOCAL_IP/control/setmode?status)
+	echo -n "Aufnahme ist a"
+	if [ "${x:0:3}" = "off" ]; then
+		echo "us."
+	else
+		echo "n."
+	fi
+	echo ""
+}
+
+standby() {
+	echo ""
+	x=$($WGET_CMD http://$LOCAL_IP/control/standby)
+	if [ "${x:0:2}" = "on" ]; then
+		STB=1
+	else
+		STB=0
+	fi
+	if [ "$1" = "an" ]; then
+		if [ "$STB" = "1" ]; then
+			echo "Standby ist bereits an, exit."
+		else
+			echo -n "Schalte Standby jetzt ein, "
+			$WGET_CMD http://$LOCAL_IP/control/standby?on
+			echo "."
+		fi
+	elif [ "$1" = "aus" ]; then
+		if [ "$STB" = "0" ]; then
+			echo "Standby ist bereits aus, exit."
+		else
+			echo -n "Schalte Standby jetzt aus, "
+			$WGET_CMD http://$LOCAL_IP/control/standby?off
+			echo "."
+		fi
+	else
+		echo -n "Standby ist a"
+		if [ "$STB" = "1" ]; then
+			echo "n."
+		else
+			echo "us."
+		fi
+	fi
+	echo ""
+}
+
+case "$PROG_NAME" in
+    "xxxxx.x")
+	echo ""
+	echo ""
+	;;
+    "build.x")
+	build
+	;;
+    "ip.x")
+	echo ""
+	$WGET_CMD http://adm.slknet.de/ip/
+	echo ""
+	;;
+    "kanal.x")
+	echo ""
+	pzapit -gi
+	echo ""
+	;;
+    "rec.x")
+	rec
+	;;
+    "re-openvpn.x")
+	echo ""
+	echo "[bbfa] service openvpn restart"
+	rm -f /tmp/.boxcheck
+	sleep 2
+	service openvpn restart
+	echo ""
+	;;
+    "up.x")
+	echo ""
+	uptime
+	echo ""
+	;;
+    "standby.x")
+	standby $*
+	;;
+    "ver.x")
+	echo ""
+	cat /.version
+	echo ""
+	;;
+
+##############################################################################
+
+    "bbfa")
+	Banner
+	if [ "$1" = "lnk" ]; then
+		cd $PROG_PATH
+		LNK=0
+		for command in $COMMANDS; do
+			if [ ! -e ${PROG_PATH}/${command}.x ]; then
+				echo "ln -sf bbfa ${command}.x"
+				ln -sf bbfa ${command}.x
+				LNK=1
+			fi
+		done
+		echo ""
+		if [ "$LNK" = "1" ]; then
+			echo "Symlinks erstellt."
+		else
+			echo "Keine Symlinks erstellt, alle vorhanden."
+		fi
+		cd $WORK_PATH
+		exit 0
+	fi
+	echo -n "Unterstuetzte Befehle: "
+	c=0
+	for command in $COMMANDS; do
+		echo -n "${command}.x "
+		c=$(($c + 1))
+		if [ "$c" = "5" ]; then
+			echo ""
+			echo -n "                       "
+			c=0
+		fi
+	done
+	echo ""; echo ""
+	;;
+    *)
+	Banner
+	echo ""
+	echo "[$PROG_NAME] -> Unbekannter Befehl, exit..."
+	exit 1
+	;;
+esac
