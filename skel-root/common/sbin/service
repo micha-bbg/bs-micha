@@ -4,17 +4,18 @@ SERVICE="$1"
 ACTION="$2"
 
 usage() {
-	echo "usage: service <name> <action>"
+	echo "usage: service <name> <start|stop|restart|status|version>"
 	echo "       start or stop a given service (init script)"
-	echo "       action depends on the init script, usually"
-	echo "       at least 'start' and 'stop' is supported."
 	echo
 	exit 1
 }
 
-test -z "$ACTION" && usage;
+case "$ACTION" in
+	start|stop|restart|status|version) ;;
+	*) usage;;
+esac
 
-for i in /opt/*/etc/init.d/$SERVICE /etc/init.d/$SERVICE; do
+for i in /opt/*/etc/init.d/$SERVICE /etc/init.d/$SERVICE /var/etc/init.d/$SERVICE; do
 	if [ -x "$i" ]; then
 		echo "running $i $ACTION"
 		"$i" "$ACTION"
@@ -22,10 +23,11 @@ for i in /opt/*/etc/init.d/$SERVICE /etc/init.d/$SERVICE; do
 	fi
 done
 
-echo "$SERVICE not found in /etc/init.d/ and /opt/*/etc/init.d/"
-SERVICES=$(for i in /opt/*/etc/init.d/[^SK]* /etc/init.d/[^SK]*; do
+echo "$SERVICE not found in /var/etc/init.d/, /etc/init.d/ and /opt/*/etc/init.d/"
+SERVICES=$(for i in /opt/*/etc/init.d/[^SK]* /etc/init.d/[^SK]* /var/etc/init.d/[^SK]*; do
 		echo "${i##*/}";
 	done | sort -u | grep -v '^\(functions\|rcK\|rcS\|start\|start_neutrino\|\[\^SK\]\*\)$')
 echo "available services:"
 echo $SERVICES | xargs -n 1 echo "	"
+
 exit 1
