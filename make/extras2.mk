@@ -49,7 +49,7 @@ $(SOURCE_DIR)/mtd-utils:
 $(ARCHIVE)/mtd-utils.tgz: $(SOURCE_DIR)/mtd-utils $(D)/liblzo | $(TARGETPREFIX)
 	rm -f $(ARCHIVE)/mtd-utils.tgz
 	cd $(SOURCE_DIR)/mtd-utils && \
-#	git checkout work-cst && \
+	git checkout work-cst && \
 #	git pull && \
 	tar -C $(SOURCE_DIR) -czf $(ARCHIVE)/mtd-utils.tgz mtd-utils
 
@@ -83,8 +83,16 @@ $(D)/mtd-utils: $(ARCHIVE)/mtd-utils.tgz $(D)/zlib $(D)/liblzo | $(TARGETPREFIX)
 			ZLIBCPPFLAGS="-I$(TARGETPREFIX)/include" \
 			X_LDLIBS="-L$(TARGETPREFIX)/lib" \
 			X_LDSTATIC="$(TARGETPREFIX)/lib" && \
+		rm -fr $(PKGPREFIX) && \
+		mkdir -p $(PKGPREFIX)/sbin && \
+		cp -a $(MTD_BUILDS) $(PKGPREFIX)/sbin && \
 		$(CROSS_DIR)/bin/$(TARGET)-strip $(MTD_BUILDS) && \
-		cp -a $(MTD_BUILDS) $(TARGETPREFIX)/sbin
+		cp -a --remove-destination $(MTD_BUILDS) $(TARGETPREFIX)/sbin
+	PKG_VER=$(MTD_UTILS_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/mtd-utils
+	rm -fr $(PKGPREFIX)
 	# build for host
 	cd $(BUILD_TMP)
 	rm -rf $(BUILD_TMP)/mtd-utils
