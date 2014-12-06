@@ -1,0 +1,11 @@
+Package: luacurl
+Version: @VER@-1
+Description: lcurl module provide low level pure C binding to libcurl
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://github.com/Lua-cURL/Lua-cURLv3
+Source:
+Depends: @DEP@
+Provides:

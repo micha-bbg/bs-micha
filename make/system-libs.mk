@@ -760,6 +760,37 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
 	touch $@
 
+$(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPREFIX)
+	rm -rf $(PKGPREFIX)
+	$(UNTAR)/Lua-cURL$(LUACURL_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/Lua-cURL$(LUACURL_VER); \
+		$(PATCH)/lua-curl-Makefile.diff; \
+		$(BUILDENV) \
+			CC=$(CROSS_DIR)/bin/$(TARGET)-gcc \
+			LUA_CMOD=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
+			LUA_LMOD=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
+			LIBDIR=$(TARGETPREFIX)$(EXT_LIB_PATH)/lib \
+			LUA_INC=$(TARGETPREFIX)$(EXT_LIB_PATH)/include \
+			CURL_LIBS="-L$(TARGETPREFIX)/lib -lcurl" \
+			$(MAKE); \
+			LUA_CMOD=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
+			LUA_LMOD=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
+			DESTDIR=$(PKGPREFIX) \
+			$(MAKE) install
+	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)
+ifeq ($(PLATFORM), nevis)
+	cp -frd $(PKGPREFIX)/lib $(TARGETPREFIX)
+	cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share
+else
+	cp -frd $(PKGPREFIX)/usr $(TARGETPREFIX)
+endif
+	$(CROSS_DIR)/bin/$(TARGET)-strip $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER)/lcurl.so
+	PKG_VER=$(LUACURL_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)/lib` \
+			$(OPKG_SH) $(CONTROL_DIR)/luacurl
+	$(REMOVE)/Lua-cURL$(LUACURL_VER) $(PKGPREFIX)
+	touch $@
+
 HDX=0
 ifeq ($(PLATFORM), apollo)
 HDX=1
