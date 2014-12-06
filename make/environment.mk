@@ -25,8 +25,6 @@ NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_NEVIS)
 NEUTRINO_WORK_BRANCH_NEVIS  ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_NEVIS)
 EXT_LIB_PATH                 =
-else
-EXT_LIB_PATH                 =/usr
 endif
 
 ifeq ($(PLATFORM), apollo)
@@ -40,6 +38,7 @@ NEUTRINO_BRANCH_APOLLO      ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_APOLLO)
 NEUTRINO_WORK_BRANCH_APOLLO ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_APOLLO)
+EXT_LIB_PATH                 =
 endif
 
 ifeq ($(PLATFORM), kronos)
@@ -53,6 +52,7 @@ NEUTRINO_BRANCH_KRONOS      ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_KRONOS)
 NEUTRINO_WORK_BRANCH_KRONOS ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
+EXT_LIB_PATH                 =/usr
 endif
 
 CROSS_PATH     ?= cross

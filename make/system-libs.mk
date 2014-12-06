@@ -778,12 +778,17 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 			DESTDIR=$(PKGPREFIX) \
 			$(MAKE) install
 	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)
-ifeq ($(PLATFORM), nevis)
-	cp -frd $(PKGPREFIX)/lib $(TARGETPREFIX)
-	cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share
-else
-	cp -frd $(PKGPREFIX)/usr $(TARGETPREFIX)
-endif
+	if [ "$(PLATFORM)" = "nevis" ]; then \
+		cp -frd $(PKGPREFIX)/lib $(TARGETPREFIX); \
+		cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share; \
+	fi;
+	if [ "$(PLATFORM)" = "apollo" ]; then \
+		cp -frd $(PKGPREFIX)/lib $(TARGETPREFIX); \
+		cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share; \
+	fi;
+	if [ "$(PLATFORM)" = "kronos" ]; then \
+		cp -frd $(PKGPREFIX)/usr $(TARGETPREFIX); \
+	fi;
 	$(CROSS_DIR)/bin/$(TARGET)-strip $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER)/lcurl.so
 	PKG_VER=$(LUACURL_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)/lib` \
