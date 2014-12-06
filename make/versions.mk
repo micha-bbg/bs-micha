@@ -230,7 +230,7 @@ NCFTP_VER=3.2.5
 ifeq ($(PLATFORM), nevis)
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.33.0
+CURL_VER=7.38.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=0.9.8
