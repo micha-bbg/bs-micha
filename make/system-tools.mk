@@ -68,18 +68,24 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX) $(BUILD_TMP)/bb-control
 	set -e; cd $(BUILD_TMP)/busybox-$(BUSYBOX_VER); \
 	\
-		$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-mdev.patch; \
-		$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-platform.patch; \
-		$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-xz.patch; \
-		$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-ntfs.patch; \
+		if [ "$(BUSYBOX_VER)" = "1.21.0" ]; then \
+			$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-mdev.patch; \
+			$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-platform.patch; \
+			$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-xz.patch; \
+			$(PATCH)/bb_fixes-1.21.0/busybox-1.21.0-ntfs.patch; \
+		fi; \
 	\
 		$(PATCH)/busybox-1.18-hack-init-s-console.patch; \
 		$(PATCH)/busybox-mdev-1.21.c.diff; \
 		$(PATCH)/busybox-1.20-ifupdown.c.diff; \
-		if [ "$(PLATFORM)" = "nevis" ]; then \
-			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21.config .config; \
+		if [ "$(BUSYBOX_VER)" = "1.21.0" ]; then \
+			if [ "$(PLATFORM)" = "nevis" ]; then \
+				cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21.config .config; \
+			else \
+				cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21-ipv6.config .config; \
+			fi; \
 		else \
-			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21-ipv6.config .config; \
+			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.23.1.config .config; \
 		fi; \
 		sed -i -e 's#^CONFIG_PREFIX.*#CONFIG_PREFIX="$(PKGPREFIX)"#' .config; \
 		grep -q DBB_BT=AUTOCONF_TIMESTAMP Makefile.flags && \

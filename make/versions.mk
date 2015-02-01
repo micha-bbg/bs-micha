@@ -25,8 +25,11 @@ MTD_UTILS_VER = 1.5.0
 UNRAR_VER = 5.0.10
 
 # busybox; combines tiny versions of many common UNIX utilities into a single binary
-#BUSYBOX_VER=1.19.4
+ifeq ($(PLATFORM), kronos)
+BUSYBOX_VER=1.23.1
+else
 BUSYBOX_VER=1.21.0
+endif
 
 # wget for retrieving files using HTTP, HTTPS and FTP
 WGET_VER=1.15
