@@ -96,15 +96,19 @@ D            = $(BASE_DIR)/deps
 # backwards compatibility
 DEPDIR       = $(D)
 
+PKGPREFIX_BASE = $(BUILD_TMP)/pkg
+TARGETPREFIX_BASE = $(BASE_DIR)/root
+
 CCACHE       = /usr/bin/ccache
 HOSTPREFIX   = $(BASE_DIR)/host
 ifeq ($(PLATFORM), nevis)
-TARGETPREFIX = $(BASE_DIR)/root
-PKGPREFIX    = $(BUILD_TMP)/pkg
+TARGETPREFIX = $(TARGETPREFIX_BASE)
+PKGPREFIX    = $(PKGPREFIX_BASE)
 else
-TARGETPREFIX = $(BASE_DIR)/root/usr
-PKGPREFIX    = $(BUILD_TMP)/pkg/usr
+TARGETPREFIX = $(TARGETPREFIX_BASE)/usr
+PKGPREFIX    = $(PKGPREFIX_BASE)/usr
 endif
+RM_PKGPREFIX = rm -fr $(PKGPREFIX_BASE)
 FROOTFS      = $(BASE_DIR)/root-flash
 SOURCE_DIR   = $(BASE_DIR)/source
 PLUGIN_DIR   = $(SOURCE_DIR)/neutrino-hd-plugins
@@ -119,7 +123,7 @@ BUILD_TOOLS ?= /Data/Cross/build-tools
 ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib
 else
-TARGETLIB       = $(TARGETPREFIX)/lib -L$$(dirname $(TARGETPREFIX))/lib
+TARGETLIB       = $(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
 endif
 TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
@@ -169,7 +173,7 @@ OPKG_SH_ENV  = PACKAGE_DIR=$(PACKAGE_DIR)
 OPKG_SH_ENV += STRIP=$(TARGET)-strip
 OPKG_SH_ENV += MAINTAINER="$(MAINTAINER)"
 OPKG_SH_ENV += ARCH=$(BOXARCH)
-OPKG_SH_ENV += SOURCE=$(PKGPREFIX)
+OPKG_SH_ENV += SOURCE=$(PKGPREFIX_BASE)
 OPKG_SH_ENV += BUILD_TMP=$(BUILD_TMP)
 OPKG_SH = $(OPKG_SH_ENV) opkg.sh
 

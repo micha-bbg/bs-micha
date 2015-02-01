@@ -1,7 +1,7 @@
 # makefile to build crosstool
 
 BOOTSTRAP  = targetprefix build-tools $(BUILD_TMP) $(CROSS_BASE) $(HOSTPREFIX)/bin
-BOOTSTRAP += $(TARGETPREFIX)/lib/libc.so.6 includes-and-libs
+BOOTSTRAP += $(TARGETPREFIX_BASE)/lib/libc.so.6 includes-and-libs
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg.sh $(HOSTPREFIX)/bin/opkg-chksvn.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-gitdescribe.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-find-requires.sh $(HOSTPREFIX)/bin/opkg-find-provides.sh
@@ -9,7 +9,7 @@ BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-module-deps.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/get-git-archive.sh
 BOOTSTRAP += pkg-config
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-controlver-from-svn.sh
-BOOTSTRAP += $(TARGETPREFIX)/sbin/ldconfig
+BOOTSTRAP += $(TARGETPREFIX_BASE)/sbin/ldconfig
 
 PLAT_LIBS  = cst-modules-$(PLATFORM) cst-libs
 PLAT_INCS  = cst-firmware
@@ -54,34 +54,34 @@ $(CROSS_BASE):
 	mkdir -p $(CROSS_BASE)
 
 cst-libs: | $(TARGETPREFIX)
-	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/libs/*.so $(TARGETPREFIX)/lib
+	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/libs/*.so $(TARGETPREFIX_BASE)/lib
 
 cst-firmware: | $(TARGETPREFIX)
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/firmware $(TARGETPREFIX)/lib
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/firmware $(TARGETPREFIX_BASE)/lib
 
 cst-modules-apollo: | $(TARGETPREFIX)
-	mkdir -p $(TARGETPREFIX)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX)/lib/modules; \
-#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX)/lib/modules; \
+	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
+#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX_BASE)/lib/modules; \
 
 cst-modules-kronos: | $(TARGETPREFIX)
-	mkdir -p $(TARGETPREFIX)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX)/lib/modules; \
-#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX)/lib/modules; \
+	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
+#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX_BASE)/lib/modules; \
 
 cst-modules-nevis: | $(TARGETPREFIX)
-	mkdir -p $(TARGETPREFIX)/lib/modules/$(KVERSION)-nevis
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION)-nevis $(TARGETPREFIX)/lib/modules
+	mkdir -p $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION)-nevis $(TARGETPREFIX_BASE)/lib/modules
 
-$(TARGETPREFIX)/lib/libc.so.6: $(TARGETPREFIX)
+$(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)
 	# stlinux RPM puts libstdc++ into /usr/lib...
 	if test -e $(CROSS_DIR)/$(TARGET)/sys-root/usr/lib/libstdc++.so; then \
-		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/usr/lib/libstdc++.s*[!y] $(TARGETPREFIX)/lib; \
+		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/usr/lib/libstdc++.s*[!y] $(TARGETPREFIX_BASE)/lib; \
 	fi
 	if test -e $(CROSS_DIR)/$(TARGET)/sys-root/lib; then \
-		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/lib/*so* $(TARGETPREFIX)/lib; \
+		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/lib/*so* $(TARGETPREFIX_BASE)/lib; \
 	else \
-		cp -a $(CROSS_DIR)/$(TARGET)/lib/*so* $(TARGETPREFIX)/lib; \
+		cp -a $(CROSS_DIR)/$(TARGET)/lib/*so* $(TARGETPREFIX_BASE)/lib; \
 	fi
 
 includes-and-libs: $(PLAT_LIBS) $(PLAT_INCS)
@@ -102,16 +102,16 @@ ccache-rm: $(HOSTPREFIX)/bin
 	@rm -rf $(HOSTPREFIX)/bin/$(TARGET)-gcc
 	@rm -rf $(HOSTPREFIX)/bin/$(TARGET)-g++
 
-ldconfig: $(TARGETPREFIX)/sbin/ldconfig
-$(TARGETPREFIX)/sbin/ldconfig: | $(TARGETPREFIX)
+ldconfig: $(TARGETPREFIX_BASE)/sbin/ldconfig
+$(TARGETPREFIX_BASE)/sbin/ldconfig: | $(TARGETPREFIX_BASE)
 	@if test -e $(CROSS_DIR)/$(TARGET)/sys-root/sbin/ldconfig; then \
 		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/sbin/ldconfig $@; \
-		mkdir -p $(TARGETPREFIX)/etc; \
-		touch $(TARGETPREFIX)/etc/ld.so.conf; \
+		mkdir -p $(TARGETPREFIX_BASE)/etc; \
+		touch $(TARGETPREFIX_BASE)/etc/ld.so.conf; \
 	elif test -e $(CROSS_DIR)/$(TARGET)/sbin/ldconfig; then \
 		cp -a $(CROSS_DIR)/$(TARGET)/sbin/ldconfig $@; \
-		mkdir -p $(TARGETPREFIX)/etc; \
-		touch $(TARGETPREFIX)/etc/ld.so.conf; \
+		mkdir -p $(TARGETPREFIX_BASE)/etc; \
+		touch $(TARGETPREFIX_BASE)/etc/ld.so.conf; \
 	else \
 		# triggers on crosstool-0.43 built Tripledragon toolchain ; \
 		echo "====================================================="; \
@@ -138,8 +138,8 @@ $(HOSTPREFIX)/bin/pkg-config: $(ARCHIVE)/pkg-config-$(PKGCONFIG_VER).tar.gz | $(
 	$(REMOVE)/pkg-config-$(PKGCONFIG_VER)
 
 $(D)/skeleton: | $(TARGETPREFIX)
-	cp --remove-destination -a skel-root/common/* $(TARGETPREFIX)/
-	cp --remove-destination -a skel-root/$(PLATFORM)/* $(TARGETPREFIX)/
+	cp --remove-destination -a skel-root/common/* $(TARGETPREFIX_BASE)/
+	cp --remove-destination -a skel-root/$(PLATFORM)/* $(TARGETPREFIX_BASE)/
 
 # hack to make sure they are always copied
 PHONY += ccache crosstool includes-and-libs cst-modules targetprefix bootstrap

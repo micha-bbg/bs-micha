@@ -27,7 +27,7 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		--with-opkglibdir=/var/lib; \
 		$(MAKE) all; \
 		cp -a src/opkg-cl $(HOSTPREFIX)/bin
-	install -d -m 0755 $(PKGPREFIX)/var/lib/opkg
+	install -d -m 0755 $(PKGPREFIX_BASE)/var/lib/opkg
 	install -d -m 0755 $(PKGPREFIX)/etc/opkg
 	ln -sf opkg-cl $(PKGPREFIX)/bin/opkg # convenience symlink
 	OPKG_EXAMPLE=$(PKGPREFIX)/etc/opkg/opkg.conf.example; \
@@ -44,7 +44,7 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(REWRITE_LIBTOOL)/libopkg.la
 	rm -rf $(PKGPREFIX)/lib $(PKGPREFIX)/include
 	PKG_VER=$(OPKG_VER) $(OPKG_SH) $(CONTROL_DIR)/opkg
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 XUPNP_DEFREF = r392
@@ -82,7 +82,7 @@ xupnpd-update: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 			echo "No changes..."; \
 		fi
 
-$(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
+$(D)/xupnpd: $(D)/lua $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	set -e; cd $(SOURCE_DIR)/xupnp; \
 		git checkout work; \
 		cd src; \
@@ -90,34 +90,33 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 		make embedded \
 			CC=$(TARGET)-gcc \
 			STRIP=$(TARGET)-strip \
-			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)/lib"; \
-	rm -rf $(PKGPREFIX)
+			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib"; \
+	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/bin
 	cp -a $(SOURCE_DIR)/xupnp/src/xupnpd $(PKGPREFIX)/bin
-	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/playlists/example
-	cp -a $(SOURCE_DIR)/xupnp/src/playlists/example/* $(PKGPREFIX)/usr/share/xupnpd/playlists/example
-	cp -fd $(SOURCE_DIR)/xupnp/src/playlists/* $(PKGPREFIX)/usr/share/xupnpd/playlists/example > /dev/null 2>&1 || true
-	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/plugins
-	cp -a $(SOURCE_DIR)/xupnp/src/plugins/* $(PKGPREFIX)/usr/share/xupnpd/plugins
-	cp -r $(SOURCE_DIR)/cst-public-plugins-scripts-lua/xupnpd/* $(PKGPREFIX)/usr/share/xupnpd/plugins
-	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/profiles
-	cp -a $(SOURCE_DIR)/xupnp/src/profiles/* $(PKGPREFIX)/usr/share/xupnpd/profiles
-	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/ui
-	cp -a $(SOURCE_DIR)/xupnp/src/ui/* $(PKGPREFIX)/usr/share/xupnpd/ui
-	mkdir -p $(PKGPREFIX)/usr/share/xupnpd/www
-	cp -a $(SOURCE_DIR)/xupnp/src/www/* $(PKGPREFIX)/usr/share/xupnpd/www
-	cp -a $(SOURCE_DIR)/xupnp/src/*.lua  $(PKGPREFIX)/usr/share/xupnpd
+	mkdir -p $(PKGPREFIX)/share/xupnpd/playlists/example
+	cp -a $(SOURCE_DIR)/xupnp/src/playlists/example/* $(PKGPREFIX)/share/xupnpd/playlists/example
+	cp -fd $(SOURCE_DIR)/xupnp/src/playlists/* $(PKGPREFIX)/share/xupnpd/playlists/example > /dev/null 2>&1 || true
+	mkdir -p $(PKGPREFIX)/share/xupnpd/plugins
+	cp -a $(SOURCE_DIR)/xupnp/src/plugins/* $(PKGPREFIX)/share/xupnpd/plugins
+	cp -r $(SOURCE_DIR)/cst-public-plugins-scripts-lua/xupnpd/* $(PKGPREFIX)/share/xupnpd/plugins
+	mkdir -p $(PKGPREFIX)/share/xupnpd/profiles
+	cp -a $(SOURCE_DIR)/xupnp/src/profiles/* $(PKGPREFIX)/share/xupnpd/profiles
+	mkdir -p $(PKGPREFIX)/share/xupnpd/ui
+	cp -a $(SOURCE_DIR)/xupnp/src/ui/* $(PKGPREFIX)/share/xupnpd/ui
+	mkdir -p $(PKGPREFIX)/share/xupnpd/www
+	cp -a $(SOURCE_DIR)/xupnp/src/www/* $(PKGPREFIX)/share/xupnpd/www
+	cp -a $(SOURCE_DIR)/xupnp/src/*.lua  $(PKGPREFIX)/share/xupnpd
 	install -m 0755 -D $(SCRIPTS)/xupnpd.init $(PKGPREFIX)/etc/init.d/xupnpd
 	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/S80xupnpd
 	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/K20xupnpd
 	cp -frd $(PKGPREFIX)/. $(TARGETPREFIX)
-	ln -s /usr/share $(PKGPREFIX)/share
 	cd $(SOURCE_DIR)/xupnp; \
 		XUPNP_SVN=$$(git svn find-rev master --before HEAD); \
 		PKG_VER=svnr$$XUPNP_SVN \
 			PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 				$(OPKG_SH) $(CONTROL_DIR)/xupnpd
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libxslt: $(D)/libxml2 $(ARCHIVE)/libxslt-git-snapshot.tar.gz | $(TARGETPREFIX)
@@ -155,7 +154,8 @@ $(D)/libxslt: $(D)/libxml2 $(ARCHIVE)/libxslt-git-snapshot.tar.gz | $(TARGETPREF
 	touch $@
 
 $(D)/libbluray: $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(D)/freetype | $(TARGETPREFIX)
-	rm -fr $(BUILD_TMP)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(PKGPREFIX)
+	rm -fr $(BUILD_TMP)/libbluray-$(LIBBLURAY_VER).tar.bz2
+	$(RM_PKGPREFIX)
 	$(UNTAR)/libbluray-$(LIBBLURAY_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/libbluray-$(LIBBLURAY_VER); \
 		$(PATCH)/libbluray-0001-Optimized-file-I-O-for-chained-usage-with-libavforma.patch; \
@@ -186,5 +186,6 @@ $(D)/libbluray: $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(D)/freetype | $(
 		$(OPKG_SH) $(CONTROL_DIR)/libbluray
 	$(REWRITE_LIBTOOL)/libbluray.la
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libbluray.pc
-	$(REMOVE)/libbluray-$(LIBBLURAY_VER) $(PKGPREFIX)
+	$(REMOVE)/libbluray-$(LIBBLURAY_VER)
+	$(RM_PKGPREFIX)
 	touch $@

@@ -2,9 +2,9 @@
 
 $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/vsftpd-$(VSFTPD_VER).tar.gz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/vsftpd-$(VSFTPD_VER); \
-		$(PATCH)/vsftpd.diff; \
+		$(PATCH)/vsftpd2.diff; \
 		make clean; \
 		TARGETPREFIX=$(TARGETPREFIX) make CC=$(TARGET)-gcc CFLAGS="-pipe -O2 -g0 -I$(TARGETPREFIX)/include" LDFLAGS="$(LD_FLAGS) -Wl,-rpath-link,$(TARGETLIB)"
 	install -d $(PKGPREFIX)/share/empty
@@ -14,16 +14,16 @@ $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	install -D -m 755 $(SCRIPTS)/vsftpd.init $(PKGPREFIX)/etc/init.d/vsftpd
 	# it is important that vsftpd is started *before* inetd to override busybox ftpd...
 	ln -sf vsftpd $(PKGPREFIX)/etc/init.d/S53vsftpd
-	cp -frd $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
-	rm -fr $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
 	PKG_VER=$(VSFTPD_VER) $(OPKG_SH) $(CONTROL_DIR)/vsftpd
-	$(REMOVE)/vsftpd-$(VSFTPD_VER) $(PKGPREFIX)
+	$(REMOVE)/vsftpd-$(VSFTPD_VER)
+	$(RM_PKGPREFIX)
 	touch $@
+
 
 $(D)/rsync: $(ARCHIVE)/rsync-$(RSYNC_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/rsync-$(RSYNC_VER).tar.gz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/rsync-$(RSYNC_VER); \
 		$(CONFIGURE) --prefix= --build=$(BUILD) --host=$(TARGET) --mandir=$(BUILD_TMP)/.remove; \
 		$(MAKE) all; \
@@ -38,7 +38,7 @@ $(D)/rsync: $(ARCHIVE)/rsync-$(RSYNC_VER).tar.gz | $(TARGETPREFIX)
 		test -e rsyncd.secrets || cp $(SCRIPTS)/rsyncd.secrets . ; }; true
 	cp -a $(SCRIPTS)/rsyncd.{conf,secrets} $(PKGPREFIX)/etc
 	$(OPKG_SH) $(CONTROL_DIR)/rsync
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/procps: $(D)/libncurses $(ARCHIVE)/procps-$(PROCPS_VER).tar.gz | $(TARGETPREFIX)
@@ -54,18 +54,20 @@ $(D)/procps: $(D)/libncurses $(ARCHIVE)/procps-$(PROCPS_VER).tar.gz | $(TARGETPR
 		rm -f $(TARGETPREFIX)/bin/ps $(TARGETPREFIX)/bin/top; \
 		install -m 755 top ps/ps $(TARGETPREFIX)/bin; \
 		install -m 755 proc/libproc-$(PROCPS_VER).so $(TARGETPREFIX)/lib
-	$(REMOVE)/procps-$(PROCPS_VER) $(PKGPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/procps-$(PROCPS_VER)
 	mkdir -p $(PKGPREFIX)/lib $(PKGPREFIX)/bin
 	cp -a $(TARGETPREFIX)/bin/{ps,top} $(PKGPREFIX)/bin
 	cp -a $(TARGETPREFIX)/lib/libproc-$(PROCPS_VER).so $(PKGPREFIX)/lib
 	$(OPKG_SH) $(CONTROL_DIR)/procps
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/busybox-$(BUSYBOX_VER)
 	$(UNTAR)/busybox-$(BUSYBOX_VER).tar.bz2
-	rm -rf $(PKGPREFIX) $(BUILD_TMP)/bb-control
+	rm -rf $(BUILD_TMP)/bb-control
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/busybox-$(BUSYBOX_VER); \
 	\
 		if [ "$(BUSYBOX_VER)" = "1.21.0" ]; then \
@@ -93,20 +95,24 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		$(BUILDENV) $(MAKE) busybox CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"; \
 		make install CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"
 	install -m 0755 $(SCRIPTS)/run-parts $(PKGPREFIX)/bin
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	mv $(PKGPREFIX_BASE)/usr $(PKGPREFIX_BASE)/.TEMP
+	mv -f $(PKGPREFIX_BASE)/.TEMP/* $(PKGPREFIX_BASE)
+	rm -fr $(PKGPREFIX_BASE)/.TEMP
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
 	cp -a $(CONTROL_DIR)/busybox $(BUILD_TMP)/bb-control
 	# "auto-provides/conflicts". let's hope opkg can deal with this...
 	printf "Provides:" >> $(BUILD_TMP)/bb-control/control
-	for i in `find $(PKGPREFIX)/ ! -type d ! -name busybox`; do printf " `basename $$i`," >> $(BUILD_TMP)/bb-control/control; done
+	for i in `find $(PKGPREFIX_BASE)/ ! -type d ! -name busybox`; do printf " `basename $$i`," >> $(BUILD_TMP)/bb-control/control; done
 	sed -i 's/,$$//' $(BUILD_TMP)/bb-control/control
 	sed -i 's/\(^Provides:\)\(.*$$\)/\1\2\nConflicts:\2/' $(BUILD_TMP)/bb-control/control
 	echo >> $(BUILD_TMP)/bb-control/control
 	PKG_VER=$(BUSYBOX_VER) $(OPKG_SH) $(BUILD_TMP)/bb-control
-	$(REMOVE)/busybox-$(BUSYBOX_VER) $(PKGPREFIX) $(BUILD_TMP)/bb-control
+	$(REMOVE)/busybox-$(BUSYBOX_VER) $(BUILD_TMP)/bb-control
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/e2fsprogs-$(E2FSPROGS_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/e2fsprogs-$(E2FSPROGS_VER); \
 		ln -sf /bin/true ./ldconfig; \
@@ -147,7 +153,7 @@ $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
 		sbin/e2undo sbin/filefrag sbin/e2freefrag bin/chattr bin/lsattr bin/uuidgen \
 		lib/*.so && rm -r lib/pkgconfig include && rm -f lib/*.a
 	PKG_VER=$(E2FSPROGS_VER) $(OPKG_SH) $(CONTROL_DIR)/e2fsprogs
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(TARGETPREFIX)/lib/libuuid.so.1:
@@ -180,7 +186,7 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 	PKG_VER=$(NTFS_3G_VER) \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ntfs-3g
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 ifeq ($(PLATFORM), apollo)
@@ -194,7 +200,7 @@ SMB_PREFIX=/opt/pkg
 endif
 $(D)/samba2: $(ARCHIVE)/samba-$(SAMBA2_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/samba-$(SAMBA2_VER).tar.gz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/samba-$(SAMBA2_VER); \
 		$(PATCH)/samba_2.2.12.diff; \
 		$(PATCH)/samba_2.2.12-noprint.diff; \
@@ -266,7 +272,8 @@ $(D)/samba2: $(ARCHIVE)/samba-$(SAMBA2_VER).tar.gz | $(TARGETPREFIX)
 	done
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(OPKG_SH) $(CONTROL_DIR)/samba2/client
-	$(REMOVE)/samba-$(SAMBA2_VER) $(PKGPREFIX)
+	$(REMOVE)/samba-$(SAMBA2_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/portmap: $(ARCHIVE)/portmap-$(PORTMAP-VER).tgz
@@ -288,7 +295,7 @@ $(D)/unfsd: $(D)/libflex $(D)/portmap $(ARCHIVE)/unfs3-$(UNFS3-VER).tar.gz
 		$(MAKE); \
 		$(MAKE) install DESTDIR=$(TARGETPREFIX)
 	rm -f -r $(TARGETPREFIX)/.remove
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/sbin
 	install -m 755 -D $(SCRIPTS)/nfsd.init $(TARGETPREFIX)/etc/init.d/nfsd
 	install -m 755 -D $(SCRIPTS)/nfsd.init $(PKGPREFIX)/etc/init.d/nfsd
@@ -296,13 +303,14 @@ $(D)/unfsd: $(D)/libflex $(D)/portmap $(ARCHIVE)/unfs3-$(UNFS3-VER).tar.gz
 	ln -s nfsd $(PKGPREFIX)/etc/init.d/K01nfsd
 	cp -a $(TARGETPREFIX)/sbin/{unfsd,portmap} $(PKGPREFIX)/sbin
 	$(OPKG_SH) $(CONTROL_DIR)/unfsd
-	$(REMOVE)/unfs3-$(UNFS3-VER) $(PKGPREFIX)
+	$(REMOVE)/unfs3-$(UNFS3-VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
-$(D)/fbshot: $(TARGETPREFIX)/bin/fbshot
+$(D)/fbshot: $(TARGETPREFIX_BASE)/bin/fbshot
 	touch $@
 
-$(TARGETPREFIX)/bin/fbshot: $(ARCHIVE)/fbshot-$(FBSHOT_VER).tar.gz $(PATCHES)/fbshot-0.3-32bit_cs_fb.diff $(D)/libpng | $(TARGETPREFIX)
+$(TARGETPREFIX_BASE)/bin/fbshot: $(ARCHIVE)/fbshot-$(FBSHOT_VER).tar.gz $(PATCHES)/fbshot-0.3-32bit_cs_fb.diff $(D)/libpng | $(TARGETPREFIX)
 	$(UNTAR)/fbshot-$(FBSHOT_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fbshot-$(FBSHOT_VER); \
 		$(PATCH)/fbshot-0.3-32bit_cs_fb.diff; \
@@ -332,7 +340,7 @@ endif
 # newer valgrind is probably only usable with external toolchain and newer glibc (posix threads)
 $(DEPDIR)/valgrind: $(ARCHIVE)/valgrind-$(VALGRIND_VER).tar.bz2 | $(TARGETPREFIX)
 	$(UNTAR)/valgrind-$(VALGRIND_VER).tar.bz2
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/valgrind-$(VALGRIND_VER); \
 		export ac_cv_path_GDB=/opt/pkg/bin/gdb; \
 		$(VALGRIND_EXTRA_EXPORT); \
@@ -348,12 +356,13 @@ $(DEPDIR)/valgrind: $(ARCHIVE)/valgrind-$(VALGRIND_VER).tar.bz2 | $(TARGETPREFIX
 	rm -rf $(PKGPREFIX)/opt/pkg/lib/valgrind/*.a
 	rm -rf $(PKGPREFIX)/opt/pkg/bin/{cg_*,callgrind_*,ms_print} # perl scripts - we don't have perl
 	PKG_VER=$(VALGRIND_VER) $(OPKG_SH) $(CONTROL_DIR)/valgrind
-	$(REMOVE)/valgrind-$(VALGRIND_VER) $(PKGPREFIX)
+	$(REMOVE)/valgrind-$(VALGRIND_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/iperf: $(ARCHIVE)/iperf-$(IPERF-VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/iperf-$(IPERF-VER).tar.gz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/iperf-$(IPERF-VER); \
 		ac_cv_func_malloc_0_nonnull=yes \
 		$(BUILDENV) ./configure \
@@ -367,7 +376,8 @@ $(D)/iperf: $(ARCHIVE)/iperf-$(IPERF-VER).tar.gz | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)/.remove
 	install -D -m 0755 $(PKGPREFIX)/opt/pkg/bin/iperf $(TARGETPREFIX)/opt/pkg/bin/iperf
 	PKG_VER=$(IPERF-VER) $(OPKG_SH) $(CONTROL_DIR)/iperf
-	$(REMOVE)/iperf-$(IPERF-VER) $(PKGPREFIX)
+	$(REMOVE)/iperf-$(IPERF-VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/tcpdump: $(D)/libpcap $(ARCHIVE)/tcpdump-$(TCPDUMP-VER).tar.gz | $(TARGETPREFIX)
@@ -380,12 +390,13 @@ $(D)/tcpdump: $(D)/libpcap $(ARCHIVE)/tcpdump-$(TCPDUMP-VER).tar.gz | $(TARGETPR
 		make install DESTDIR=$(PKGPREFIX)
 	rm -rf $(PKGPREFIX)/.remove $(PKGPREFIX)/sbin/tcpdump.*
 	PKG_VER=$(TCPDUMP-VER) $(OPKG_SH) $(CONTROL_DIR)/tcpdump
-	$(REMOVE)/tcpdump-$(TCPDUMP-VER) $(PKGPREFIX)
+	$(REMOVE)/tcpdump-$(TCPDUMP-VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/ntp-$(NTP_VER).tar.gz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/ntp-$(NTP_VER); \
 		$(PATCH)/ntp-remove-buildtime.patch; \
 		$(BUILDENV) ./configure \
@@ -402,12 +413,13 @@ $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 	rm $(PKGPREFIX)/bin/*
 	rm -rf $(PKGPREFIX)/share
 	PKG_VER=$(NTP_VER) $(OPKG_SH) $(CONTROL_DIR)/ntp
-	$(REMOVE)/ntp-$(NTP_VER) $(PKGPREFIX)
+	$(REMOVE)/ntp-$(NTP_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/wget: $(D)/e2fsprogs $(D)/openssl $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TARGETPREFIX)
 	$(UNTAR)/wget-$(WGET_VER).tar.xz
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/wget-$(WGET_VER); \
 		ac_cv_path_POD2MAN=no \
 		$(BUILDENV) ./configure \
@@ -430,7 +442,8 @@ $(D)/wget: $(D)/e2fsprogs $(D)/openssl $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TA
 	PKG_VER=$(WGET_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/wget
-	$(REMOVE)/wget-$(WGET_VER) $(PKGPREFIX)
+	$(REMOVE)/wget-$(WGET_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 
@@ -467,7 +480,8 @@ $(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.g
 	PKG_VER=$(OPENVPN_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/openvpn
-	$(REMOVE)/openvpn-$(OPENVPN_VER) $(PKGPREFIX)
+	$(REMOVE)/openvpn-$(OPENVPN_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
@@ -482,6 +496,7 @@ $(D)/killproc: $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz | $(TARGETPREFIX)
 	touch $@
 
 $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/ncftp-$(NCFTP_VER)-src.tar.bz2
 	set -e; cd $(BUILD_TMP)/ncftp-$(NCFTP_VER); \
 		CC=$(TARGET)-gcc $(BUILDENV) \
@@ -504,7 +519,8 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 	PKG_VER=$(NCFTP_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ncftp
-	$(REMOVE)/ncftp-$(NCFTP_VER) $(PKGPREFIX)
+	$(REMOVE)/ncftp-$(NCFTP_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 ifeq ($(PLATFORM), nevis)

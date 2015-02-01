@@ -31,7 +31,7 @@ $(D)/libmad: $(ARCHIVE)/libmad-$(MAD_VER).tar.gz | $(TARGETPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libmad.so.* $(PKGPREFIX)/lib
 	$(OPKG_SH) $(CONTROL_DIR)/libmad
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libid3tag: $(D)/zlib $(ARCHIVE)/libid3tag-$(ID3TAG_VER)$(ID3TAG_SUBVER).tar.gz | $(TARGETPREFIX)
@@ -47,13 +47,13 @@ $(D)/libid3tag: $(D)/zlib $(ARCHIVE)/libid3tag-$(ID3TAG_VER)$(ID3TAG_SUBVER).tar
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libid3tag.so.* $(PKGPREFIX)/lib
 	$(OPKG_SH) $(CONTROL_DIR)/libid3tag
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 # obsoleted by giflib, but might still be needed by some 3rd party binaries
 # to make sure it is not used to build stuff, it is not installed in TARGETPREFIX
 $(D)/libungif: $(ARCHIVE)/libungif-$(UNGIF_VER).tar.bz2
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/libungif-$(UNGIF_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/libungif-$(UNGIF_VER); \
 		rm -f config.guess; \
@@ -65,6 +65,7 @@ $(D)/libungif: $(ARCHIVE)/libungif-$(UNGIF_VER).tar.bz2
 	rm -rf $(PKGPREFIX)/.remove $(PKGPREFIX)/include $(PKGPREFIX)/lib/libungif.?? $(PKGPREFIX)/lib/libungif.a
 	$(OPKG_SH) $(CONTROL_DIR)/libungif
 	$(REMOVE)/libungif-$(UNGIF_VER) $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/giflib: $(D)/giflib-$(GIFLIB_VER)
@@ -85,7 +86,7 @@ $(D)/giflib-$(GIFLIB_VER): $(ARCHIVE)/giflib-$(GIFLIB_VER).tar.bz2 | $(TARGETPRE
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/giflib
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libcurl: $(D)/libcurl-$(CURL_VER)
@@ -111,16 +112,14 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 		chmod 755 $(HOSTPREFIX)/bin/curl-config; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm $(PKGPREFIX)/bin/curl-config
-	mkdir -p $(PKGPREFIX)/usr
-	mv $(PKGPREFIX)/share $(PKGPREFIX)/usr
-	ln -sf usr/share $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(REMOVE)/pkg-lib; mkdir $(BUILD_TMP)/pkg-lib
 	cd $(PKGPREFIX) && rm -rf share usr include lib/pkgconfig lib/*.so lib/*a .remove/ && mv lib $(BUILD_TMP)/pkg-lib
 	PKG_VER=$(CURL_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/curl/curl
-	rm -rf $(PKGPREFIX)/*
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX)
 	mv $(BUILD_TMP)/pkg-lib/* $(PKGPREFIX)/
 	PKG_VER=$(CURL_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
@@ -129,7 +128,8 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 	$(REWRITE_LIBTOOL)/libcurl.la
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcurl.pc
 	rm -rf $(TARGETPREFIX)/.remove
-	$(REMOVE)/curl-$(CURL_VER) $(PKGPREFIX) $(BUILD_TMP)/pkg-lib
+	$(REMOVE)/curl-$(CURL_VER) $(BUILD_TMP)/pkg-lib
+	$(RM_PKGPREFIX)
 	touch $@
 
 # no Package, since it's only linked statically for now also only install static lib
@@ -185,7 +185,7 @@ $(D)/libpng-$(PNG_VER): $(ARCHIVE)/libpng-$(PNG_VER).tar.xz $(D)/zlib | $(TARGET
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libpng$(PNG_VER_X).so.* $(PKGPREFIX)/lib
 	PKG_VER=$(PNG_VER) $(OPKG_SH) $(CONTROL_DIR)/libpng$(PNG_VER_X)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 
@@ -242,7 +242,7 @@ $(D)/freetype-$(FREETYPE_VER): $(D)/libpng $(ARCHIVE)/freetype-$(FREETYPE_VER).t
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/libfreetype
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 ## build both libjpeg.so.62 and libjpeg.so.8
@@ -271,7 +271,7 @@ $(D)/libjpeg-turbo-$(JPEG_TURBO_VER): $(ARCHIVE)/libjpeg-turbo-$(JPEG_TURBO_VER)
 	cp -a $(TARGETPREFIX)/lib/libjpeg.so.* $(PKGPREFIX)/lib
 	PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		PKG_VER=$(JPEG_TURBO_VER) $(OPKG_SH) $(CONTROL_DIR)/libjpeg
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 # openssl seems to have problem with parallel builds, so use "make" instead of "$(MAKE)"
@@ -311,7 +311,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
 	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8 && \
 	chmod 0755 $(TARGETPREFIX)/lib/libcrypto.so.* $(TARGETPREFIX)/lib/libssl.so.*
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	if [ ! "$(PLATFORM)" = "nevis" ]; then \
 		mkdir -p $(PKGPREFIX)/bin; \
@@ -324,7 +324,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
 	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
 	rm -rf $(TARGETPREFIX)/.TEMP
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 
@@ -333,7 +333,8 @@ NEVIS_XML2_FLAGS = --without-iconv --with-minimum
 endif
 
 $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
-	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz $(PKGPREFIX)
+	rm -fr $(BUILD_TMP)/libxml2-$(LIBXML2_VER).tar.gz
+	$(RM_PKGPREFIX)
 	$(UNTAR)/libxml2-$(LIBXML2_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/libxml2-$(LIBXML2_VER); \
 		$(CONFIGURE) \
@@ -362,7 +363,8 @@ $(D)/libxml2: $(ARCHIVE)/libxml2-$(LIBXML2_VER).tar.gz | $(TARGETPREFIX)
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/libxml2
-	$(REMOVE)/libxml2-$(LIBXML2_VER) $(PKGPREFIX)
+	$(REMOVE)/libxml2-$(LIBXML2_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 ifeq ($(BOXARCH), arm)
@@ -526,7 +528,8 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(ARCHIVE)/ffmpeg-$(FFMPEG
 	rm -rf $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/lib/*.so $(PKGPREFIX)/.remove
 	PKG_VER=$(FFMPEG_VER) PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ffmpeg
-	$(REMOVE)/ffmpeg-$(FFMPEG_VER) $(PKGPREFIX)
+	$(REMOVE)/ffmpeg-$(FFMPEG_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 ncurses-prereq:
@@ -558,7 +561,7 @@ $(D)/libncurses: $(ARCHIVE)/ncurses-$(NCURSES_VER).tar.gz | ncurses-prereq $(TAR
 	# deliberately ignore libforms and libpanel - not yet needed
 	cp -a $(TARGETPREFIX)/lib/libncurses.so.* $(PKGPREFIX)/lib
 	$(OPKG_SH) $(CONTROL_DIR)/libncurses
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libdvbsi++: $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2 \
@@ -603,7 +606,7 @@ $(D)/openthreads: | $(TARGETPREFIX) find-lzma
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libOpenThreads.so.* $(PKGPREFIX)/lib
 	PKG_VER=13083 $(OPKG_SH) $(CONTROL_DIR)/libOpenThreads
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libogg: $(ARCHIVE)/libogg-$(OGG_VER).tar.gz | $(TARGETPREFIX)
@@ -743,7 +746,8 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/lua
-	$(REMOVE)/lua-$(LUA_VER) $(PKGPREFIX)
+	$(REMOVE)/lua-$(LUA_VER)
+	$(RM_PKGPREFIX)
 	touch $@ 
 
 $(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
@@ -755,7 +759,7 @@ $(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPRE
 	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove
 
 $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/luaposix-$(LUAPOSIX_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/luaposix-$(LUAPOSIX_VER); \
 		$(PATCH)/luaposix-fix-build.patch && \
@@ -781,11 +785,12 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/luaposix
-	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
+	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/Lua-cURL$(LUACURL_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/Lua-cURL$(LUACURL_VER); \
 		$(PATCH)/lua-curl-Makefile.diff; \
@@ -817,7 +822,8 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 	PKG_VER=$(LUACURL_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
 			$(OPKG_SH) $(CONTROL_DIR)/luacurl
-	$(REMOVE)/Lua-cURL$(LUACURL_VER) $(PKGPREFIX)
+	$(REMOVE)/Lua-cURL$(LUACURL_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 HDX=0
@@ -848,12 +854,13 @@ $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/libiconv
-	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
+	$(REMOVE)/libiconv-$(ICONV_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 endif
 
 $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/fuse-$(FUSE_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-$(FUSE_VER); \
 		$(CONFIGURE) --prefix= --mandir=/.remove; \
@@ -877,7 +884,8 @@ ifeq ($(PLATFORM), nevis)
 	ln -s load-fuse $(PKGPREFIX)/etc/init.d/S56load-fuse
 	PKG_DEP="fuse.ko" PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
 endif
-	$(REMOVE)/fuse-$(FUSE_VER) $(PKGPREFIX)
+	$(REMOVE)/fuse-$(FUSE_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/readline: $(ARCHIVE)/readline-$(READLINE_VER).tar.gz | $(TARGETPREFIX)
@@ -934,7 +942,7 @@ $(D)/wpa_supplicant: $(ARCHIVE)/wpa_supplicant-$(WPA_SUPPLICANT_VER).tar.gz $(D)
 
 #libsigc++: typesafe Callback Framework for C++
 $(D)/libsigc++: $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/libsigc++-$(LIBSIGCPP_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/libsigc++-$(LIBSIGCPP_VER); \
 		$(CONFIGURE) -prefix= \
@@ -952,7 +960,7 @@ $(D)/libsigc++: $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz | $(TARGETPREFIX)
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/libsigc++
 	$(REMOVE)/libsigc++-$(LIBSIGCPP_VER)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	touch $@
 
 SDL2_CONFIGURE = \
