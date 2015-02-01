@@ -283,26 +283,50 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 		./Configure shared no-hw no-engine linux-generic32 --prefix=/ --openssldir=/.remove; \
 		make depend; \
 		make all; \
-		make install_sw INSTALL_PREFIX=$(TARGETPREFIX)
+		make install_sw INSTALL_PREFIX=$(TARGETPREFIX)/.TEMP
+	mkdir -p $(PKG_CONFIG_PATH)
+	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/openssl.pc $(PKG_CONFIG_PATH)
+	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/libcrypto.pc $(PKG_CONFIG_PATH)
+	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/libssl.pc $(PKG_CONFIG_PATH)
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/openssl.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcrypto.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libssl.pc
-	pushd $(TARGETPREFIX)/lib && \
-	ln -sf libcrypto.so.$(OPENSSL_VER) libcrypto.so.0.9.7 && \
-	ln -sf libssl.so.$(OPENSSL_VER) libssl.so.0.9.7 && \
-	ln -sf libcrypto.so.$(OPENSSL_VER) libcrypto.so.0.9.8 && \
-	ln -sf libssl.so.$(OPENSSL_VER) libssl.so.0.9.8 && \
-	chmod 0755 $(TARGETPREFIX)/lib/libcrypto.so.* $(TARGETPREFIX)/lib/libssl.so.*
+	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/include
+	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+	cp -frd $(TARGETPREFIX)/.TEMP/include/openssl $(TARGETPREFIX)$(EXT_LIB_PATH)/include
+	if [ ! "$(PLATFORM)" = "nevis" ]; then \
+		mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
+		cp -a $(TARGETPREFIX)/.TEMP/bin/openssl $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
+		cp -a $(TARGETPREFIX)/.TEMP/bin/c_rehash $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
+	fi;
+	cp -a $(TARGETPREFIX)/.TEMP/lib/lib{crypto,ssl}.so* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+	pushd $(TARGETPREFIX)$(EXT_LIB_PATH)/lib && \
+	if [ "$(OPENSSL_VER)" = "1.0.1" ]; then \
+		OPENSSL_VER_X=1.0.0; \
+	else \
+		OPENSSL_VER_X=$(OPENSSL_VER); \
+	fi; \
+	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.7 && \
+	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.7 && \
+	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
+	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8 && \
+	chmod 0755 $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/libcrypto.so.* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/libssl.so.*
 	rm -rf $(PKGPREFIX)
-	mkdir -p $(PKGPREFIX)/lib
-	cp -a $(TARGETPREFIX)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)/lib
+	mkdir -p $(PKGPREFIX)$(EXT_LIB_PATH)/lib
+	if [ ! "$(PLATFORM)" = "nevis" ]; then \
+		mkdir -p $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
+		cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/bin/openssl $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
+		cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/bin/c_rehash $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
+	fi;
+	cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)$(EXT_LIB_PATH)/lib
 	PKG_VER=$(OPENSSL_VER)$(OPENSSL_SUBVER) \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
 	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
-	rm -r $(TARGETPREFIX)/.remove $(TARGETPREFIX)/bin/openssl $(TARGETPREFIX)/bin/c_rehash
+	rm -rf $(TARGETPREFIX)/.TEMP
 	rm -rf $(PKGPREFIX)
 	touch $@
+
 
 ifeq ($(PLATFORM), nevis)
 NEVIS_XML2_FLAGS = --without-iconv --with-minimum

@@ -115,10 +115,10 @@ BUILD       ?= $(shell /usr/share/libtool/config.guess 2>/dev/null || /usr/share
 BUILD_TOOLS ?= /Data/Cross/build-tools
 
 TARGETLIB       = $(TARGETPREFIX)/lib
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
+TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)$(EXT_LIB_PATH)/include
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
-TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB)
+TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB) -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib
 LD_FLAGS        = $(TARGET_LDFLAGS)
 
 VPATH = $(D)

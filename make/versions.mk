@@ -247,7 +247,7 @@ ifeq ($(PLATFORM), apollo)
 CURL_VER=7.38.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=1.0.0
+OPENSSL_VER=1.0.1
 OPENSSL_SUBVER=l
 endif
 
@@ -256,7 +256,7 @@ ifeq ($(PLATFORM), kronos)
 CURL_VER=7.38.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=1.0.0
+OPENSSL_VER=1.0.1
 OPENSSL_SUBVER=l
 endif
 
