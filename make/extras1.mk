@@ -90,7 +90,7 @@ $(D)/xupnpd: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 		make embedded \
 			CC=$(TARGET)-gcc \
 			STRIP=$(TARGET)-strip \
-			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib"; \
+			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)/lib"; \
 	rm -rf $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/bin
 	cp -a $(SOURCE_DIR)/xupnp/src/xupnpd $(PKGPREFIX)/bin

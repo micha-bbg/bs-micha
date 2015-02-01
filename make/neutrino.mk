@@ -83,7 +83,7 @@ neutrino-deps: $(NEUTRINO_DEPS)
 
 N_LDFLAGS =
 #N_LDFLAGS = -L$(TARGETPREFIX)/lib -lcurl -lssl -lcrypto -ldl
-N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)/lib
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
 
 # finally we can build outside of the source directory

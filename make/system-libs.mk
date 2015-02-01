@@ -291,16 +291,16 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/openssl.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcrypto.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libssl.pc
-	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/include
-	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
-	cp -frd $(TARGETPREFIX)/.TEMP/include/openssl $(TARGETPREFIX)$(EXT_LIB_PATH)/include
+	mkdir -p $(TARGETPREFIX)/include
+	mkdir -p $(TARGETPREFIX)/lib
+	cp -frd $(TARGETPREFIX)/.TEMP/include/openssl $(TARGETPREFIX)/include
 	if [ ! "$(PLATFORM)" = "nevis" ]; then \
-		mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/bin/openssl $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/bin/c_rehash $(TARGETPREFIX)$(EXT_LIB_PATH)/bin; \
+		mkdir -p $(TARGETPREFIX)/bin; \
+		cp -a $(TARGETPREFIX)/.TEMP/bin/openssl $(TARGETPREFIX)/bin; \
+		cp -a $(TARGETPREFIX)/.TEMP/bin/c_rehash $(TARGETPREFIX)/bin; \
 	fi;
-	cp -a $(TARGETPREFIX)/.TEMP/lib/lib{crypto,ssl}.so* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
-	pushd $(TARGETPREFIX)$(EXT_LIB_PATH)/lib && \
+	cp -a $(TARGETPREFIX)/.TEMP/lib/lib{crypto,ssl}.so* $(TARGETPREFIX)/lib
+	pushd $(TARGETPREFIX)/lib && \
 	if [ "$(OPENSSL_VER)" = "1.0.1" ]; then \
 		OPENSSL_VER_X=1.0.0; \
 	else \
@@ -310,15 +310,15 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.7 && \
 	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
 	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8 && \
-	chmod 0755 $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/libcrypto.so.* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/libssl.so.*
+	chmod 0755 $(TARGETPREFIX)/lib/libcrypto.so.* $(TARGETPREFIX)/lib/libssl.so.*
 	rm -rf $(PKGPREFIX)
-	mkdir -p $(PKGPREFIX)$(EXT_LIB_PATH)/lib
+	mkdir -p $(PKGPREFIX)/lib
 	if [ ! "$(PLATFORM)" = "nevis" ]; then \
-		mkdir -p $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
-		cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/bin/openssl $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
-		cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/bin/c_rehash $(PKGPREFIX)$(EXT_LIB_PATH)/bin; \
+		mkdir -p $(PKGPREFIX)/bin; \
+		cp -a $(TARGETPREFIX)/bin/openssl $(PKGPREFIX)/bin; \
+		cp -a $(TARGETPREFIX)/bin/c_rehash $(PKGPREFIX)/bin; \
 	fi;
-	cp -a $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)$(EXT_LIB_PATH)/lib
+	cp -a $(TARGETPREFIX)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)/lib
 	PKG_VER=$(OPENSSL_VER)$(OPENSSL_SUBVER) \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
@@ -726,22 +726,22 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
 		fi; \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
-		$(MAKE) install INSTALL_TOP=$(PKGPREFIX)$(EXT_LIB_PATH); \
-		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX)$(EXT_LIB_PATH); \
-	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.so.$(LUA_VER)
-	cd $(TARGETPREFIX)$(EXT_LIB_PATH)/lib; ln -sf liblua.so.$(LUA_VER) $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.so
+		$(MAKE) install INSTALL_TOP=$(PKGPREFIX); \
+		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX); \
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so.$(LUA_VER)
+	cd $(TARGETPREFIX)/lib; ln -sf liblua.so.$(LUA_VER) $(TARGETPREFIX)/lib/liblua.so
 	install -m 0644 -D $(BUILD_TMP)/lua-$(LUA_VER)/etc/lua.pc $(PKG_CONFIG_PATH)/lua.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/lua.pc
-	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(PKGPREFIX)$(EXT_LIB_PATH)/lib/liblua.so.$(LUA_VER)
-	rm -rf $(PKGPREFIX)$(EXT_LIB_PATH)/.remove
-	rm -rf $(PKGPREFIX)$(EXT_LIB_PATH)/include
-	rm -f $(PKGPREFIX)$(EXT_LIB_PATH)/lib/*.a
-	rm -f $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/liblua.a
-	rm -rf $(TARGETPREFIX)$(EXT_LIB_PATH)/.remove
-	cd $(PKGPREFIX)$(EXT_LIB_PATH)/lib; ln -sf liblua.so.$(LUA_VER) $(PKGPREFIX)$(EXT_LIB_PATH)/lib/liblua.so
+	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/liblua.so.$(LUA_VER) $(PKGPREFIX)/lib/liblua.so.$(LUA_VER)
+	rm -rf $(PKGPREFIX)/.remove
+	rm -rf $(PKGPREFIX)/include
+	rm -f $(PKGPREFIX)/lib/*.a
+	rm -f $(TARGETPREFIX)/lib/liblua.a
+	rm -rf $(TARGETPREFIX)/.remove
+	cd $(PKGPREFIX)/lib; ln -sf liblua.so.$(LUA_VER) $(PKGPREFIX)/lib/liblua.so
 	PKG_VER=$(LUA_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/lua
 	$(REMOVE)/lua-$(LUA_VER) $(PKGPREFIX)
 	touch $@ 
@@ -763,8 +763,8 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 		export LUA=$(HOSTPREFIX)/bin/lua-$(LUA_VER) && \
 		$(CONFIGURE) --prefix= \
 			--exec-prefix= \
-			--libdir=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
-			--datarootdir=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
+			--libdir=/lib/lua/$(LUA_ABIVER) \
+			--datarootdir=/share/lua/$(LUA_ABIVER) \
 			--mandir=/.remove \
 			--docdir=/.remove \
 			--enable-silent-rules \
@@ -772,14 +772,14 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 		$(MAKE) && \
 		$(MAKE) install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/.remove
-	cp -frd $(PKGPREFIX)$(EXT_LIB_PATH)/lib/* $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
-	cp -frd $(PKGPREFIX)$(EXT_LIB_PATH)/share/* $(TARGETPREFIX)$(EXT_LIB_PATH)/share
+	cp -frd $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
+	cp -frd $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
 	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/curses_c.la
 	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/posix_c.la
-	rm -fr $(PKGPREFIX)$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER)/*.la
+	rm -fr $(PKGPREFIX)/lib/lua/$(LUA_ABIVER)/*.la
 	PKG_VER=$(LUA_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)$(EXT_LIB_PATH)` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/luaposix
 	$(REMOVE)/luaposix-$(LUAPOSIX_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
 	touch $@
@@ -791,17 +791,17 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 		$(PATCH)/lua-curl-Makefile.diff; \
 		$(BUILDENV) \
 			CC=$(CROSS_DIR)/bin/$(TARGET)-gcc \
-			LUA_CMOD=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
-			LUA_LMOD=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
-			LIBDIR=$(TARGETPREFIX)$(EXT_LIB_PATH)/lib \
-			LUA_INC=$(TARGETPREFIX)$(EXT_LIB_PATH)/include \
+			LUA_CMOD=/lib/lua/$(LUA_ABIVER) \
+			LUA_LMOD=/share/lua/$(LUA_ABIVER) \
+			LIBDIR=$(TARGETPREFIX)/lib \
+			LUA_INC=$(TARGETPREFIX)/include \
 			CURL_LIBS="-L$(TARGETPREFIX)/lib -lcurl" \
 			$(MAKE); \
-			LUA_CMOD=$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER) \
-			LUA_LMOD=$(EXT_LIB_PATH)/share/lua/$(LUA_ABIVER) \
+			LUA_CMOD=/lib/lua/$(LUA_ABIVER) \
+			LUA_LMOD=/share/lua/$(LUA_ABIVER) \
 			DESTDIR=$(PKGPREFIX) \
 			$(MAKE) install
-	mkdir -p $(TARGETPREFIX)$(EXT_LIB_PATH)
+	mkdir -p $(TARGETPREFIX)
 	if [ "$(PLATFORM)" = "nevis" ]; then \
 		cp -frd $(PKGPREFIX)/lib $(TARGETPREFIX); \
 		cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share; \
@@ -813,9 +813,9 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 	if [ "$(PLATFORM)" = "kronos" ]; then \
 		cp -frd $(PKGPREFIX)/usr $(TARGETPREFIX); \
 	fi;
-	$(CROSS_DIR)/bin/$(TARGET)-strip $(TARGETPREFIX)$(EXT_LIB_PATH)/lib/lua/$(LUA_ABIVER)/lcurl.so
+	$(CROSS_DIR)/bin/$(TARGET)-strip $(TARGETPREFIX)/lib/lua/$(LUA_ABIVER)/lcurl.so
 	PKG_VER=$(LUACURL_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)$(EXT_LIB_PATH)/lib` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
 			$(OPKG_SH) $(CONTROL_DIR)/luacurl
 	$(REMOVE)/Lua-cURL$(LUACURL_VER) $(PKGPREFIX)
 	touch $@

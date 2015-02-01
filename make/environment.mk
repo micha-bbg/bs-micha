@@ -24,7 +24,6 @@ NEUTRINO_BRANCH_NEVIS       ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_NEVIS)
 NEUTRINO_WORK_BRANCH_NEVIS  ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_NEVIS)
-EXT_LIB_PATH                 =
 endif
 
 ifeq ($(PLATFORM), apollo)
@@ -38,7 +37,6 @@ NEUTRINO_BRANCH_APOLLO      ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_APOLLO)
 NEUTRINO_WORK_BRANCH_APOLLO ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_APOLLO)
-EXT_LIB_PATH                 =
 endif
 
 ifeq ($(PLATFORM), kronos)
@@ -52,7 +50,6 @@ NEUTRINO_BRANCH_KRONOS      ?= next-cc
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_KRONOS)
 NEUTRINO_WORK_BRANCH_KRONOS ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
-EXT_LIB_PATH                 =/usr
 endif
 
 CROSS_PATH     ?= cross
@@ -115,10 +112,10 @@ BUILD       ?= $(shell /usr/share/libtool/config.guess 2>/dev/null || /usr/share
 BUILD_TOOLS ?= /Data/Cross/build-tools
 
 TARGETLIB       = $(TARGETPREFIX)/lib
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)$(EXT_LIB_PATH)/include
+TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)/include
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
-TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB) -L$(TARGETPREFIX)$(EXT_LIB_PATH)/lib
+TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB) -L$(TARGETPREFIX)/lib
 LD_FLAGS        = $(TARGET_LDFLAGS)
 
 VPATH = $(D)
@@ -132,8 +129,8 @@ PKG_CONFIG = $(HOSTPREFIX)/bin/$(TARGET)-pkg-config
 PKG_CONFIG_PATH = $(TARGETPREFIX)/lib/pkgconfig
 
 # helper-"functions":
-REWRITE_LIBTOOL = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)$(EXT_LIB_PATH)/lib'," $(TARGETPREFIX)$(EXT_LIB_PATH)/lib
-REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)$(EXT_LIB_PATH)',"
+REWRITE_LIBTOOL = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/lib'," $(TARGETPREFIX)/lib
+REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)',"
 REWRITE_LIBTOOL_OPT = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/opt/pkg/lib'," $(TARGETPREFIX)/opt/pkg/lib
 REWRITE_PKGCONF_OPT = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)/opt/pkg',"
 
