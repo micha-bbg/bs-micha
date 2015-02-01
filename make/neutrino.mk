@@ -13,11 +13,6 @@ NEUTRINO_DEPS += libiconv
 endif
 NEUTRINO_PKG_DEPS =
 
-
-
-#N_CFLAGS   = -Wall -W -Wshadow -g -O2 -fno-strict-aliasing -rdynamic -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
-#N_CPPFLAGS = -I$(TARGETPREFIX)/include
-
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
 N_CFLAGS += -fmax-errors=10
@@ -43,9 +38,7 @@ N_CFLAGS += -DUSE_NEVIS_GXA
 HW_TYPE = --with-boxtype=coolstream
 endif
 
-#N_CFLAGS += -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)/include/linux/dvb -I$(TARGETPREFIX)/include/include/freetype2
-
-N_CPPFLAGS = -I$(TARGETPREFIX)/include
+N_CPPFLAGS = -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include
 N_CPPFLAGS += -Werror -Wsign-compare
 
 N_CONFIG_OPTS =
@@ -73,17 +66,17 @@ N_CONFIG_OPTS += --enable-flac
 NEUTRINO_DEPS += libFLAC
 endif
 
-NEUTRINO_DEPS2 += $(TARGETPREFIX)/bin/fbshot
+NEUTRINO_DEPS2 += $(TARGETPREFIX_BASE)/bin/fbshot
 
 neutrino-deps: $(NEUTRINO_DEPS)
 
 # the original build script links against openssl, but it is not needed at all.
 # libcurl is picked up by configure anyway, so not needed here.
-# N_LDFLAGS  = -L$(TARGETPREFIX)/lib -lcurl -lssl -lcrypto -ldl
+# N_LDFLAGS  = -L$(TARGETPREFIX_BASE)/lib -lcurl -lssl -lcrypto -ldl
 
 N_LDFLAGS =
-#N_LDFLAGS = -L$(TARGETPREFIX)/lib -lcurl -lssl -lcrypto -ldl
-N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX)/lib
+#N_LDFLAGS = -L$(TARGETPREFIX_BASE)/lib -lcurl -lssl -lcrypto -ldl
+N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
 
 # finally we can build outside of the source directory
@@ -112,8 +105,8 @@ $(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk
 
 HOMEPAGE = "http://gitorious.org/neutrino-hd"
 IMGNAME  = "HD-Neutrino"
-$(PKGPREFIX)/.version \
-$(TARGETPREFIX)/.version:
+$(PKGPREFIX_BASE)/.version \
+$(TARGETPREFIX_BASE)/.version:
 	echo "version=1200`date +%Y%m%d%H%M`"	 > $@
 	echo "creator=$(MAINTAINER)"		>> $@
 	echo "imagename=$(IMGNAME)"		>> $@
@@ -125,7 +118,7 @@ $(TARGETPREFIX)/.version:
 		echo "builddate=$$C$$D $${F:1}" >> $@
 	echo "homepage=$(HOMEPAGE)"		>> $@
 
-PHONY += $(PKGPREFIX)/.version $(TARGETPREFIX)/.version
+PHONY += $(PKGPREFIX_BASE)/.version $(TARGETPREFIX_BASE)/.version
 
 $(D)/neutrino: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 	rm -f $(N_OBJDIR)/src/neutrino # trigger relinking, to pick up newly built libstb-hal
@@ -133,43 +126,43 @@ $(D)/neutrino: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 		git checkout $(NEUTRINO_WORK_BRANCH)
 	cd $(BASE_DIR)
 	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
-	$(MAKE) -C $(N_OBJDIR) all     DESTDIR=$(TARGETPREFIX)
-	$(MAKE) -C $(N_OBJDIR) install DESTDIR=$(TARGETPREFIX)
-	+make $(TARGETPREFIX)/.version
+	$(MAKE) -C $(N_OBJDIR) all     DESTDIR=$(TARGETPREFIX_BASE)
+	$(MAKE) -C $(N_OBJDIR) install DESTDIR=$(TARGETPREFIX_BASE)
+	+make $(TARGETPREFIX_BASE)/.version
 	: touch $@
 
 neutrino-pkg: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2) $(NEUTRINO_PKG_DEPS)
-	rm -rf $(PKGPREFIX) $(BUILD_TMP)/neutrino-control
+	rm -rf $(PKGPREFIX_BASE) $(BUILD_TMP)/neutrino-control
 	cd $(N_HD_SOURCE); \
 		git checkout $(NEUTRINO_WORK_BRANCH)
 	cd $(BASE_DIR)
-#	$(MAKE) -C $(N_OBJDIR) clean   DESTDIR=$(TARGETPREFIX)
+#	$(MAKE) -C $(N_OBJDIR) clean   DESTDIR=$(TARGETPREFIX_BASE)
 	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
-	$(MAKE) -C $(N_OBJDIR) all     DESTDIR=$(TARGETPREFIX)
-	$(MAKE) -C $(N_OBJDIR) install DESTDIR=$(PKGPREFIX)
+	$(MAKE) -C $(N_OBJDIR) all     DESTDIR=$(TARGETPREFIX_BASE)
+	$(MAKE) -C $(N_OBJDIR) install DESTDIR=$(PKGPREFIX_BASE)
 ifeq ($(PLATFORM), nevis)
-	install -D -m 0755 skel-root/nevis/etc/init.d/start_neutrino $(PKGPREFIX)/etc/init.d/start_neutrino;
+	install -D -m 0755 skel-root/nevis/etc/init.d/start_neutrino $(PKGPREFIX_BASE)/etc/init.d/start_neutrino;
 endif
 ifeq ($(PLATFORM), apollo)
-	install -D -m 0755 skel-root/apollo/bin/autorun.sh $(PKGPREFIX)/bin/autorun.sh;
+	install -D -m 0755 skel-root/apollo/bin/autorun.sh $(PKGPREFIX_BASE)/bin/autorun.sh;
 endif
 ifeq ($(PLATFORM), kronos)
-	install -D -m 0755 skel-root/kronos/bin/autorun.sh $(PKGPREFIX)/bin/autorun.sh;
+	install -D -m 0755 skel-root/kronos/bin/autorun.sh $(PKGPREFIX_BASE)/bin/autorun.sh;
 endif
-	make $(PKGPREFIX)/.version
+	make $(PKGPREFIX_BASE)/.version
 	cp -a $(CONTROL_DIR)/$(NEUTRINO_PKG) $(BUILD_TMP)/neutrino-control
-	DEP=`$(TARGET)-objdump -p $(PKGPREFIX)/bin/neutrino | awk '/NEEDED/{print $$2}' | sort` && \
+	DEP=`$(TARGET)-objdump -p $(PKGPREFIX_BASE)/bin/neutrino | awk '/NEEDED/{print $$2}' | sort` && \
 		DEP=`echo $$DEP` && \
 		DEP="$${DEP// /, }" && \
 		sed -i "s/@DEP@/$$DEP/" $(BUILD_TMP)/neutrino-control/control
 	sed -i 's/^\(Depends:.*\)$$/\1, cs-drivers/' $(BUILD_TMP)/neutrino-control/control
-	install -p -m 0755 $(TARGETPREFIX)/bin/fbshot $(PKGPREFIX)/bin/
-	ln -s usr/share $(PKGPREFIX)/share
-	find $(PKGPREFIX)/share/tuxbox/neutrino/locale/ -type f \
+	install -p -m 0755 $(TARGETPREFIX_BASE)/bin/fbshot $(PKGPREFIX_BASE)/bin/
+	ln -s usr/share $(PKGPREFIX_BASE)/share
+	find $(PKGPREFIX_BASE)/share/tuxbox/neutrino/locale/ -type f \
 		! -name deutsch.locale ! -name english.locale ! -name nederlands.locale ! -name slovak.locale | xargs --no-run-if-empty rm
 	# ignore the .version file for package  comparison
 	DONT_STRIP=$(NEUTRINO_NOSTRIP) CMP_IGNORE="/.version" $(OPKG_SH) $(BUILD_TMP)/neutrino-control
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 
 neutrino-clean:
 	-make -C $(N_OBJDIR) uninstall
