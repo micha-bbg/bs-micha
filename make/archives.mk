@@ -80,7 +80,7 @@ $(ARCHIVE)/libjpeg-turbo-$(JPEG_TURBO_VER).tar.gz:
 	$(WGET) http://sourceforge.net/projects/libjpeg-turbo/files/$(JPEG_TURBO_VER)/libjpeg-turbo-$(JPEG_TURBO_VER).tar.gz
 
 $(ARCHIVE)/giflib-$(GIFLIB_VER).tar.bz2:
-	$(WGET) http://sourceforge.net/projects/giflib/files/giflib-5.x/$(notdir $@)
+	$(WGET) http://sourceforge.net/projects/giflib/files/$(notdir $@)
 
 $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2:
 	$(WGET) http://www.saftware.de/libdvbsi++/libdvbsi++-$(LIBDVBSI_VER).tar.bz2

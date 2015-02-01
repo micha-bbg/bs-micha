@@ -1,6 +1,6 @@
 
 # opkg; a lightweight package management system based on Ipkg
-OPKG_VER=0.2.2
+OPKG_VER=0.2.4
 
 ## for recent versions, the SVN trunk rev is used:
 #OPKG_SVN=635
@@ -53,7 +53,7 @@ NCURSES_VER=5.6
 NTP_VER=4.2.6p5
 
 # ntfs-3g; file system driver for the NTFS file system, enabling read/write support of NTFS file systems
-NTFS_3G_VER=2013.1.13
+NTFS_3G_VER=2014.2.15
 
 # fbshot;  a small program that allowes you to take screenshots from the framebuffer
 FBSHOT_VER=0.3
@@ -61,10 +61,10 @@ FBSHOT_VER=0.3
 # libpng; reference library for reading and writing PNGs
 #PNG_VER_X=12
 #PNG_VER=1.2.50
-PNG_VER_X=15
-PNG_VER=1.5.17
-#PNG_VER_X=16
-#PNG_VER=1.6.1
+#PNG_VER_X=15
+#PNG_VER=1.5.17
+PNG_VER_X=16
+PNG_VER=1.6.6
 
 # libdid3tag; writing, reading and manipulating ID3 tags
 ID3TAG_VER=0.15.1
@@ -80,7 +80,7 @@ MAD_VER=0.15.1b
 #FREETYPE_NANO=1
 FREETYPE_MAJOR=2
 FREETYPE_MINOR=5
-FREETYPE_MICRO=3
+FREETYPE_MICRO=5
 FREETYPE_NANO=n/a
 FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR).$(FREETYPE_MICRO)
 ifeq ($(FREETYPE_NANO), n/a)
@@ -92,13 +92,13 @@ endif
 FREETYPE_VER_OLD=2.3.12
 
 # libjpeg-turbo; a derivative of libjpeg for x86 and x86-64 processors which uses SIMD instructions (MMX, SSE2, etc.) to accelerate baseline JPEG compression and decompression
-JPEG_TURBO_VER=1.2.1
+JPEG_TURBO_VER=1.4.0
 
 # libungif; converting images
 UNGIF_VER=4.1.4
 
 # giflib: replaces libungif
-GIFLIB_VER=5.0.5
+GIFLIB_VER=5.1.1
 
 # libdvbsi++; libdvbsi++ is a open source C++ library for parsing DVB Service Information and MPEG-2 Program Specific Information.
 LIBDVBSI_VER=0.3.6
@@ -235,7 +235,7 @@ NCFTP_VER=3.2.5
 ifeq ($(PLATFORM), nevis)
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.38.0
+CURL_VER=7.40.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=0.9.8
@@ -244,7 +244,7 @@ endif
 
 ifeq ($(PLATFORM), apollo)
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.38.0
+CURL_VER=7.40.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.1
@@ -253,7 +253,7 @@ endif
 
 ifeq ($(PLATFORM), kronos)
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.38.0
+CURL_VER=7.40.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.1
