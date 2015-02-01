@@ -98,8 +98,13 @@ DEPDIR       = $(D)
 
 CCACHE       = /usr/bin/ccache
 HOSTPREFIX   = $(BASE_DIR)/host
+ifeq ($(PLATFORM), nevis)
 TARGETPREFIX = $(BASE_DIR)/root
 PKGPREFIX    = $(BUILD_TMP)/pkg
+else
+TARGETPREFIX = $(BASE_DIR)/root/usr
+PKGPREFIX    = $(BUILD_TMP)/pkg/usr
+endif
 FROOTFS      = $(BASE_DIR)/root-flash
 SOURCE_DIR   = $(BASE_DIR)/source
 PLUGIN_DIR   = $(SOURCE_DIR)/neutrino-hd-plugins
@@ -111,11 +116,15 @@ SCRIPTS      = $(BASE_DIR)/scripts/target
 BUILD       ?= $(shell /usr/share/libtool/config.guess 2>/dev/null || /usr/share/libtool/config/config.guess)
 BUILD_TOOLS ?= /Data/Cross/build-tools
 
+ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX)/include
+else
+TARGETLIB       = $(TARGETPREFIX)/lib -L$$(dirname $(TARGETPREFIX))/lib
+endif
+TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
-TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB) -L$(TARGETPREFIX)/lib
+TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB)
 LD_FLAGS        = $(TARGET_LDFLAGS)
 
 VPATH = $(D)

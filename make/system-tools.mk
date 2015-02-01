@@ -508,7 +508,7 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 	touch $@
 
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/wget $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage
 endif
