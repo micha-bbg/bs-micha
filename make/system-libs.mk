@@ -392,6 +392,7 @@ FFMPEG_CONFIGURE = \
 --enable-decoder=subviewer1 \
 --enable-decoder=xsub \
 --enable-decoder=pgssub \
+--enable-decoder=movtext \
 --enable-decoder=mp3 \
 --enable-decoder=flac \
 --enable-decoder=vorbis \
@@ -508,7 +509,6 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(ARCHIVE)/ffmpeg-$(FFMPEG
 			--prefix=/; \
 		$(MAKE); \
 		make install DESTDIR=$(PKGPREFIX)
-	rm -rf $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	if ! test -e $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)/version.h; then \
 		set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
