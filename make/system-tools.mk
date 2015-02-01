@@ -507,6 +507,48 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 	$(REMOVE)/ncftp-$(NCFTP_VER) $(PKGPREFIX)
 	touch $@
 
+ifeq ($(PLATFORM), nevis)
+$(D)/parted: $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREFIX)
+else
+$(D)/parted: $(D)/libiconv $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREFIX)
+endif
+	## parted-3.2-device-mapper.patch: https://lists.gnu.org/archive/html/bug-parted/2014-07/msg00036.html
+	$(UNTAR)/parted-$(PARTED_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/parted-$(PARTED_VER); \
+		$(PATCH)/parted-3.2-device-mapper.patch; \
+		if [ "$(PLATFORM)" = "nevis" ]; then \
+			ICONV_X=""; \
+			LIBS_X="-luuid"; \
+		else \
+			ICONV_X="--with-libiconv-prefix=$(TARGETPREFIX)"; \
+			LIBS_X="-luuid -liconv"; \
+		fi; \
+		$(CONFIGURE) \
+			--prefix= \
+			$$ICONV_X \
+			--disable-device-mapper \
+			--infodir=/.remove \
+			--mandir=/.remove; \
+		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="$$LIBS_X"; \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
+	rm -fr $(PKGPREFIX)/include
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a
+	rm -f $(PKGPREFIX)/lib/*.la
+	rm -f $(PKGPREFIX)/lib/*.so
+	$(REWRITE_LIBTOOL)/libparted.la
+	$(REWRITE_LIBTOOL)/libparted-fs-resize.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libparted.pc
+	PKG_VER=$(PARTED_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/parted
+	rm -fr $(BUILD_TMP)/parted-$(PARTED_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
 ifeq ($(PLATFORM), nevis)

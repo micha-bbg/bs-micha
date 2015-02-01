@@ -1,0 +1,11 @@
+Package: parted
+Version: @VER@-1
+Description: The GNU Parted disk partitioning
+Section: base
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.gnu.org/software/parted/
+Source:
+Depends: @DEP@
+Provides: @PROV@

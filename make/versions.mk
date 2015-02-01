@@ -154,7 +154,7 @@ FUSE_VER=2.9.2
 
 READLINE_VER = 6.2
 
-PARTED_VER = 3.1
+PARTED_VER = 3.2
 
 # mc; the famous midnight commander
 MC_VER=4.8.10

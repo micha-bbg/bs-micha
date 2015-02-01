@@ -892,22 +892,6 @@ $(D)/readline: $(ARCHIVE)/readline-$(READLINE_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/readline-$(READLINE_VER) $(TARGETPREFIX)/.remove
 	touch $@
 
-$(D)/parted: $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREFIX)
-	$(UNTAR)/parted-$(PARTED_VER).tar.xz
-	set -e; cd $(BUILD_TMP)/parted-$(PARTED_VER); \
-		$(CONFIGURE) \
-			--prefix= \
-			--disable-device-mapper \
-			--infodir=/.remove \
-			--mandir=/.remove; \
-		$(MAKE) all; \
-		make install DESTDIR=$(TARGETPREFIX)
-	$(REWRITE_LIBTOOL)/libparted.la
-	$(REWRITE_LIBTOOL)/libparted-fs-resize.la
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libparted.pc
-	rm -fr $(BUILD_TMP)/parted-$(PARTED_VER) $(TARGETPREFIX)/.remove
-	touch $@
-
 $(D)/libnl: $(ARCHIVE)/libnl-$(LIBNL_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/libnl-$(LIBNL_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/libnl-$(LIBNL_VER); \
