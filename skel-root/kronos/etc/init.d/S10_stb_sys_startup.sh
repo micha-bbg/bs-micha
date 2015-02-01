@@ -30,6 +30,8 @@ loadmod()
 echo ""
 echo "Running loadmod now ......."
 
+echo ""
+loadmod ipv6
 loadmod tun
 DEVNET=/dev/net
 mkdir -p $DEVNET
@@ -58,6 +60,9 @@ echo ""
 loadmod frontpanel
 create_node "cs_display"
 ln -sf /dev/cs_display /dev/display
+
+logoview --background --timeout=20 --logo=/var/share/icons/logo.jpg
+
 echo ""
 dt -t"Loading drivers..."
 
