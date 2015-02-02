@@ -16,7 +16,7 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		--with-opkglibdir=/var/lib \
 		--mandir=$(BUILD_TMP)/.remove; \
 		$(MAKE) all exec_prefix=; \
-		make install prefix=$(PKGPREFIX); \
+		make install prefix=$(PKGPREFIX_BASE); \
 		make distclean; \
 		CFLAGS= \
 		./configure \
@@ -28,21 +28,21 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		$(MAKE) all; \
 		cp -a src/opkg-cl $(HOSTPREFIX)/bin
 	install -d -m 0755 $(PKGPREFIX_BASE)/var/lib/opkg
-	install -d -m 0755 $(PKGPREFIX)/etc/opkg
-	ln -sf opkg-cl $(PKGPREFIX)/bin/opkg # convenience symlink
-	OPKG_EXAMPLE=$(PKGPREFIX)/etc/opkg/opkg.conf.example; \
+	install -d -m 0755 $(PKGPREFIX_BASE)/etc/opkg
+	ln -sf opkg-cl $(PKGPREFIX_BASE)/bin/opkg # convenience symlink
+	OPKG_EXAMPLE=$(PKGPREFIX_BASE)/etc/opkg/opkg.conf.example; \
 		echo "# example config file, copy to opkg.conf and edit"					 > $$OPKG_EXAMPLE; \
 		echo "src server http://server/dist/$(PLATFORM)"						>> $$OPKG_EXAMPLE; \
 		echo "# add an optional cache directory, important if not enough flash memory is available!"	>> $$OPKG_EXAMPLE; \
 		echo "# directory must exist before executing of opkg"						>> $$OPKG_EXAMPLE; \
 		echo "option cache /tmp/media/sda1/.opkg"							>> $$OPKG_EXAMPLE
-	$(REMOVE)/opkg-$(OPKG_VER) $(PKGPREFIX)/.remove
-	cp -fr $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
-	rm -fr $(PKGPREFIX)/share
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libopkg.pc
-	$(REWRITE_LIBTOOL)/libopkg.la
-	rm -rf $(PKGPREFIX)/lib $(PKGPREFIX)/include
+	$(REMOVE)/opkg-$(OPKG_VER) $(PKGPREFIX_BASE)/.remove
+	cp -fr $(PKGPREFIX_BASE)/share/* $(TARGETPREFIX_BASE)/share
+	rm -fr $(PKGPREFIX_BASE)/share
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/libopkg.pc
+	$(REWRITE_LIBTOOL_BASE)/libopkg.la
+	rm -rf $(PKGPREFIX_BASE)/lib $(PKGPREFIX_BASE)/include
 	PKG_VER=$(OPKG_VER) $(OPKG_SH) $(CONTROL_DIR)/opkg
 	$(RM_PKGPREFIX)
 	touch $@
