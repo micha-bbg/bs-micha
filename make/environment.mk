@@ -140,10 +140,13 @@ PATH := $(BUILD_TOOLS)/bin:$(HOSTPREFIX)/bin:$(CROSS_DIR)/bin:$(PATH):/sbin:/usr
 
 PKG_CONFIG = $(HOSTPREFIX)/bin/$(TARGET)-pkg-config
 PKG_CONFIG_PATH = $(TARGETPREFIX)/lib/pkgconfig
+PKG_CONFIG_PATH_BASE = $(TARGETPREFIX_BASE)/lib/pkgconfig
 
 # helper-"functions":
 REWRITE_LIBTOOL = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/lib'," $(TARGETPREFIX)/lib
 REWRITE_PKGCONF = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)',"
+REWRITE_LIBTOOL_BASE = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX_BASE)/lib'," $(TARGETPREFIX_BASE)/lib
+REWRITE_PKGCONF_BASE = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX_BASE)',"
 REWRITE_LIBTOOL_OPT = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/opt/pkg/lib'," $(TARGETPREFIX)/opt/pkg/lib
 REWRITE_PKGCONF_OPT = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)/opt/pkg',"
 
