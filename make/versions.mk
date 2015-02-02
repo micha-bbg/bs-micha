@@ -35,7 +35,7 @@ endif
 WGET_VER=1.15
 
 # e2fsprogs; filesystem utilities for use with the ext[x] filesystem
-E2FSPROGS_VER=1.42.8
+E2FSPROGS_VER=1.42.12
 
 # vsftpd; a small, tiny and "v"ery "s"ecure "ftp" deamon
 VSFTPD_VER=3.0.2

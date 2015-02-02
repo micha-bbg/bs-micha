@@ -36,7 +36,8 @@ $(ARCHIVE)/wget-$(WGET_VER).tar.xz:
 	$(WGET) http://ftp.gnu.org/gnu/wget/$(notdir $@)
 
 $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz:
-	$(WGET) http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-$(E2FSPROGS_VER).tar.gz
+	$(WGET) http://sourceforge.net/projects/e2fsprogs/files/e2fsprogs/v$(E2FSPROGS_VER)/e2fsprogs-$(E2FSPROGS_VER).tar.gz
+#	$(WGET) http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-$(E2FSPROGS_VER).tar.gz
 
 $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz:
 	$(WGET) https://security.appspot.com/downloads/vsftpd-$(VSFTPD_VER).tar.gz
