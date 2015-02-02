@@ -177,14 +177,15 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 			--disable-static \
 			; \
 		$(MAKE); \
-		make install DESTDIR=$(PKGPREFIX)
-	$(REMOVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER) $(PKGPREFIX)/.remove
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	rm -r $(PKGPREFIX)/include $(PKGPREFIX)/lib/*.la $(PKGPREFIX)/lib/*.so \
-		$(PKGPREFIX)/lib/pkgconfig/ $(PKGPREFIX)/bin/ntfs-3g.{usermap,secaudit}
-	find $(PKGPREFIX) -name '*lowntfs*' | xargs rm
+		make install DESTDIR=$(PKGPREFIX_BASE)
+	$(REMOVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER) $(PKGPREFIX_BASE)/.remove
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/libntfs-3g.pc
+	rm -r $(PKGPREFIX_BASE)/include $(PKGPREFIX_BASE)/lib/*.la $(PKGPREFIX_BASE)/lib/*.so \
+		$(PKGPREFIX_BASE)/lib/pkgconfig/ $(PKGPREFIX_BASE)/bin/ntfs-3g.{usermap,secaudit}
+	find $(PKGPREFIX_BASE) -name '*lowntfs*' | xargs rm
 	PKG_VER=$(NTFS_3G_VER) \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX_BASE)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ntfs-3g
 	$(RM_PKGPREFIX)
 	touch $@
