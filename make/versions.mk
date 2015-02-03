@@ -233,28 +233,25 @@ KILLPROC_VER=2.13
 
 NCFTP_VER=3.2.5
 
-ifeq ($(PLATFORM), nevis)
 # curl; command line tool for transferring data with URL syntax
 CURL_VER=7.40.0
 
+ifeq ($(PLATFORM), nevis)
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=0.9.8
 OPENSSL_SUBVER=ze
 
-else
+LIBXML2_VER = 2.8.0
 
-# curl; command line tool for transferring data with URL syntax
-CURL_VER=7.40.0
+else
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.1
 OPENSSL_SUBVER=l
-endif
 
 LIBXML2_VER = 2.9.1
-ifeq ($(PLATFORM), nevis)
-LIBXML2_VER = 2.8.0
-endif
+endif	# ifeq ($(PLATFORM), nevis)
+
 LIBXSLT_VER = 1.1.28
 
 LIBBLURAY_VER=0.5.0
