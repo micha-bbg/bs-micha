@@ -299,6 +299,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	mkdir -p $(TARGETPREFIX)/include
 	mkdir -p $(TARGETPREFIX)/lib
 	cp -frd $(TARGETPREFIX)/.TEMP/include/openssl $(TARGETPREFIX)/include
+	chmod 0755 $(TARGETPREFIX)/.TEMP/lib/libcrypto.so.* $(TARGETPREFIX)/.TEMP/lib/libssl.so.*
 	if [ "$(BUILD_OPENSSL_BINARY)" = "1" ]; then \
 		mkdir -p $(TARGETPREFIX)/bin; \
 		cp -a $(TARGETPREFIX)/.TEMP/bin/* $(TARGETPREFIX)/bin; \
@@ -316,9 +317,10 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	fi; \
 	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.7 && \
 	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.7 && \
-	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
-	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8 && \
-	chmod 0755 $(TARGETPREFIX)/lib/libcrypto.so.* $(TARGETPREFIX)/lib/libssl.so.*
+	if [ ! "$(OPENSSL_VER)" = "0.9.8" ]; then \
+		ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
+		ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8; \
+	fi;
 	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	if [ "$(BUILD_OPENSSL_BINARY)" = "1" ]; then \

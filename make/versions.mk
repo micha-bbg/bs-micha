@@ -233,25 +233,15 @@ KILLPROC_VER=2.13
 NCFTP_VER=3.2.5
 
 ifeq ($(PLATFORM), nevis)
-
 # curl; command line tool for transferring data with URL syntax
 CURL_VER=7.40.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=0.9.8
-OPENSSL_SUBVER=y
-endif
+OPENSSL_SUBVER=ze
 
-ifeq ($(PLATFORM), apollo)
-# curl; command line tool for transferring data with URL syntax
-CURL_VER=7.40.0
+else
 
-# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=1.0.1
-OPENSSL_SUBVER=l
-endif
-
-ifeq ($(PLATFORM), kronos)
 # curl; command line tool for transferring data with URL syntax
 CURL_VER=7.40.0
 
