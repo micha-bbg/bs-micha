@@ -112,6 +112,11 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 		chmod 755 $(HOSTPREFIX)/bin/curl-config; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm $(PKGPREFIX)/bin/curl-config
+	if [ "$(NO_USR_BUILD)" = "1" ]; then \
+		mkdir -p $(PKGPREFIX)/usr; \
+		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
+		ln -sf usr/share $(PKGPREFIX)/share; \
+	fi;
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	$(REMOVE)/pkg-lib; mkdir $(BUILD_TMP)/pkg-lib
 	cd $(PKGPREFIX) && rm -rf share usr include lib/pkgconfig lib/*.so lib/*a .remove/ && mv lib $(BUILD_TMP)/pkg-lib

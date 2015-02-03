@@ -14,6 +14,11 @@ $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	install -D -m 755 $(SCRIPTS)/vsftpd.init $(PKGPREFIX)/etc/init.d/vsftpd
 	# it is important that vsftpd is started *before* inetd to override busybox ftpd...
 	ln -sf vsftpd $(PKGPREFIX)/etc/init.d/S53vsftpd
+	if [ "$(NO_USR_BUILD)" = "1" ]; then \
+		mkdir -p $(PKGPREFIX)/usr; \
+		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
+		ln -sf usr/share $(PKGPREFIX)/share; \
+	fi;
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
 	PKG_VER=$(VSFTPD_VER) $(OPKG_SH) $(CONTROL_DIR)/vsftpd
 	$(REMOVE)/vsftpd-$(VSFTPD_VER)
@@ -551,6 +556,7 @@ endif
 		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="$$LIBS_X"; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/.remove
+	rm -fr $(PKGPREFIX)/share
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
 	rm -fr $(PKGPREFIX)/include
 	rm -fr $(PKGPREFIX)/lib/pkgconfig
