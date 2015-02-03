@@ -1,0 +1,40 @@
+--- a/vsf_findlibs.sh.orig	2012-03-28 04:17:41.000000000 +0200
++++ b/vsf_findlibs.sh	2015-01-31 15:32:51.947148782 +0100
+@@ -1,8 +1,14 @@
+ #!/bin/sh
+ # Cheesy hacky location of additional link libraries.
+ 
+-locate_library() { [ ! "$1*" = "`echo $1*`" ]; }
+-find_func() { egrep $1 $2 >/dev/null; }
++if [ "$(basename ${TARGETPREFIX})" = "usr" ]; then
++	TARGETPREFIX_X=$(dirname ${TARGETPREFIX})
++else
++	TARGETPREFIX_X=${TARGETPREFIX}
++fi
++
++locate_library() { [ ! "${TARGETPREFIX_X}$1*" = "`echo ${TARGETPREFIX_X}$1*`" ]; }
++find_func() { egrep ${TARGETPREFIX_X}$1 $2 >/dev/null; }
+ 
+ if find_func hosts_access tcpwrap.o; then
+   echo "-lwrap";
+@@ -36,7 +42,7 @@
+ locate_library /lib/libsocket.so && echo "-lsocket";
+ 
+ # Look for libnsl. Solaris needs this.
+-locate_library /lib/libnsl.so && echo "-lnsl";
++# locate_library /lib/libnsl.so && echo "-lnsl";
+ 
+ # Look for libresolv. Solaris needs this.
+ locate_library /lib/libresolv.so && echo "-lresolv";
+@@ -49,9 +55,9 @@
+ 
+ # Look for libcap (capabilities)
+ if locate_library /lib/libcap.so.1; then
+-  echo "/lib/libcap.so.1";
++  echo "${TARGETPREFIX_X}/lib/libcap.so.1";
+ elif locate_library /lib/libcap.so.2; then
+-  echo "/lib/libcap.so.2";
++  echo "${TARGETPREFIX_X}/lib/libcap.so.2";
+ else
+   locate_library /usr/lib/libcap.so && echo "-lcap";
+   locate_library /lib/libcap.so && echo "-lcap";
