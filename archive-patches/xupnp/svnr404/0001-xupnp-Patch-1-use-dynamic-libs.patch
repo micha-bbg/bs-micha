@@ -1,0 +1,104 @@
+From fa39d21022a7d6b07e66288100165450b3683619 Mon Sep 17 00:00:00 2001
+From: "M. Liebmann" <tuxcode.bbg@gmail.com>
+Date: Sun, 26 Jan 2014 02:27:01 +0100
+Subject: [PATCH 1/4] xupnp: Patch #1, use dynamic libs
+
+---
+ src/Makefile | 60 ++++++++++++++++--------------------------------------------
+ 1 file changed, 16 insertions(+), 44 deletions(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index 1622fcd..2a5314e 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -1,15 +1,12 @@
+-LUA     = lua-5.1.4
++LUA     = lua-5.2.3
+ #LUA     = lua-5.2.0
+ STATIC  = false
+ 
+-CFLAGS  = -fno-exceptions -fno-rtti -O2 -I$(LUA) -L$(LUA)
++CFLAGS  = -fno-exceptions -fno-rtti -O2
+ SRC     = main.cpp soap.cpp mem.cpp mcast.cpp luaxlib.cpp luaxcore.cpp luajson.cpp luajson_parser.cpp
++STAGING_DIR = /u01/home/shocker/staff/openwrt/staging_dir
+ LUAMYCFLAGS = -DLUA_USE_LINUX
+ 
+-SDK_8_09 = /u01/home/shocker_old/staff/openwrt_8_09/staging_dir
+-SDK_BACKFIRE = /u01/home/shocker_old/staff/openwrt/staging_dir
+-SDK_BBREAKER = /home/shocker/staff/openwrt/staging_dir
+-
+ ifeq ($(STATIC),true)
+ CFLAGS+=-static
+ LUAMYCFLAGS+=-static
+@@ -36,42 +33,18 @@ x86_bsd:
+ 
+ 
+ # D-Link DIR-320/DD-WRT (mipsel)
+-bcm947x_ddwrt:
+-	$(MAKE) embedded TARGET=bcm947x-ddwrt SDK=$(SDK_8_09)/toolchain-mipsel_gcc3.4.6/mipsel-linux/bin UTILS=$(SDK_8_09)/toolchain-mipsel_gcc3.4.6/libexec/gcc/mipsel-linux-uclibc/3.4.6 STAGING_DIR=$(SDK_8_09)
++bcm947xx_ddwrt:
++	$(MAKE) embedded TARGET=bcm947xx-ddwrt SDK=/u01/home/shocker/staff/openwrt_8_09/staging_dir/toolchain-mipsel_gcc3.4.6/mipsel-linux/bin PATH=$(PATH):/u01/home/shocker/staff/openwrt_8_09/staging_dir/toolchain-mipsel_gcc3.4.6/libexec/gcc/mipsel-linux-uclibc/3.4.6
+ 
+ # OpenWrt Backfire
+-bcm947x_backfire:
+-	$(MAKE) embedded TARGET=bcm947x-bf SDK=$(SDK_BACKFIRE)/toolchain-mipsel_gcc-3.4.6-bcm947xx/mipsel-openwrt-linux/bin UTILS=$(SDK_BACKFIRE)/toolchain-mipsel_gcc-3.4.6-bcm947xx/libexec/gcc/mipsel-openwrt-linux-uclibc/3.4.6 STAGING_DIR=$(SDK_BACKFIRE)
+-
+-ar71xx_backfire:
+-	$(MAKE) embedded TARGET=ar71xx-bf SDK=$(SDK_BACKFIRE)/toolchain-mips_r2_gcc-4.3.3+cs-ar71xx/mips-openwrt-linux/bin UTILS=$(SDK_BACKFIRE)/toolchain-mips_r2_gcc-4.3.3+cs-ar71xx/libexec/gcc/mips-openwrt-linux-uclibc/4.3.3 STAGING_DIR=$(SDK_BACKFIRE)
+-
+-ar231x_backfire:
+-	$(MAKE) embedded TARGET=ar231x-bf SDK=$(SDK_BACKFIRE)/toolchain-mips_gcc-4.3.3+cs-ar231x/mips-openwrt-linux/bin UTILS=$(SDK_BACKFIRE)/toolchain-mips_gcc-4.3.3+cs-ar231x/libexec/gcc/mips-openwrt-linux-uclibc/4.3.3 STAGING_DIR=$(SDK_BACKFIRE)
+-
+-
+-# OpenWrt Barrier Breaker
++bcm947xx:
++	$(MAKE) embedded TARGET=bcm947xx SDK=$(STAGING_DIR)/toolchain-mipsel_gcc-3.4.6-bcm947xx/mipsel-openwrt-linux/bin PATH=$(PATH):$(STAGING_DIR)/toolchain-mipsel_gcc-3.4.6-bcm947xx/libexec/gcc/mipsel-openwrt-linux-uclibc/3.4.6 STAGING_DIR=$(STAGING_DIR)
+ 
+-# Broadcom BCM2708/BCM2835
+-bcm2708:
+-	$(MAKE) embedded TARGET=bcm2708 SDK=$(SDK_BBREAKER)/toolchain-arm_arm1176jzf-s+vfp_gcc-4.8-linaro-bcm2708/arm-openwrt-linux/bin UTILS=$(SDK_BBREAKER)/toolchain-arm_arm1176jzf-s+vfp_gcc-4.8-linaro-bcm2708/libexec/gcc/arm-openwrt-linux-uclibcgnueabi/4.8.3 STAGING_DIR=$(SDK_BBREAKER)
++ar71xx:
++	$(MAKE) embedded TARGET=ar71xx SDK=$(STAGING_DIR)/toolchain-mips_r2_gcc-4.3.3+cs-ar71xx/mips-openwrt-linux/bin PATH=$(PATH):$(STAGING_DIR)/toolchain-mips_r2_gcc-4.3.3+cs-ar71xx/libexec/gcc/mips-openwrt-linux-uclibc/4.3.3 STAGING_DIR=$(STAGING_DIR)
+ 
+-# Broadcom BCM47xx/BCM53xx (MIPS)
+-bcm47xx:
+-	$(MAKE) embedded TARGET=bcm47xx SDK=$(SDK_BBREAKER)/toolchain-mipsel_mips32_gcc-4.8-linaro-bcm47xx/mipsel-openwrt-linux/bin UTILS=$(SDK_BBREAKER)/toolchain-mipsel_mips32_gcc-4.8-linaro-bcm47xx/libexec/gcc/mipsel-openwrt-linux-uclibc/4.8.3 STAGING_DIR=$(SDK_BBREAKER)
+-
+-# Broadcom BCM63xx
+-bcm63xx:
+-	$(MAKE) embedded TARGET=bcm63xx SDK=$(SDK_BBREAKER)/toolchain-mips_mips32_gcc-4.8-linaro-bcm63xx/mips-openwrt-linux/bin UTILS=$(SDK_BBREAKER)/toolchain-mips_mips32_gcc-4.8-linaro-bcm63xx/libexec/gcc/mips-openwrt-linux-uclibc/4.8.3 STAGING_DIR=$(SDK_BBREAKER)
+-
+-# Atheros AR231x/AR5312
+ ar231x:
+-	$(MAKE) embedded TARGET=ar231x SDK=$(SDK_BBREAKER)/toolchain-mips_mips32_gcc-4.8-linaro-ar231x/mips-openwrt-linux/bin UTILS=$(SDK_BBREAKER)/toolchain-mips_mips32_gcc-4.8-linaro-ar231x/libexec/gcc/mips-openwrt-linux-uclibc/4.8.3 STAGING_DIR=$(SDK_BBREAKER)
+-
+-# Atheros AR7xxx/AR9xxx
+-ar7xxx:
+-	$(MAKE) embedded TARGET=ar7xxx SDK=$(SDK_BBREAKER)/toolchain-mips_34kc_gcc-4.8-linaro-ar7xxx/mips-openwrt-linux/bin UTILS=$(SDK_BBREAKER)/toolchain-mips_34kc_gcc-4.8-linaro-ar7xxx/libexec/gcc/mips-openwrt-linux-uclibc/4.8.3 STAGING_DIR=$(SDK_BBREAKER)
+-
++	$(MAKE) embedded TARGET=ar231x SDK=$(STAGING_DIR)/toolchain-mips_gcc-4.3.3+cs-ar231x/mips-openwrt-linux/bin PATH=$(PATH):$(STAGING_DIR)/toolchain-mips_gcc-4.3.3+cs-ar231x/libexec/gcc/mips-openwrt-linux-uclibc/4.3.3 STAGING_DIR=$(STAGING_DIR)
+ 
+ # Other
+ samsung_d:
+@@ -85,12 +58,11 @@ dreambox:
+ 
+ 
+ embedded:
+-	PATH=$(PATH):$(UTILS) make -C $(LUA) CC=$(SDK)/gcc a MYCFLAGS='$(LUAMYCFLAGS)'
+-	$(SDK)/gcc -O2 -c -B$(UTILS) -o md5.o md5c.c
+-	$(SDK)/gcc $(CFLAGS) -B$(UTILS) -DWITH_URANDOM -o xupnpd-$(TARGET) $(SRC) md5.o -llua -lm -ldl
+-	$(SDK)/strip xupnpd-$(TARGET)
++	export PATH
++	export STAGING_DIR
++	$(CC) -O2 -c -o md5.o md5c.c
++	${CC} ${CFLAGS} ${LUAFLAGS} -DWITH_URANDOM -o xupnpd $(SRC) md5.o -llua -lm -ldl -rdynamic
++	${STRIP} xupnpd
+ 
+ clean:
+-	make -C $(LUA) clean
+-	rm -f $(LUA)/liblua.a
+-	rm -f md5.o
++	rm -f md5.o xupnpd
+-- 
+2.2.2
+

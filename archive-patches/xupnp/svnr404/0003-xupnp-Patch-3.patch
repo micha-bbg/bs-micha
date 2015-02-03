@@ -1,0 +1,22 @@
+From da180d0a2c88bef403bb93a90a1c859cb160ab66 Mon Sep 17 00:00:00 2001
+From: "M. Liebmann" <tuxcode.bbg@gmail.com>
+Date: Sun, 26 Jan 2014 22:11:50 +0100
+Subject: [PATCH 3/4] xupnp: Patch #3
+
+---
+ src/.gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 src/.gitignore
+
+diff --git a/src/.gitignore b/src/.gitignore
+new file mode 100644
+index 0000000..f7c3942
+--- /dev/null
++++ b/src/.gitignore
+@@ -0,0 +1,3 @@
++*.o
++*.orig
++xupnpd-*
+-- 
+2.2.2
+

@@ -99,7 +99,6 @@ $(D)/xupnpd: $(D)/lua $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	cp -fd $(SOURCE_DIR)/xupnp/src/playlists/* $(PKGPREFIX)/share/xupnpd/playlists/example > /dev/null 2>&1 || true
 	mkdir -p $(PKGPREFIX)/share/xupnpd/plugins
 	cp -a $(SOURCE_DIR)/xupnp/src/plugins/* $(PKGPREFIX)/share/xupnpd/plugins
-	cp -r $(SOURCE_DIR)/cst-public-plugins-scripts-lua/xupnpd/* $(PKGPREFIX)/share/xupnpd/plugins
 	mkdir -p $(PKGPREFIX)/share/xupnpd/profiles
 	cp -a $(SOURCE_DIR)/xupnp/src/profiles/* $(PKGPREFIX)/share/xupnpd/profiles
 	mkdir -p $(PKGPREFIX)/share/xupnpd/ui
@@ -110,6 +109,11 @@ $(D)/xupnpd: $(D)/lua $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
 	install -m 0755 -D $(SCRIPTS)/xupnpd.init $(PKGPREFIX)/etc/init.d/xupnpd
 	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/S80xupnpd
 	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/K20xupnpd
+	if [ "$(NO_USR_BUILD)" = "1" ]; then \
+		mkdir -p $(PKGPREFIX)/usr; \
+		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
+		ln -sf usr/share $(PKGPREFIX)/share; \
+	fi;
 	cp -frd $(PKGPREFIX)/. $(TARGETPREFIX)
 	cd $(SOURCE_DIR)/xupnp; \
 		XUPNP_SVN=$$(git svn find-rev master --before HEAD); \
