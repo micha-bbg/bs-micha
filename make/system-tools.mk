@@ -95,9 +95,11 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		$(BUILDENV) $(MAKE) busybox CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"; \
 		make install CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"
 	install -m 0755 $(SCRIPTS)/run-parts $(PKGPREFIX)/bin
-	mv $(PKGPREFIX_BASE)/usr $(PKGPREFIX_BASE)/.TEMP
-	mv -f $(PKGPREFIX_BASE)/.TEMP/* $(PKGPREFIX_BASE)
-	rm -fr $(PKGPREFIX_BASE)/.TEMP
+	if [ ! "$(PLATFORM)" = "nevis" ]; then \
+		mv $(PKGPREFIX_BASE)/usr $(PKGPREFIX_BASE)/.TEMP; \
+		mv -f $(PKGPREFIX_BASE)/.TEMP/* $(PKGPREFIX_BASE); \
+		rm -fr $(PKGPREFIX_BASE)/.TEMP; \
+	fi;
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
 	cp -a $(CONTROL_DIR)/busybox $(BUILD_TMP)/bb-control
 	# "auto-provides/conflicts". let's hope opkg can deal with this...
