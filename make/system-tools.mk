@@ -406,7 +406,7 @@ $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/ntp-$(NTP_VER).tar.gz
 	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/ntp-$(NTP_VER); \
-		$(PATCH)/ntp-remove-buildtime.patch; \
+		$(PATCH)/ntp-remove-buildtime2.patch; \
 		$(BUILDENV) ./configure \
 			--build=$(BUILD) \
 			--host=$(TARGET) \
@@ -414,12 +414,12 @@ $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 			--prefix= \
 			--disable-tick \
 			--disable-tickadj \
+			--with-yielding-select=yes \
 			; \
 		$(MAKE) install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/bin/ntpdate $(TARGETPREFIX)/sbin/
 	mv -v $(PKGPREFIX)/bin/ntpdate $(PKGPREFIX)/sbin/
-	rm $(PKGPREFIX)/bin/*
-	rm -rf $(PKGPREFIX)/share
+	rm -rf $(PKGPREFIX)/bin $(PKGPREFIX)/include $(PKGPREFIX)/lib $(PKGPREFIX)/libexec $(PKGPREFIX)/share
 	PKG_VER=$(NTP_VER) $(OPKG_SH) $(CONTROL_DIR)/ntp
 	$(REMOVE)/ntp-$(NTP_VER)
 	$(RM_PKGPREFIX)

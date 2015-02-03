@@ -51,7 +51,7 @@ PROCPS_VER=3.2.8
 NCURSES_VER=5.6
 
 # ntp; synchronize system clock over a network
-NTP_VER=4.2.6p5
+NTP_VER=4.2.8
 
 # ntfs-3g; file system driver for the NTFS file system, enabling read/write support of NTFS file systems
 NTFS_3G_VER=2014.2.15
