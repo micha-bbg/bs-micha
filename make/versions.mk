@@ -151,7 +151,7 @@ TZ_VER = 2013d
 ICONV_VER=1.14
 
 # FUSE; filesystems in userspace
-FUSE_VER=2.9.2
+FUSE_VER=2.9.3
 
 READLINE_VER = 6.2
 

@@ -887,18 +887,16 @@ $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
 	set -e; cd $(PKGPREFIX); \
 		rm -rf dev etc lib/pkgconfig include .remove; \
 		rm lib/*.so lib/*.la lib/*.a
-ifeq ($(PLATFORM), apollo)
-	PKG_DEP=" " PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
-endif
-ifeq ($(PLATFORM), kronos)
-	PKG_DEP=" " PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
-endif
-ifeq ($(PLATFORM), nevis)
-	install -m 755 -D $(SCRIPTS)/load-fuse.init \
-		$(PKGPREFIX)/etc/init.d/load-fuse
-	ln -s load-fuse $(PKGPREFIX)/etc/init.d/S56load-fuse
-	PKG_DEP="fuse.ko" PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse
-endif
+	if [ "$(PLATFORM)" = "nevis" ]; then \
+		install -m 755 -D $(SCRIPTS)/load-fuse.init $(PKGPREFIX)/etc/init.d/load-fuse; \
+		PKG_DEP="fuse.ko `opkg-find-requires.sh $(PKGPREFIX)`" \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse; \
+	else \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse; \
+	fi;
 	$(REMOVE)/fuse-$(FUSE_VER)
 	$(RM_PKGPREFIX)
 	touch $@
