@@ -577,6 +577,33 @@ endif
 	$(RM_PKGPREFIX)
 	touch $@
 
+$(D)/exfat-utils: $(ARCHIVE)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/exfat-utils-$(EXFAT_UTILS_VER); \
+		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
+		$(SCONS) DESTDIR=$(PKGPREFIX)/sbin install
+	cp -a $(PKGPREFIX)/sbin $(TARGETPREFIX)
+	PKG_VER=$(EXFAT_UTILS_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/exfat-utils
+	rm -fr $(BUILD_TMP)/exfat-utils-$(EXFAT_UTILS_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER); \
+		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
+		if [ "$(PLATFORM)" = "nevis" ]; then LIBS_X=""; else LIBS_X="-liconv"; fi; \
+		$(SCONS) DESTDIR=$(PKGPREFIX)/sbin install
+	cp -a $(PKGPREFIX)/sbin $(TARGETPREFIX)
+	PKG_VER=$(FUSE_EXFAT_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/fuse-exfat
+	rm -fr $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
 ifeq ($(PLATFORM), nevis)

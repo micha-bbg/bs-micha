@@ -1,0 +1,11 @@
+Package: exfat-utils
+Version: @VER@-1
+Description: Free exFAT file system implementation
+Section: base
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://code.google.com/p/exfat/
+Source: https://code.google.com/p/exfat/wiki/Downloads
+Depends: @DEP@
+Provides:
