@@ -6,7 +6,7 @@ export CONFIG_SITE
 BASE_DIR := $(shell pwd)
 -include $(BASE_DIR)/config.mk
 
-PLATFORM ?= nevis
+PLATFORM ?= kronos
 ifeq ($(PLATFORM), apollo)
 BOXMODEL ?= tank
 else
@@ -28,7 +28,7 @@ NO_USR_BUILD		     = 1
 endif
 
 ifeq ($(PLATFORM), apollo)
-TARGET_APOLLO               ?= arm-pnx8400-linux-uclibcgnueabi
+TARGET_APOLLO               ?= arm-cortex-linux-uclibcgnueabi
 TARGET                       = $(TARGET_APOLLO)
 N_HD_SOURCE                  = $(N_HD_SOURCE_APOLLO)
 KVERSION_APOLLO             ?= 2.6.34.14
@@ -42,7 +42,7 @@ NO_USR_BUILD		     = 0
 endif
 
 ifeq ($(PLATFORM), kronos)
-TARGET_KRONOS               ?= arm-pnx8400-linux-uclibcgnueabi
+TARGET_KRONOS               ?= arm-cortex-linux-uclibcgnueabi
 TARGET                       = $(TARGET_KRONOS)
 N_HD_SOURCE                  = $(N_HD_SOURCE_KRONOS)
 KVERSION_KRONOS             ?= 2.6.34.14
@@ -121,7 +121,7 @@ PACKAGE_DIR  = $(BASE_DIR)/pkgs/opkg
 SCRIPTS      = $(BASE_DIR)/scripts/target
 
 BUILD       ?= $(shell /usr/share/libtool/config.guess 2>/dev/null || /usr/share/libtool/config/config.guess)
-BUILD_TOOLS ?= /Data/Cross/build-tools
+BUILD_TOOLS ?= /Data/coolstream/Cross/build-tools
 
 ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib
