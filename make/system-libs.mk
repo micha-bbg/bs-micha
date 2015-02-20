@@ -737,11 +737,10 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 		$(PATCH)/lua-lvm.c.diff && \
 		sed -i 's/^V=.*/V= $(LUA_ABIVER)/' etc/lua.pc && \
 		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc; \
-		if [ "$(PLATFORM)" = "apollo" ]; then \
-			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
-		fi; \
-		if [ "$(PLATFORM)" = "kronos" ]; then \
-			$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
+		if [ 0 ]; then \
+			if [ ! "$(PLATFORM)" = "nevis" ]; then \
+				$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
+			fi; \
 		fi; \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
 		$(MAKE) install INSTALL_TOP=$(PKGPREFIX); \
@@ -768,7 +767,7 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 $(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	cd $(BUILD_TMP)/lua-$(LUA_VER) && \
-		$(PATCH)/lua-01-fix-coolstream-build.patch && \
+		$(PATCH)/$(PLATFORM)/lua-01-fix-coolstream-build.patch && \
 		$(MAKE) linux
 	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/lua $@
 	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove
@@ -831,7 +830,7 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 		cp -frd $(PKGPREFIX)/share/lua $(TARGETPREFIX)/share; \
 	fi;
 	if [ "$(PLATFORM)" = "kronos" ]; then \
-		cp -frd $(PKGPREFIX)/usr $(TARGETPREFIX); \
+		cp -frd $(PKGPREFIX)/* $(TARGETPREFIX); \
 	fi;
 	$(CROSS_DIR)/bin/$(TARGET)-strip $(TARGETPREFIX)/lib/lua/$(LUA_ABIVER)/lcurl.so
 	PKG_VER=$(LUACURL_VER) \

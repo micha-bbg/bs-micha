@@ -40,14 +40,15 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	cp -fr $(PKGPREFIX_BASE)/share/* $(TARGETPREFIX_BASE)/share
 	rm -fr $(PKGPREFIX_BASE)/share
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/libopkg.pc
+	mv $(PKG_CONFIG_PATH_BASE)/libopkg.pc $(PKG_CONFIG_PATH)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libopkg.pc
 	$(REWRITE_LIBTOOL_BASE)/libopkg.la
 	rm -rf $(PKGPREFIX_BASE)/lib $(PKGPREFIX_BASE)/include
 	PKG_VER=$(OPKG_VER) $(OPKG_SH) $(CONTROL_DIR)/opkg
 	$(RM_PKGPREFIX)
 	touch $@
 
-XUPNP_DEFREF = r392
+XUPNP_DEFREF = r404
 XUPNP_DL_PATH = http://tsdemuxer.googlecode.com/svn/trunk/xupnpd
 
 $(SOURCE_DIR)/xupnp/src/Makefile:
@@ -62,7 +63,7 @@ $(SOURCE_DIR)/xupnp/src/Makefile:
 		ID=$$(git svn find-rev $(XUPNP_DEFREF)); \
 		git checkout $$ID; \
 		git checkout -b work; \
-		git am $(PATCHES)/xupnp/*.patch; \
+		git am $(PATCHES)/xupnp/svn$(XUPNP_DEFREF)/*.patch; \
 		git rebase master
 
 xupnpd-update: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)

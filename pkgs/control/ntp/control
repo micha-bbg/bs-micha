@@ -7,4 +7,4 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://www.ntp.org
 Source:
-Depends:
+Depends: @DEP@

@@ -159,8 +159,10 @@ $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
 		:
 	$(REMOVE)/e2fsprogs-$(E2FSPROGS_VER) $(PKGPREFIX_BASE)/.remove
 	cp -a --remove-destination $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
-	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/uuid.pc
-	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/blkid.pc
+	mv $(PKG_CONFIG_PATH_BASE)/uuid.pc $(PKG_CONFIG_PATH)
+	mv $(PKG_CONFIG_PATH_BASE)/blkid.pc $(PKG_CONFIG_PATH)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/uuid.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
 	cd $(PKGPREFIX_BASE) && rm sbin/badblocks sbin/dumpe2fs sbin/logsave \
 		sbin/e2undo sbin/filefrag sbin/e2freefrag bin/chattr bin/lsattr bin/uuidgen \
 		lib/*.so && rm -r lib/pkgconfig include && rm -f lib/*.a
@@ -192,7 +194,8 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 		make install DESTDIR=$(PKGPREFIX_BASE)
 	$(REMOVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER) $(PKGPREFIX_BASE)/.remove
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH_BASE)/libntfs-3g.pc
+	mv $(PKG_CONFIG_PATH_BASE)/libntfs-3g.pc $(PKG_CONFIG_PATH)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libntfs-3g.pc
 	rm -r $(PKGPREFIX_BASE)/include $(PKGPREFIX_BASE)/lib/*.la $(PKGPREFIX_BASE)/lib/*.so \
 		$(PKGPREFIX_BASE)/lib/pkgconfig/ $(PKGPREFIX_BASE)/bin/ntfs-3g.{usermap,secaudit}
 	find $(PKGPREFIX_BASE) -name '*lowntfs*' | xargs rm
@@ -407,7 +410,7 @@ $(D)/tcpdump: $(D)/libpcap $(ARCHIVE)/tcpdump-$(TCPDUMP-VER).tar.gz | $(TARGETPR
 	$(RM_PKGPREFIX)
 	touch $@
 
-$(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
+$(D)/ntp: $(D)/openssl $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/ntp-$(NTP_VER).tar.gz
 	$(RM_PKGPREFIX)
 	set -e; cd $(BUILD_TMP)/ntp-$(NTP_VER); \
@@ -420,12 +423,16 @@ $(D)/ntp: $(ARCHIVE)/ntp-$(NTP_VER).tar.gz | $(TARGETPREFIX)
 			--disable-tick \
 			--disable-tickadj \
 			--with-yielding-select=yes \
+			--without-ntpsnmpd \
+			--disable-debugging \
 			; \
 		$(MAKE) install DESTDIR=$(PKGPREFIX)
 	cp -a $(PKGPREFIX)/bin/ntpdate $(TARGETPREFIX)/sbin/
 	mv -v $(PKGPREFIX)/bin/ntpdate $(PKGPREFIX)/sbin/
 	rm -rf $(PKGPREFIX)/bin $(PKGPREFIX)/include $(PKGPREFIX)/lib $(PKGPREFIX)/libexec $(PKGPREFIX)/share
-	PKG_VER=$(NTP_VER) $(OPKG_SH) $(CONTROL_DIR)/ntp
+	PKG_VER=$(NTP_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/ntp
 	$(REMOVE)/ntp-$(NTP_VER)
 	$(RM_PKGPREFIX)
 	touch $@
