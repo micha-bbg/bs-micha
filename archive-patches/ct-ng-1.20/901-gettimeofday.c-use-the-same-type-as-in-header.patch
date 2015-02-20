@@ -1,0 +1,25 @@
+From 34c0112854f35922ab6e109b2538a4265436113a Mon Sep 17 00:00:00 2001
+From: Peter S. Mazinger <ps.m@gmx.net>
+Date: Sat, 16 Apr 2011 11:05:33 +0000
+Subject: gettimeofday.c: use the same type as in header
+
+Signed-off-by: Peter S. Mazinger <ps.m@gmx.net>
+Signed-off-by: Bernhard Reutner-Fischer <rep.dot.nop@gmail.com>
+---
+diff --git a/libc/sysdeps/linux/common/gettimeofday.c b/libc/sysdeps/linux/common/gettimeofday.c
+index 52490fe..d9b2a22 100644
+--- a/libc/sysdeps/linux/common/gettimeofday.c
++++ b/libc/sysdeps/linux/common/gettimeofday.c
+@@ -10,9 +10,5 @@
+ #include <sys/syscall.h>
+ #include <sys/time.h>
+
+-#ifdef __USE_BSD
+-_syscall2(int, gettimeofday, struct timeval *, tv, struct timezone *, tz)
+-#else
+-_syscall2(int, gettimeofday, struct timeval *, tv, void *, tz)
+-#endif
++_syscall2(int, gettimeofday, struct timeval *, tv, __timezone_ptr_t, tz)
+ libc_hidden_def(gettimeofday)
+--
+cgit v0.9.1
