@@ -54,24 +54,22 @@ $(CROSS_BASE):
 	mkdir -p $(CROSS_BASE)
 
 cst-libs: | $(TARGETPREFIX)
-	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/libs/*.so $(TARGETPREFIX_BASE)/lib
+	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs/*.so $(TARGETPREFIX_BASE)/lib
 
 cst-firmware: | $(TARGETPREFIX)
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/firmware $(TARGETPREFIX_BASE)/lib
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/firmware $(TARGETPREFIX_BASE)/lib
 
 cst-modules-apollo: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
-#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
 
 cst-modules-kronos: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
-#	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(shell echo $(KVERSION) | awk '{ printf "%s\n", substr( $$0, 0, 6) }') $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
 
 cst-modules-nevis: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)/drivers/$(KVERSION)-nevis $(TARGETPREFIX_BASE)/lib/modules
+	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION)-nevis $(TARGETPREFIX_BASE)/lib/modules
 
 $(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)
 	# stlinux RPM puts libstdc++ into /usr/lib...

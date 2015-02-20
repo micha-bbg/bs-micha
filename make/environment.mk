@@ -25,6 +25,7 @@ NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_NEVIS)
 NEUTRINO_WORK_BRANCH_NEVIS  ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_NEVIS)
 NO_USR_BUILD		     = 1
+DRIVERS_3x                   = $(DRIVERS_3x_NEVIS)
 endif
 
 ifeq ($(PLATFORM), apollo)
@@ -39,6 +40,7 @@ NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_APOLLO)
 NEUTRINO_WORK_BRANCH_APOLLO ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_APOLLO)
 NO_USR_BUILD		     = 0
+DRIVERS_3x                   = $(DRIVERS_3x_APOLLO)
 endif
 
 ifeq ($(PLATFORM), kronos)
@@ -53,6 +55,7 @@ NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_KRONOS)
 NEUTRINO_WORK_BRANCH_KRONOS ?= next-cc
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
 NO_USR_BUILD		     = 0
+DRIVERS_3x                   = $(DRIVERS_3x_KRONOS)
 endif
 
 CROSS_PATH     ?= cross
@@ -125,10 +128,12 @@ BUILD_TOOLS ?= /Data/coolstream/Cross/build-tools
 
 ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib
+TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
 else
 TARGETLIB       = $(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
+TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include
 endif
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
+
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
 TARGET_LDFLAGS  = -Wl,-O1 -L$(TARGETLIB)
@@ -158,7 +163,7 @@ UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)
 REMOVE = rm -rf $(BUILD_TMP)
 PATCH = patch -p1 -i $(PATCHES)
 # wget tarballs into archive directory
-WGET = wget -t6 -T20 -c -P $(ARCHIVE)
+WGET = wget --no-check-certificate -t6 -T20 -c -P $(ARCHIVE)
 
 CONFIGURE_OPTS = \
 	--build=$(BUILD) --host=$(TARGET)
