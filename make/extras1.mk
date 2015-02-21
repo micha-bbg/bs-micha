@@ -40,7 +40,9 @@ $(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	cp -fr $(PKGPREFIX_BASE)/share/* $(TARGETPREFIX_BASE)/share
 	rm -fr $(PKGPREFIX_BASE)/share
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	mv $(PKG_CONFIG_PATH_BASE)/libopkg.pc $(PKG_CONFIG_PATH)
+	if [ ! $(PKG_CONFIG_PATH_BASE) = $(PKG_CONFIG_PATH) ]; then \
+		mv $(PKG_CONFIG_PATH_BASE)/libopkg.pc $(PKG_CONFIG_PATH); \
+	fi;
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libopkg.pc
 	$(REWRITE_LIBTOOL_BASE)/libopkg.la
 	rm -rf $(PKGPREFIX_BASE)/lib $(PKGPREFIX_BASE)/include

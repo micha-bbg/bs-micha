@@ -159,8 +159,10 @@ $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
 		:
 	$(REMOVE)/e2fsprogs-$(E2FSPROGS_VER) $(PKGPREFIX_BASE)/.remove
 	cp -a --remove-destination $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
-	mv $(PKG_CONFIG_PATH_BASE)/uuid.pc $(PKG_CONFIG_PATH)
-	mv $(PKG_CONFIG_PATH_BASE)/blkid.pc $(PKG_CONFIG_PATH)
+	if [ ! $(PKG_CONFIG_PATH_BASE) = $(PKG_CONFIG_PATH) ]; then \
+		mv $(PKG_CONFIG_PATH_BASE)/uuid.pc $(PKG_CONFIG_PATH); \
+		mv $(PKG_CONFIG_PATH_BASE)/blkid.pc $(PKG_CONFIG_PATH); \
+	fi;
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/uuid.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/blkid.pc
 	cd $(PKGPREFIX_BASE) && rm sbin/badblocks sbin/dumpe2fs sbin/logsave \
@@ -194,7 +196,9 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 		make install DESTDIR=$(PKGPREFIX_BASE)
 	$(REMOVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER) $(PKGPREFIX_BASE)/.remove
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	mv $(PKG_CONFIG_PATH_BASE)/libntfs-3g.pc $(PKG_CONFIG_PATH)
+	if [ ! $(PKG_CONFIG_PATH_BASE) = $(PKG_CONFIG_PATH) ]; then \
+		mv $(PKG_CONFIG_PATH_BASE)/libntfs-3g.pc $(PKG_CONFIG_PATH); \
+	fi;
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libntfs-3g.pc
 	rm -r $(PKGPREFIX_BASE)/include $(PKGPREFIX_BASE)/lib/*.la $(PKGPREFIX_BASE)/lib/*.so \
 		$(PKGPREFIX_BASE)/lib/pkgconfig/ $(PKGPREFIX_BASE)/bin/ntfs-3g.{usermap,secaudit}
