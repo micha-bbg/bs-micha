@@ -77,19 +77,18 @@ DRIVERS_3x_APOLLO   = "-3.x"
 DRIVERS_3x_KRONOS   = "-3.x"
 
 # default (if empty) is "2.6.34.13"
-KVERSION_NEVIS = 2.6.34.13
+#KVERSION_NEVIS = 2.6.34.13
 
-# default (if empty) is "2.6.34"
-KVERSION_APOLLO = 2.6.34.14
+# default (if empty) is "3.10.69"
+#KVERSION_APOLLO = 2.6.34.14
 
-# default (if empty) is "2.6.34"
+# default (if empty) is "3.10.69"
 #KVERSION_KRONOS = 2.6.34.14
-KVERSION_KRONOS = 3.10.69
 
 # crosstool-ng versions
-CT_VER_NEVIS  = 1.16.0
-CT_VER_APOLLO = 1.19.0
-CT_VER_KRONOS = 1.19.0
+CT_VER_NEVIS  = 1.20.0
+CT_VER_APOLLO = 1.20.0
+CT_VER_KRONOS = 1.20.0
 
 # default (if empty) is "/Data/coolstream/Cross/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
