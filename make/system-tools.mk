@@ -85,6 +85,7 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 			$(PATCH)/bb_fixes-1.23.1/busybox-1.23.1-modprobe-small.patch; \
 			$(PATCH)/bb_fixes-1.23.1/busybox-1.23.1-dc.patch; \
 			$(PATCH)/bb_fixes-1.23.1/busybox-1.23.1-wget.patch; \
+			$(PATCH)/bb_fixes-1.23.1/busybox-1.23.1-modinfo.patch; \
 		fi; \
 	\
 		$(PATCH)/busybox-1.18-hack-init-s-console.patch; \
