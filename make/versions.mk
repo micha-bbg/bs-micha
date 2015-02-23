@@ -105,12 +105,12 @@ GIFLIB_VER=5.1.1
 LIBDVBSI_VER=0.3.6
 
 # lua: easily embeddable scripting language
-LUA_ABIVER=5.2
-LUA_VER=$(LUA_ABIVER).3
+LUA_ABIVER=5.3
+LUA_VER=$(LUA_ABIVER).0
 
 # luaposix: posix bindings for lua
 #LUAPOSIX_VER=5.1.28
-LUAPOSIX_VER=31
+LUAPOSIX_VER=33.2.1
 
 LUACURL_VER=v3
 

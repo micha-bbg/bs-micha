@@ -731,17 +731,12 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 	$(REMOVE)/lua-$(LUA_VER) $(PKGPREFIX)
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/lua-$(LUA_VER) && \
-		$(PATCH)/$(PLATFORM)/lua-01-fix-coolstream-build.patch && \
+		$(PATCH)/$(PLATFORM)/lua-5.3.0-01-fix-coolstream-build.patch; \
 		$(PATCH)/lua-02-shared-libs-for-lua.patch && \
 		$(PATCH)/lua-03-lua-pc.patch && \
 		$(PATCH)/lua-lvm.c.diff && \
 		sed -i 's/^V=.*/V= $(LUA_ABIVER)/' etc/lua.pc && \
 		sed -i 's/^R=.*/R= $(LUA_VER)/' etc/lua.pc; \
-		if [ 0 ]; then \
-			if [ ! "$(PLATFORM)" = "nevis" ]; then \
-				$(PATCH)/lua-01a-fix-coolstream-eglibc-build.patch; \
-			fi; \
-		fi; \
 		$(MAKE) linux PKG_VERSION=$(LUA_VER) CC=$(TARGET)-gcc LD=$(TARGET)-ld AR="$(TARGET)-ar r" RANLIB=$(TARGET)-ranlib LDFLAGS="-L$(TARGETPREFIX)/lib" && \
 		$(MAKE) install INSTALL_TOP=$(PKGPREFIX); \
 		$(MAKE) install INSTALL_TOP=$(TARGETPREFIX); \
@@ -767,7 +762,7 @@ $(D)/lua: $(HOSTPREFIX)/bin/lua-$(LUA_VER) $(D)/libncurses $(ARCHIVE)/lua-$(LUA_
 $(HOSTPREFIX)/bin/lua-$(LUA_VER): $(ARCHIVE)/lua-$(LUA_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/lua-$(LUA_VER).tar.gz
 	cd $(BUILD_TMP)/lua-$(LUA_VER) && \
-		$(PATCH)/$(PLATFORM)/lua-01-fix-coolstream-build.patch && \
+		$(PATCH)/$(PLATFORM)/lua-5.3.0-01-fix-coolstream-build.patch; \
 		$(MAKE) linux
 	install -m 0755 -D $(BUILD_TMP)/lua-$(LUA_VER)/src/lua $@
 	$(REMOVE)/lua-$(LUA_VER) $(TARGETPREFIX)/.remove
@@ -776,8 +771,8 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	$(RM_PKGPREFIX)
 	$(UNTAR)/luaposix-$(LUAPOSIX_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/luaposix-$(LUAPOSIX_VER); \
-		$(PATCH)/luaposix-fix-build.patch && \
-		$(PATCH)/luaposix-fix-docdir-build.patch; \
+		$(PATCH)/luaposixV33-fix-build.patch; \
+		$(PATCH)/luaposixV33-fix-docdir-build.patch; \
 		export LUA=$(HOSTPREFIX)/bin/lua-$(LUA_VER) && \
 		$(CONFIGURE) --prefix= \
 			--exec-prefix= \
@@ -792,8 +787,7 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	rm -fr $(PKGPREFIX)/.remove
 	cp -frd $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
 	cp -frd $(PKGPREFIX)/share/* $(TARGETPREFIX)/share
-	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/curses_c.la
-	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/posix_c.la
+	$(REWRITE_LIBTOOL)/lua/$(LUA_ABIVER)/posix.la
 	rm -fr $(PKGPREFIX)/lib/lua/$(LUA_ABIVER)/*.la
 	PKG_VER=$(LUA_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \

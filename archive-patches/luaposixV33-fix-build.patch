@@ -1,0 +1,11 @@
+--- a/ext/include/_helpers.c.orig	2015-02-23 23:11:38.339606733 +0100
++++ b/ext/include/_helpers.c	2015-02-23 23:11:10.083606900 +0100
+@@ -35,7 +35,7 @@
+ # elif HAVE_CURSES_H
+ #    include <curses.h>
+ # endif
+-#include <term.h>
++#include <ncurses/term.h>
+ #endif
+ 
+ /* Some systems set _POSIX_C_SOURCE over _POSIX_VERSION! */
