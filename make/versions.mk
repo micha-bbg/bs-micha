@@ -207,7 +207,7 @@ NETTLE_VER  = 2.7.1
 MAKE_VER = 3.82
 M4_VER = 1.4.17
 AUTOCONF_VER = 2.69
-AUTOMAKE_VER = 1.14
+AUTOMAKE_VER = 1.14.1
 AUTOMAKE_ARCH=xz
 LIBTOOL_VER = 2.4.2
 #######################################
