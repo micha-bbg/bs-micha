@@ -228,8 +228,8 @@ $(ARCHIVE)/SDL2_ttf-$(SDL2_TTF_VER).tar.gz:
 $(ARCHIVE)/SDL2_mixer-$(SDL2_MIXER_VER).tar.gz:
 	$(WGET) http://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-$(SDL2_MIXER_VER).tar.gz
 
-$(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.gz:
-	$(WGET) http://swupdate.openvpn.org/community/releases/openvpn-$(OPENVPN_VER).tar.gz
+$(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.xz:
+	$(WGET) http://swupdate.openvpn.org/community/releases/openvpn-$(OPENVPN_VER).tar.xz
 
 $(ARCHIVE)/killproc-$(KILLPROC_VER).tar.gz:
 	$(WGET) ftp://ftp.suse.de/pub/projects/init/killproc-$(KILLPROC_VER).tar.gz

@@ -486,22 +486,21 @@ $(D)/cs-uboot: $(ARCHIVE)/u-boot-2009.03.tar.bz2 $(PATCHES)/u-boot-2009.3-CST.di
 	cp -a $(BUILD_TMP)/u-boot-2009.03/tools/mkimage $(HOSTPREFIX)/bin
 	touch $@
 
-$(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.gz | $(TARGETPREFIX)
-	$(UNTAR)/openvpn-$(OPENVPN_VER).tar.gz
+$(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.xz | $(TARGETPREFIX)
+	$(UNTAR)/openvpn-$(OPENVPN_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/openvpn-$(OPENVPN_VER); \
 		$(CONFIGURE) \
 			--build=$(BUILD) \
 			--host=$(TARGET) \
 			--target=$(TARGET) \
 			--disable-lzo \
+			--disable-plugins \
 			--prefix= \
 			; \
 		$(MAKE); \
-		cp openvpn $(TARGETPREFIX)/sbin
-		$(TARGET)-strip $(TARGETPREFIX)/sbin/openvpn
-	rm -rf $(PKGPREFIX)
-	mkdir -p $(PKGPREFIX)/sbin
-	cp $(TARGETPREFIX)/sbin/openvpn $(PKGPREFIX)/sbin
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/share
+	cp $(PKGPREFIX)/sbin/openvpn $(TARGETPREFIX)/sbin
 	PKG_VER=$(OPENVPN_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/openvpn
