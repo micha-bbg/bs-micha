@@ -53,8 +53,13 @@ $(BUILD_TMP):
 $(CROSS_BASE):
 	mkdir -p $(CROSS_BASE)
 
+ifeq ($(PLATFORM), nevis)
 cst-libs: | $(TARGETPREFIX)
 	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs/*.so $(TARGETPREFIX_BASE)/lib
+else
+cst-libs: | $(TARGETPREFIX)
+	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs-eglibc/*.so $(TARGETPREFIX_BASE)/lib
+endif
 
 cst-firmware: | $(TARGETPREFIX)
 	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/firmware $(TARGETPREFIX_BASE)/lib
