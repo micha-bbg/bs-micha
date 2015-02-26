@@ -3,6 +3,8 @@
 PATH=/var/bin:/bin:/usr/bin:/var/sbin:/sbin:/usr/sbin
 . /etc/init.d/functions
 
+[ ! -e /dev/input ] && mkdir /dev/input
+
 echo "Running mknod now..."
 
 create_node "KAL"

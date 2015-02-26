@@ -16,6 +16,9 @@ for i in $paths ;do
 done
 export PATH=$P
 
+# hostname in prompt...
+PS1='\\h:\\w \\$ '
+
 alias ll='ls -al'
 alias c='cat'
 alias d='date'

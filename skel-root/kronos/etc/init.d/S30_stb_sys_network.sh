@@ -19,7 +19,8 @@ ifup -f lo
 # telnet
 if [ -e /var/etc/.telnetd -a -x /sbin/telnetd ]; then
 	echo "Starting telnetd"
-	/sbin/telnetd -l /bin/login
+#	/sbin/telnetd -l /bin/login
+	/sbin/telnetd -f /etc/issue
 fi
 
 # vsftpd
