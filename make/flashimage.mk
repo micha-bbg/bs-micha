@@ -75,4 +75,28 @@ flashimage: flash-prepare cskernel flash-build
 
 endif # ($(PLATFORM), nevis)
 
+ifeq ($(PLATFORM), kronos)
+ERASEBLOCK    = 
+FLASHIMG_BODY = $(IMGs)/rootfs.arm.jffs2.nand
+SUMIMG_BODY   = $(IMGs)/rootfs.arm.jffs2.nand
+
+ERASEBLOCK = 0x20000
+FLASHIMG   = $(FLASHIMG_BODY).$(TIME).tmp.img
+SUMIMG     = $(SUMIMG_BODY).$(TIME).img
+
+flash-prepare: local-install find-mkfs.jffs2 find-sumtool
+
+flash-build: 
+	mkdir -p $(IMGs)
+	echo "/dev/console c 0600 0 0 5 1 0 0 0" > $(BUILD_TMP)/devtable
+	@echo ""
+	@du -shk $$(realpath $(INSTALL))
+	@echo ""
+	mkfs.jffs2 -C -n -e $(ERASEBLOCK) -l -U -D $(BUILD_TMP)/devtable -r $(BUILD_TMP)/install -o $(FLASHIMG) && \
+	sumtool -n -e $(ERASEBLOCK) -l -i $(FLASHIMG) -o $(SUMIMG)
+	rm -f $(FLASHIMG)
+	rm -f $(BUILD_TMP)/devtable
+
+endif # ($(PLATFORM), kronos)
+
 PHONY += flashimage
