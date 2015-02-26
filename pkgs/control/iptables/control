@@ -1,0 +1,11 @@
+Package: iptables
+Version: @VER@-1
+Description: iptables is the userspace command line program used to configure the Linux 2.4.x and later packet filtering ruleset
+Section: network
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.netfilter.org/projects/iptables/index.html
+Source: http://www.netfilter.org/projects/iptables/downloads.html
+Depends: @DEP@
+Provides: @PROV@

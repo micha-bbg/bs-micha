@@ -272,3 +272,6 @@ ifeq ($(FUSE_EXFAT_VER), 1.1.0)
 else
 	$(WGET) https://exfat.googlecode.com/files/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
 endif
+
+$(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
+	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2

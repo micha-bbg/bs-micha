@@ -617,8 +617,44 @@ $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TA
 	$(RM_PKGPREFIX)
 	touch $@
 
+$(D)/iptables: $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2 | $(TARGETPREFIX)
+	$(REMOVE)/iptables-$(IPTABLES_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/iptables-$(IPTABLES_VER).tar.bz2
+	set -e; cd $(BUILD_TMP)/iptables-$(IPTABLES_VER); \
+		$(CONFIGURE) \
+			--prefix=/usr \
+			--mandir=/.remove; \
+		$(MAKE); \
+		make install DESTDIR=$(PKGPREFIX_BASE)
+	mkdir -p $(TARGETPREFIX)/lib/pkgconfig
+	mkdir -p $(TARGETPREFIX)/include
+	cp -a $(PKGPREFIX)/lib/pkgconfig/* $(TARGETPREFIX)/lib/pkgconfig
+	cp -a $(PKGPREFIX)/include/* $(TARGETPREFIX)/include
+	rm -rf $(PKGPREFIX)/lib/pkgconfig
+	rm -rf $(PKGPREFIX)/include
+	rm -f $(PKGPREFIX)/lib/*.la
+	rm -rf $(PKGPREFIX_BASE)/.remove
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	$(REWRITE_LIBTOOL)/libip4tc.la
+	$(REWRITE_LIBTOOL)/libip6tc.la
+	$(REWRITE_LIBTOOL)/libiptc.la
+	$(REWRITE_LIBTOOL)/libxtables.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libip4tc.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libip6tc.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libiptc.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/xtables.pc
+	PKG_VER=$(IPTABLES_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/iptables
+	$(REMOVE)/iptables-$(IPTABLES_VER)
+	$(RM_PKGPREFIX)
+	touch $@
 
-SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd
+
+SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
+SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables
 ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage
 endif
