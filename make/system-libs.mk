@@ -568,14 +568,18 @@ $(D)/libncurses: $(ARCHIVE)/ncurses-$(NCURSES_VER).tar.gz | ncurses-prereq $(TAR
 			--with-fallbacks='linux vt100 xterm'; \
 		$(MAKE) libs HOSTCC=gcc HOSTLDFLAGS="$(TARGET_LDFLAGS)" \
 			HOSTCCFLAGS="$(TARGET_CFLAGS) -DHAVE_CONFIG_H -I../ncurses -DNDEBUG -D_GNU_SOURCE -I../include"; \
+		make install.libs DESTDIR=$(PKGPREFIX); \
 		make install.libs DESTDIR=$(TARGETPREFIX); \
 		install -D -m 0755 misc/ncurses-config $(HOSTPREFIX)/bin/ncurses5-config
-	$(REMOVE)/ncurses-$(NCURSES_VER) $(PKGPREFIX)
+	rm -rf $(PKGPREFIX)/bin
+	rm -rf $(PKGPREFIX)/include
+	rm -f $(PKGPREFIX)/lib/*.a
+	rm -f $(PKGPREFIX)/lib/*.so
 	$(REWRITE_PKGCONF) $(HOSTPREFIX)/bin/ncurses5-config
-	mkdir -p $(PKGPREFIX)/lib
-	# deliberately ignore libforms and libpanel - not yet needed
-	cp -a $(TARGETPREFIX)/lib/libncurses.so.* $(PKGPREFIX)/lib
-	$(OPKG_SH) $(CONTROL_DIR)/libncurses
+	PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+	PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+	PKG_VER=$(NCURSES_VER) $(OPKG_SH) $(CONTROL_DIR)/libncurses
+	$(REMOVE)/ncurses-$(NCURSES_VER)
 	$(RM_PKGPREFIX)
 	touch $@
 
