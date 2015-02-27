@@ -621,9 +621,9 @@ $(D)/iptables: $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2 | $(TARGETPREFIX)
 	cp -a $(PKGPREFIX)/include/* $(TARGETPREFIX)/include
 	rm -rf $(PKGPREFIX)/lib/pkgconfig
 	rm -rf $(PKGPREFIX)/include
-	rm -f $(PKGPREFIX)/lib/*.la
 	rm -rf $(PKGPREFIX_BASE)/.remove
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -f $(PKGPREFIX)/lib/*.la
 	$(REWRITE_LIBTOOL)/libip4tc.la
 	$(REWRITE_LIBTOOL)/libip6tc.la
 	$(REWRITE_LIBTOOL)/libiptc.la
