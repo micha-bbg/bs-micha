@@ -478,18 +478,18 @@ ifeq ($(PLATFORM), apollo)
 FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
 --enable-decoder=h264 \
 --enable-decoder=vc1 \
---extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
+--extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS = $(D)/libxml2 $(D)/libiconv
+FFMPEG_DEPS = $(D)/libxml2
 endif
 
 ifeq ($(PLATFORM), kronos)
 FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
 --enable-decoder=h264 \
 --enable-decoder=vc1 \
---extra-ldflags="-lfreetype -lpng -lxml2 -liconv -lz -L$(TARGETPREFIX)/lib"
+--extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS = $(D)/libxml2 $(D)/libiconv
+FFMPEG_DEPS = $(D)/libxml2
 endif
 
 ifeq ($(PLATFORM), nevis)
@@ -844,14 +844,7 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 	$(RM_PKGPREFIX)
 	touch $@
 
-HDX=0
-ifeq ($(PLATFORM), apollo)
-HDX=1
-endif
-ifeq ($(PLATFORM), kronos)
-HDX=1
-endif
-ifeq ($(HDX), 1)
+ifeq ($(GLIBC_BUILD), 0)
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz

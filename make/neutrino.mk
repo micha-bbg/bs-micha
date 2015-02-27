@@ -5,13 +5,11 @@ NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
 NEUTRINO_DEPS += libcurl libjpeg freetype libbluray ffmpeg libdvbsi++ giflib libsigc++
 NEUTRINO_DEPS += openthreads luaposix luacurl openssl
 NEUTRINO_DEPS += wpa_supplicant parted
-ifeq ($(PLATFORM), apollo)
-NEUTRINO_DEPS += libiconv
-endif
-ifeq ($(PLATFORM), kronos)
-NEUTRINO_DEPS += libiconv
-endif
 NEUTRINO_PKG_DEPS =
+
+ifeq ($(GLIBC_BUILD), 0)
+NEUTRINO_DEPS += libiconv
+endif
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
@@ -77,6 +75,9 @@ neutrino-deps: $(NEUTRINO_DEPS)
 N_LDFLAGS =
 #N_LDFLAGS = -L$(TARGETPREFIX_BASE)/lib -lcurl -lssl -lcrypto -ldl
 N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
+ifeq ($(GLIBC_BUILD), 0)
+N_LDFLAGS += -liconv
+endif
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
 
 # finally we can build outside of the source directory

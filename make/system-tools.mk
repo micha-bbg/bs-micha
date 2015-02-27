@@ -547,29 +547,18 @@ $(D)/ncftp: $(ARCHIVE)/ncftp-$(NCFTP_VER)-src.tar.bz2 | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	touch $@
 
-ifeq ($(PLATFORM), nevis)
 $(D)/parted: $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREFIX)
-else
-$(D)/parted: $(D)/libiconv $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREFIX)
-endif
 	## parted-3.2-device-mapper.patch: https://lists.gnu.org/archive/html/bug-parted/2014-07/msg00036.html
 	$(UNTAR)/parted-$(PARTED_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/parted-$(PARTED_VER); \
 		$(PATCH)/parted-3.2-device-mapper.patch; \
-		if [ "$(PLATFORM)" = "nevis" ]; then \
-			ICONV_X=""; \
-			LIBS_X="-luuid"; \
-		else \
-			ICONV_X="--with-libiconv-prefix=$(TARGETPREFIX)"; \
-			LIBS_X="-luuid -liconv"; \
-		fi; \
+		ICONV_X=""; \
 		$(CONFIGURE) \
 			--prefix= \
-			$$ICONV_X \
 			--disable-device-mapper \
 			--infodir=/.remove \
 			--mandir=/.remove; \
-		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="$$LIBS_X"; \
+		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="-luuid"; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/.remove
 	rm -fr $(PKGPREFIX)/share
@@ -607,7 +596,6 @@ $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TA
 	$(UNTAR)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER); \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
-		if [ "$(PLATFORM)" = "nevis" ]; then LIBS_X=""; else LIBS_X="-liconv"; fi; \
 		$(SCONS) DESTDIR=$(PKGPREFIX)/sbin install
 	cp -a $(PKGPREFIX)/sbin $(TARGETPREFIX)
 	PKG_VER=$(FUSE_EXFAT_VER) \
