@@ -28,22 +28,29 @@ $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	touch $@
 
 $(D)/rsync: $(ARCHIVE)/rsync-$(RSYNC_VER).tar.gz | $(TARGETPREFIX)
-	$(UNTAR)/rsync-$(RSYNC_VER).tar.gz
+	$(REMOVE)/rsync-$(RSYNC_VER)
 	$(RM_PKGPREFIX)
+	$(UNTAR)/rsync-$(RSYNC_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/rsync-$(RSYNC_VER); \
-		$(CONFIGURE) --prefix= --build=$(BUILD) --host=$(TARGET) --mandir=$(BUILD_TMP)/.remove; \
+		$(CONFIGURE) \
+			--prefix=/usr \
+			--disable-locale \
+			--sysconfdir=/etc \
+			--mandir=/.remove; \
 		$(MAKE) all; \
-		make install prefix=$(PKGPREFIX)
-	$(REMOVE)/rsync-$(RSYNC_VER) $(BUILD_TMP)/.remove
-	install -D -m 0755 $(SCRIPTS)/rsyncd.init $(PKGPREFIX)/etc/init.d/rsyncd
-	ln -sf rsyncd $(PKGPREFIX)/etc/init.d/K40rsyncd
-	ln -sf rsyncd $(PKGPREFIX)/etc/init.d/S60rsyncd
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	cd $(TARGETPREFIX)/etc && { \
+		make install-all DESTDIR=$(PKGPREFIX_BASE)
+	rm -fr $(PKGPREFIX_BASE)/.remove
+	install -D -m 0755 $(SCRIPTS)/rsyncd.init $(PKGPREFIX_BASE)/etc/init.d/rsyncd
+	ln -sf rsyncd $(PKGPREFIX_BASE)/etc/init.d/K40rsyncd
+	ln -sf rsyncd $(PKGPREFIX_BASE)/etc/init.d/S60rsyncd
+	cd $(PKGPREFIX_BASE)/etc && { \
 		test -e rsyncd.conf    || cp $(SCRIPTS)/rsyncd.conf . ; \
 		test -e rsyncd.secrets || cp $(SCRIPTS)/rsyncd.secrets . ; }; true
-	cp -a $(SCRIPTS)/rsyncd.{conf,secrets} $(PKGPREFIX)/etc
-	$(OPKG_SH) $(CONTROL_DIR)/rsync
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	PKG_VER=$(RSYNC_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		$(OPKG_SH) $(CONTROL_DIR)/rsync
+	$(REMOVE)/rsync-$(RSYNC_VER)
 	$(RM_PKGPREFIX)
 	touch $@
 

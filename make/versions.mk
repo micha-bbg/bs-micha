@@ -42,7 +42,7 @@ E2FSPROGS_VER=1.42.12
 VSFTPD_VER=3.0.2
 
 # rsync; fast and extraordinarily versatile file copying tool
-RSYNC_VER=3.0.7
+RSYNC_VER=3.1.1
 
 # procps; a bunch of small useful utilities that give information about processes using the /proc filesystem
 PROCPS_VER=3.2.8

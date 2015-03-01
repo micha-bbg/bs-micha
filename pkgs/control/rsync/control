@@ -1,5 +1,5 @@
 Package: rsync
-Version: 3.0.7-1
+Version: @VER@-1
 Description: Utility For Fast Incremental File Transfer
 Section: base
 Priority: optional
@@ -7,4 +7,4 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://rsync.samba.org
 Source:
-Depends:
+Depends: @DEP@
