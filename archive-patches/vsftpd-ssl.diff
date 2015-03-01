@@ -1,0 +1,11 @@
+--- a/builddefs.h.orig	2015-03-01 12:50:39.536018502 +0100
++++ b/builddefs.h	2015-03-01 12:50:48.324018450 +0100
+@@ -3,7 +3,7 @@
+ 
+ #undef VSF_BUILD_TCPWRAPPERS
+ #define VSF_BUILD_PAM
+-#undef VSF_BUILD_SSL
++#define VSF_BUILD_SSL
+ 
+ #endif /* VSF_BUILDDEFS_H */
+ 

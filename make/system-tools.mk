@@ -1,30 +1,31 @@
 # Makefile to build system tools
 
 $(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
-	$(UNTAR)/vsftpd-$(VSFTPD_VER).tar.gz
 	$(RM_PKGPREFIX)
+	$(UNTAR)/vsftpd-$(VSFTPD_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/vsftpd-$(VSFTPD_VER); \
-		$(PATCH)/vsftpd2.diff; \
+		$(PATCH)/vsftpd-ssl.diff; \
 		make clean; \
-		TARGETPREFIX=$(TARGETPREFIX) make CC=$(TARGET)-gcc CFLAGS="-pipe -O2 -g0 -I$(TARGETPREFIX)/include" LDFLAGS="$(LD_FLAGS) -Wl,-rpath-link,$(TARGETLIB)"
+		TARGETPREFIX=$(TARGETPREFIX) make CC=$(TARGET)-gcc LIBS="-lcrypt -lcrypto -lssl" CFLAGS="-pipe -O2 -g0 -I$(TARGETPREFIX)/include" LDFLAGS="$(LD_FLAGS) -Wl,-rpath-link,$(TARGETLIB)"
 	install -d $(PKGPREFIX)/share/empty
 	install -D -m 755 $(BUILD_TMP)/vsftpd-$(VSFTPD_VER)/vsftpd $(PKGPREFIX)/sbin/vsftpd
-	install -D -m 644 $(SCRIPTS)/vsftpd.conf $(PKGPREFIX)/etc/vsftpd.conf
-	install -D -m 644 $(SCRIPTS)/banner.ftp $(PKGPREFIX)/etc/banner.ftp
-	install -D -m 755 $(SCRIPTS)/vsftpd.init $(PKGPREFIX)/etc/init.d/vsftpd
+	install -D -m 644 $(SCRIPTS)/vsftpd.conf $(PKGPREFIX_BASE)/etc/vsftpd.conf
+	install -D -m 644 $(SCRIPTS)/banner.ftp $(PKGPREFIX_BASE)/etc/banner.ftp
+	install -D -m 755 $(SCRIPTS)/vsftpd.init $(PKGPREFIX_BASE)/etc/init.d/vsftpd
 	# it is important that vsftpd is started *before* inetd to override busybox ftpd...
-	ln -sf vsftpd $(PKGPREFIX)/etc/init.d/S53vsftpd
+	ln -sf vsftpd $(PKGPREFIX_BASE)/etc/init.d/S53vsftpd
 	if [ "$(NO_USR_BUILD)" = "1" ]; then \
 		mkdir -p $(PKGPREFIX)/usr; \
 		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
 		ln -sf usr/share $(PKGPREFIX)/share; \
 	fi;
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)/
-	PKG_VER=$(VSFTPD_VER) $(OPKG_SH) $(CONTROL_DIR)/vsftpd
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
+	PKG_VER=$(VSFTPD_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/vsftpd
 	$(REMOVE)/vsftpd-$(VSFTPD_VER)
 	$(RM_PKGPREFIX)
 	touch $@
-
 
 $(D)/rsync: $(ARCHIVE)/rsync-$(RSYNC_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/rsync-$(RSYNC_VER).tar.gz

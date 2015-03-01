@@ -7,4 +7,4 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://vsftpd.beasts.org/
 Source:
-Depends:
+Depends: @DEP@
