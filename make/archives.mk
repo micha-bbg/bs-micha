@@ -146,8 +146,8 @@ $(ARCHIVE)/glib-$(GLIB_VER).tar.xz:
 $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz:
 	$(WGET) ftp://sourceware.org/pub/libffi/libffi-$(LIBFFI_VER).tar.gz
 
-$(ARCHIVE)/gettext-$(GETTEXT_VER).tar.gz:
-	$(WGET) http://ftp.gnu.org/pub/gnu/gettext/gettext-(GETTEXT_VER).tar.gz
+$(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz:
+	$(WGET) http://ftp.gnu.org/pub/gnu/gettext/gettext-$(GETTEXT_VER).tar.xz
 
 $(ARCHIVE)/wpa_supplicant-$(WPA_SUPPLICANT_VER).tar.gz:
 	$(WGET) http://hostap.epitest.fi/releases/wpa_supplicant-$(WPA_SUPPLICANT_VER).tar.gz

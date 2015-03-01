@@ -1,0 +1,15 @@
+--- a/misc/mc.ext.in.orig	2015-03-01 07:46:24.691164183 +0100
++++ b/misc/mc.ext.in	2015-03-01 07:58:34.911159876 +0100
+@@ -265,6 +265,12 @@
+ 	#Open=%view{ascii} ar tv %f
+ 	View=%view{ascii} @EXTHELPERSDIR@/misc.sh view ar
+ 
++# opkg
++shell/i/.opk
++	Open=%cd %p/uar://
++	#Open=%view{ascii} ar tv %f
++	View=%view{ascii} @EXTHELPERSDIR@/misc.sh view ar
++
+ # gplib
+ shell/i/.lib
+ 	Open=%cd %p/ulib://

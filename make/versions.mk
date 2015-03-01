@@ -158,26 +158,18 @@ READLINE_VER = 6.2
 PARTED_VER = 3.2
 
 # mc; the famous midnight commander
-MC_VER=4.8.10
+MC_VER=4.8.13
 
-LIBFFI_VER = 3.0.13
+LIBFFI_VER = 3.2.1
 
 # glib; the low-level core library that forms the basis for projects such as GTK+ and GNOME
-#GLIB_MAJOR=2
-#GLIB_MINOR=26
-#GLIB_MICRO=1
-
-#GLIB_MAJOR=2
-#GLIB_MINOR=29
-#GLIB_MICRO=92
-
 GLIB_MAJOR=2
-GLIB_MINOR=37
-GLIB_MICRO=6
+GLIB_MINOR=43
+GLIB_MICRO=4
 GLIB_VER=$(GLIB_MAJOR).$(GLIB_MINOR).$(GLIB_MICRO)
 
 # gettext
-GETTEXT_VER = 0.18.3
+GETTEXT_VER = 0.19.4
 
 #WPA_SUPPLICANT_VER = 2.0
 WPA_SUPPLICANT_VER = 0.7.3

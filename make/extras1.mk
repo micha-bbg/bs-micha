@@ -196,3 +196,128 @@ $(D)/libbluray: $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2 $(D)/freetype | $(
 	$(REMOVE)/libbluray-$(LIBBLURAY_VER)
 	$(RM_PKGPREFIX)
 	touch $@
+
+$(D)/mc: $(ARCHIVE)/mc-$(MC_VER).tar.xz $(D)/libncurses $(D)/libglib | $(TARGETPREFIX) find-autopoint
+	$(REMOVE)/mc-$(MC_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/mc-$(MC_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/mc-$(MC_VER); \
+		$(PATCH)/mc-4.8.1.diff; \
+		$(PATCH)/mc-opkg.diff; \
+		autoreconf -fi; \
+		LIBS="-lglib-2.0" \
+		$(BUILDENV) \
+		./configure \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--prefix=/usr \
+			--without-gpm-mouse \
+			--disable-doxygen-doc \
+			--disable-doxygen-dot \
+			--enable-charset \
+			--with-screen=ncurses \
+			--with-ncurses-includes="$(TARGETPREFIX)/include/ncurses" \
+			--with-ncurses-libs="$(TARGETPREFIX)/lib" \
+			--sysconfdir=/etc \
+			--mandir=/.remove \
+			--without-x; \
+			$(BUILDENV) $(MAKE) all; \
+			make install DESTDIR=$(PKGPREFIX_BASE)
+	rm -rf $(PKGPREFIX_BASE)/.remove
+	rm -rf $(PKGPREFIX)/share/locale # who needs localization?
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
+	PKG_VER=$(MC_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/mc
+	$(REMOVE)/mc-$(MC_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(HOSTPREFIX)/bin/glib-genmarshal: | $(HOSTPREFIX)/bin
+	$(REMOVE)/glib-$(GLIB_VER)
+	$(UNTAR)/glib-$(GLIB_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/glib-$(GLIB_VER); \
+		export PKG_CONFIG=/usr/bin/pkg-config; \
+		./autogen.sh; \
+		./configure \
+			--disable-gtk-doc \
+			--disable-gtk-doc-html \
+			--enable-static=yes \
+			--enable-shared=no \
+			--prefix=`pwd`/out \
+			; \
+		$(MAKE) install; \
+		strip out/bin/glib-* || true; \
+		cp -a out/bin/glib-* $(HOSTPREFIX)/bin
+	$(REMOVE)/glib-$(GLIB_VER)
+
+#http://www.dbox2world.net/board293-coolstream-hd1/board314-coolstream-development/9363-idee-midnight-commander/
+$(D)/libglib: $(HOSTPREFIX)/bin/glib-genmarshal $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(D)/zlib $(D)/libffi | $(TARGETPREFIX)
+	$(REMOVE)/glib-$(GLIB_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/glib-$(GLIB_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/glib-$(GLIB_VER); \
+		./autogen.sh; \
+		echo "ac_cv_func_posix_getpwuid_r=yes" > config.cache; \
+		echo "ac_cv_func_posix_getgrgid_r=yes" >> config.cache; \
+		echo "glib_cv_stack_grows=no" >> config.cache; \
+		echo "glib_cv_uscore=no" >> config.cache; \
+		$(BUILDENV) \
+		./configure \
+			--cache-file=config.cache \
+			--disable-gtk-doc \
+			--disable-gtk-doc-html \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--enable-static=yes \
+			--enable-shared=yes \
+			--with-html-dir=/.remove \
+			--mandir=/.remove \
+			--prefix= ;\
+		$(MAKE) all; \
+		$(MAKE) install DESTDIR=$(PKGPREFIX)
+	rm -rf $(PKGPREFIX)/.remove
+	set -e; cd $(PKGPREFIX)/lib/pkgconfig; for i in *; do \
+		mv $$i $(PKG_CONFIG_PATH); $(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/$$i; done
+	rm -rf $(PKGPREFIX)/share/locale # who needs localization?
+	rm -f $(PKGPREFIX)/bin/glib-mkenums # no perl available on the box
+	rm -f $(PKGPREFIX)/bin/gdbus-codegen # no python available on the box
+	rm -f $(PKGPREFIX)/bin/gtester-report # no python available on the box
+	sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/lib'," $(PKGPREFIX)/lib/*.la
+	rm -f $(PKGPREFIX)/bin/gdbus
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	cd $(PKGPREFIX) && \
+		rm -fr include lib/*.so lib/*.la share etc/bash_completion.d \
+		bin/gtester-report bin/glib-gettextize
+	rm -fr $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/etc
+	PKG_VER=$(GLIB_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libglib
+	$(REMOVE)/glib-$(GLIB_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(D)/libffi: $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz | $(TARGETPREFIX)
+	$(UNTAR)/libffi-$(LIBFFI_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/libffi-$(LIBFFI_VER); \
+		./configure \
+			--prefix= \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--target=$(TARGET) \
+			--enable-shared=yes \
+			--enable-static=yes; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX); \
+		make install DESTDIR=$(TARGETPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libffi.pc
+	$(REWRITE_LIBTOOL)/libffi.la
+	rm -rf $(PKGPREFIX)/share $(PKGPREFIX)/lib/libffi-$(LIBFFI_VER) $(PKGPREFIX)/lib/pkgconfig
+	rm -rf $(PKGPREFIX)/lib/*.*a $(PKGPREFIX)/lib/*.so
+	PKG_VER=$(LIBFFI_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libffi
+	rm -fr $(BUILD_TMP)/libffi-$(LIBFFI_VER)
+	$(RM_PKGPREFIX)
+	touch $@
