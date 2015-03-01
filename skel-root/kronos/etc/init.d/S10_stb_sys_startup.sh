@@ -32,7 +32,7 @@ echo "Running loadmod now ......."
 
 echo ""
 loadmod ipv6
-loadmod tun
+#loadmod tun
 DEVNET=/dev/net
 mkdir -p $DEVNET
 if [ ! -c $DEVNET/tun ]; then
@@ -50,6 +50,8 @@ loadmod lnxdvbciDrv
 #loadmod lnxIPfeDrv		???
 loadmod framebuffer cnxtfb_standalone=1 cnxtfb_hdwidth=1280 cnxtfb_hdheight=720 cnxtfb_autoscale_sd=2
 
+logoview --background --timeout=20 --logo=/var/share/icons/logo.jpg
+
 if [ -f /opt/.load_3ddrivers ] ; then
 	echo ""
 	loadmod pvrnxpdc
@@ -61,8 +63,6 @@ loadmod frontpanel
 create_node "cs_display"
 ln -sf /dev/cs_display /dev/display
 
-logoview --background --timeout=20 --logo=/var/share/icons/logo.jpg
-
 echo ""
 dt -t"Loading drivers..."
 
@@ -70,6 +70,7 @@ dt -t"Loading drivers..."
 loadmod sharp780x
 loadmod dvb_api
 loadmod cifs
+loadmod fuse
 
 echo "Driver modules loaded, please start the app now..."
 echo ""
