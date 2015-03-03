@@ -844,7 +844,7 @@ $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPR
 	$(RM_PKGPREFIX)
 	touch $@
 
-ifeq ($(GLIBC_BUILD), 0)
+ifeq ($(UCLIBC_BUILD), 1)
 $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/libiconv-$(ICONV_VER) $(PKGPREFIX)
 	$(UNTAR)/libiconv-$(ICONV_VER).tar.gz

@@ -205,7 +205,9 @@ $(D)/mc: $(ARCHIVE)/mc-$(MC_VER).tar.xz $(D)/libncurses $(D)/libglib | $(TARGETP
 		$(PATCH)/mc-4.8.1.diff; \
 		$(PATCH)/mc-opkg.diff; \
 		autoreconf -fi; \
-		LIBS="-lglib-2.0" \
+		if [ ! "$(UCLIBC_BUILD)" = "1" ]; then \
+			export LIBS="-lglib-2.0"; \
+		fi; \
 		$(BUILDENV) \
 		./configure \
 			--build=$(BUILD) \
@@ -262,8 +264,14 @@ $(D)/libglib: $(HOSTPREFIX)/bin/glib-genmarshal $(ARCHIVE)/glib-$(GLIB_VER).tar.
 		echo "ac_cv_func_posix_getgrgid_r=yes" >> config.cache; \
 		echo "glib_cv_stack_grows=no" >> config.cache; \
 		echo "glib_cv_uscore=no" >> config.cache; \
+		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
+			ICONV=--with-libiconv=gnu; \
+		else \
+			ICONV=; \
+		fi; \
 		$(BUILDENV) \
 		./configure \
+			$$ICONV \
 			--cache-file=config.cache \
 			--disable-gtk-doc \
 			--disable-gtk-doc-html \
@@ -321,3 +329,39 @@ $(D)/libffi: $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/libffi-$(LIBFFI_VER)
 	$(RM_PKGPREFIX)
 	touch $@
+
+ifeq ($(UCLIBC_BUILD), 1)
+$(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz | $(TARGETPREFIX)
+	$(REMOVE)/gettext-$(GETTEXT_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/gettext-$(GETTEXT_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/gettext-$(GETTEXT_VER); \
+		$(CONFIGURE) \
+			--enable-silent-rules \
+			--prefix=/usr \
+			--disable-java \
+			--disable-native-java \
+			--datarootdir=/.remove \
+			--with-libxml2-prefix=$(TARGETPREFIX) \
+			; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX_BASE)
+	rm -fr $(PKGPREFIX_BASE)/.remove
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	rm -fr $(PKGPREFIX)/include
+	rm -f $(PKGPREFIX)/lib/*.a
+	rm -f $(PKGPREFIX)/lib/*.la
+	rm -f $(PKGPREFIX)/lib/*.so
+	$(REWRITE_LIBTOOL)/libasprintf.la
+	$(REWRITE_LIBTOOL)/libgettextlib.la
+	$(REWRITE_LIBTOOL)/libgettextpo.la
+	$(REWRITE_LIBTOOL)/libgettextsrc.la
+	$(REWRITE_LIBTOOL)/libintl.la
+	PKG_VER=$(GETTEXT_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/gettext
+	$(REMOVE)/gettext-$(GETTEXT_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+endif
