@@ -648,6 +648,15 @@ $(D)/iptables: $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2 | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	touch $@
 
+$(D)/iptables-rules:
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX_BASE)
+	cp -a $(SCRIPTS)/iptables-rules/* $(PKGPREFIX_BASE)
+	PKG_VER=$(IPTABLES_RULES_VER) \
+		$(OPKG_SH) $(CONTROL_DIR)/iptables-rules
+	$(RM_PKGPREFIX)
+	touch $@
+
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
 SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables

@@ -1,0 +1,11 @@
+Package: iptables-rules
+Version: @VER@-1
+Description: Simple rules for iptables (ipv4/ipv6) and autostart iptables.
+Section: network
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: 
+Source: 
+Depends: 
+Provides: 
