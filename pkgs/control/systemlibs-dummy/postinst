@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/var/bin/find-system-libs.sh
+
+exit 0
