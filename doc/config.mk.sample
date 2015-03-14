@@ -1,11 +1,11 @@
 # The type of box to build for.
 # either "nevis", "apollo" or kronos
-# default (if empty) is "kronos"
-#PLATFORM=kronos
+# default (if empty) is "nevis"
+PLATFORM=kronos
 
 # for apollo platform only, either "tank" or "trinity"
 # default (if empty) is "tank"
-#BOXMODEL=trinity
+BOXMODEL=trinity
 
 # CROSS_BASE = $(BASE_DIR)/$(CROSS_PATH)
 # default (if empty) is "cross"
@@ -15,10 +15,10 @@
 #TARGET_NEVIS=arm-cx2450x-linux-gnueabi
 #
 # empty: arm-cortex-linux-uclibcgnueabi
-#TARGET_APOLLO=arm-cortex-linux-uclibcgnueabi
+#TARGET_APOLLO=arm-cortex-linux-gnueabi
 #
 # empty: arm-cortex-linux-uclibcgnueabi
-#TARGET_KRONOS=arm-cortex-linux-uclibcgnueabi
+#TARGET_KRONOS=arm-cortex-linux-gnueabi
 
 
 # if /usr/share/libtool/config/config.guess does not supply a valid
@@ -35,15 +35,15 @@ GIT_SOURCE = privat
 # default (if empty) is "git"
 GIT_PROTO = ssh
 
-# default (if empty) is "next-cc"
-#NEUTRINO_BRANCH_APOLLO = next-cc
-#NEUTRINO_BRANCH_NEVIS  = next-cc
-#NEUTRINO_BRANCH_KRONOS  = next-cc
+# default (if empty) is "cst-next"
+#NEUTRINO_BRANCH_APOLLO = cst-next
+#NEUTRINO_BRANCH_NEVIS  = cst-next
+#NEUTRINO_BRANCH_KRONOS  = cst-next
 
-# default (if empty) is "next-cc"
-#NEUTRINO_WORK_BRANCH_APOLLO = cstnext-work
-#NEUTRINO_WORK_BRANCH_KRONOS = cstnext-work
-#NEUTRINO_WORK_BRANCH_NEVIS  = cstnext-work
+# default (if empty) is "cst-next"
+NEUTRINO_WORK_BRANCH_APOLLO = cstnext-work
+NEUTRINO_WORK_BRANCH_KRONOS = cstnext-work
+NEUTRINO_WORK_BRANCH_NEVIS  = cstnext-work
 
 #
 # configure the directory where "make dist-pkgs"
@@ -75,21 +75,24 @@ SOURCE_TOOLS        = cst-public-tools
 DRIVERS_3x_NEVIS    =
 DRIVERS_3x_APOLLO   = "-3.x"
 DRIVERS_3x_KRONOS   = "-3.x"
+#DRIVERS_3x_KRONOS   =
 
 # default (if empty) is "2.6.34.13"
-#KVERSION_NEVIS = 2.6.34.13
+KVERSION_NEVIS = 2.6.34.13
 
-# default (if empty) is "3.10.69"
-#KVERSION_APOLLO = 2.6.34.14
+# default (if empty) is "3.10.70"
+KVERSION_APOLLO = 3.10.70
 
-# default (if empty) is "3.10.69"
-#KVERSION_KRONOS = 2.6.34.14
+# default (if empty) is "3.10.70"
+KVERSION_KRONOS = 3.10.70
 
 # crosstool-ng versions
-CT_VER_NEVIS  = 1.20.0
-CT_VER_APOLLO = 1.20.0
-CT_VER_KRONOS = 1.20.0
+CT_VER_NEVIS  = 1.16.0
+CT_VER_APOLLO = 1.20.0-git_2015-02-26
+CT_VER_KRONOS = 1.20.0-git_2015-02-26
 
-# default (if empty) is "/Data/coolstream/Cross/build-tools"
+# default (if empty) is "/Data/Cross/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
-#BUILD_TOOLS = /Data/coolstream/Cross/build-tools
+BUILD_TOOLS = /Data/coolstream/Cross/build-tools
+
+UCLIBC_BUILD = 1
