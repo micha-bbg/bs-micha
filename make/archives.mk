@@ -93,7 +93,7 @@ $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2: | $(HOSTPREFIX)/bin/get-git-archive
 	get-git-archive.sh git://github.com/luaposix/luaposix.git release-v$(LUAPOSIX_VER) $(notdir $@) $(ARCHIVE)
 
 $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz:
-	$(WGET) http://cst.dl.slknet.de/bs-micha/Lua-cURL$(LUACURL_VER).tar.xz
+	$(WGET) https://slknet.de/bs-micha-download/Lua-cURL$(LUACURL_VER).tar.xz
 
 $(ARCHIVE)/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz:
 	$(WGET) http://ftp.de.debian.org/debian/pool/main/libv/libvorbisidec/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz
