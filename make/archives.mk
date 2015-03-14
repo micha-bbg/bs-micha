@@ -170,18 +170,6 @@ $(ARCHIVE)/gmp-$(GMP_VER).tar.xz:
 $(ARCHIVE)/nettle-$(NETTLE_VER).tar.gz:
 	$(WGET) http://www.lysator.liu.se/~nisse/archive/nettle-$(NETTLE_VER).tar.gz
 
-$(ARCHIVE)/linux-2.6.34.13.tar.bz2:
-	$(WGET) https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.34/linux-2.6.34.13.tar.bz2
-
-$(ARCHIVE)/linux-2.6.34.tar.bz2:
-	$(WGET) https://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.34.tar.bz2
-
-$(ARCHIVE)/linux-2.6.34.14.tar.bz2:
-	$(WGET) https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.34/linux-2.6.34.14.tar.bz2
-
-$(ARCHIVE)/linux-2.6.26.8.tar.bz2:
-	$(WGET) http://ftp.linux.org.uk/pub/linux/linux-2.6/linux-2.6.26.8.tar.bz2
-
 $(ARCHIVE)/pkg-config-$(PKGCONFIG_VER).tar.gz:
 	$(WGET) http://pkgconfig.freedesktop.org/releases/pkg-config-$(PKGCONFIG_VER).tar.gz
 
@@ -275,3 +263,6 @@ endif
 
 $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2
+
+$(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
+	$(WGET) https://slknet.de/bs-micha-download/cst-kernel_$(KERNEL_FILE_VER).tar.xz

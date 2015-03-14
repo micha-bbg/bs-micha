@@ -86,6 +86,14 @@ KVERSION_APOLLO = 3.10.70
 # default (if empty) is "3.10.70"
 KVERSION_KRONOS = 3.10.70
 
+ifeq ($(PLATFORM), nevis)
+KERNEL_FILE_VER = 2.6.34.13-cnxt_2012-12-09_1613_6ff43b3
+KERNEL_BUILD = vers:01
+else
+KERNEL_FILE_VER = cst_3.10_2015-03-13_1913_a32e261
+KERNEL_BUILD = vers:01
+endif
+
 # crosstool-ng versions
 CT_VER_NEVIS  = 1.16.0
 CT_VER_APOLLO = 1.20.0-git_2015-02-26
@@ -96,3 +104,4 @@ CT_VER_KRONOS = 1.20.0-git_2015-02-26
 BUILD_TOOLS = /Data/coolstream/Cross/build-tools
 
 UCLIBC_BUILD = 1
+SKIP_KRNL_COPY = 0

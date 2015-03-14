@@ -97,7 +97,7 @@ include make/system-tools.mk
 include make/devel-tools.mk
 include make/neutrino.mk
 #include make/cleantargets.mk
-#include make/linuxkernel.mk
+include make/linuxkernel.mk
 include make/archives.mk
 include make/extras1.mk
 include make/extras2.mk
