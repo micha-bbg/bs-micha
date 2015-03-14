@@ -1,26 +1,31 @@
 
 ifeq ($(PLATFORM), nevis)
+## nevis kernel
 KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-01.config
 else
-KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-02.config
+## apollo/kronos kernel
+KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-01.config
 endif
 
-SKIP_KRNL_COPY  ?= 0
-KERNEL_BUILD    ?= vers:##
+USE_KRNL_LOGO   ?= 0
+KERNEL_BUILD    ?= 0
+KERNEL_BUILD_INT = vers:$(KERNEL_BUILD)
 K_OBJ            = $(BUILD_TMP)/kobj
 K_SRCDIR         = $(BUILD_TMP)/linux
 INSTALL_MOD_PATH = $(TARGETPREFIX_BASE)/mymodules
+KRNL_LOGO_FILE   = $(PATCHES)/kernel/$(KRNL_LOGO)
 
 #######################################################################
 
 $(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 	mkdir -p $(K_OBJ)
-	if [ ! "$SKIP_KRNL_COPY" = "1" -o ! -d cst-kernel_$(KERNEL_FILE_VER) ]; then \
-		rm -fr cst-kernel_$(KERNEL_FILE_VER); \
-		rm -fr $(K_SRCDIR); \
-		$(UNTAR)/cst-kernel_$(KERNEL_FILE_VER).tar.xz; \
-	fi;
+	rm -fr $(K_SRCDIR); \
+	rm -fr $(BUILD_TMP)/cst-kernel_$(KERNEL_FILE_VER); \
+	$(UNTAR)/cst-kernel_$(KERNEL_FILE_VER).tar.xz; \
 	ln -sf cst-kernel_$(KERNEL_FILE_VER) $(K_SRCDIR); \
+	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
+		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
+	fi; \
 	cp -a $(KERNEL_CONFIG) $@
 
 kernel-menuconfig: $(K_OBJ)/.config
@@ -30,7 +35,9 @@ kernel-menuconfig: $(K_OBJ)/.config
 kernel-clean:
 	rm -fr $(K_OBJ)
 	rm -fr $(INSTALL_MOD_PATH)
-	rm -fr $(BUILD_TMP)/kernel-img
+	rm -f $(BUILD_TMP)/kernel-img/vmlinux.ub.gz
+	rm -f $(BUILD_TMP)/kernel-img/zImage_DTB
+	rm -f $(D)/cskernel
 
 
 $(D)/cskernel: $(K_OBJ)/.config
@@ -62,7 +69,7 @@ cskernel-image: $(D)/cskernel | $(HOSTPREFIX)/bin/mkimage
 	cd $(BUILD_TMP)/kernel-img && \
 		rm -f vmlinux.ub.gz; \
 		mkimage -A ARM -O linux -T kernel -C none -a $(LOAD_ADDR) -e $(TEXT_ADDR) \
-			-n "$(KRNL_NAME) $(KERNEL_BUILD)" -d zImage_DTB vmlinux.ub.gz
+			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d zImage_DTB vmlinux.ub.gz
 
 else ## ifneq ($(PLATFORM), nevis)
 
@@ -74,7 +81,7 @@ cskernel-image: $(D)/cskernel | $(HOSTPREFIX)/bin/mkimage
 	cd $(BUILD_TMP)/kernel-img && \
 		rm -f kernel.img; \
 		mkimage -A ARM -O linux -T kernel -C none -a $(LOAD_ADDR) -e $(TEXT_ADDR) \
-			-n "$(KRNL_NAME) $(KERNEL_BUILD)" -d $(K_OBJ)/arch/arm/boot/zImage kernel.img
+			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d $(K_OBJ)/arch/arm/boot/zImage kernel.img
 
 endif ## ifneq ($(PLATFORM), nevis)
 
