@@ -28,8 +28,7 @@ UNRAR_VER = 5.0.10
 ifeq ($(PLATFORM), kronos)
 BUSYBOX_VER=1.23.1
 else
-#BUSYBOX_VER=1.21.0
-BUSYBOX_VER=1.23.1
+BUSYBOX_VER=1.21.0
 endif
 
 # wget for retrieving files using HTTP, HTTPS and FTP
