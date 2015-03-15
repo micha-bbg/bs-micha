@@ -22,8 +22,8 @@ $(ARCHIVE)/lzo-$(LZO_VER).tar.gz:
 $(ARCHIVE)/mtd-utils-$(MTD_UTILS_VER).tar.bz2:
 	$(WGET) ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-$(MTD_UTILS_VER).tar.bz2
 
-$(ARCHIVE)/crosstool-ng-$(CROSSTOOL-NG_VER).tar.bz2:
-	$(WGET) http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-$(CROSSTOOL-NG_VER).tar.bz2
+$(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz:
+	$(WGET) https://slknet.de/bs-micha-download/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 
 $(ARCHIVE)/unrarsrc-$(UNRAR_VER).tar.gz:
 	$(WGET) http://www.rarlab.com/rar/unrarsrc-$(UNRAR_VER).tar.gz
