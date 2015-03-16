@@ -1,6 +1,6 @@
 # Makefile to build system tools
 
-$(D)/vsftpd: $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
+$(D)/vsftpd: $(D)/openssl $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/vsftpd-$(VSFTPD_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/vsftpd-$(VSFTPD_VER); \
@@ -33,7 +33,7 @@ $(D)/rsync: $(ARCHIVE)/rsync-$(RSYNC_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/rsync-$(RSYNC_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/rsync-$(RSYNC_VER); \
 		$(CONFIGURE) \
-			--prefix=/usr \
+			--prefix=$(DEFAULT_PREFIX) \
 			--disable-locale \
 			--sysconfdir=/etc \
 			--mandir=/.remove; \
@@ -619,7 +619,7 @@ $(D)/iptables: $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2 | $(TARGETPREFIX)
 	$(UNTAR)/iptables-$(IPTABLES_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/iptables-$(IPTABLES_VER); \
 		$(CONFIGURE) \
-			--prefix=/usr \
+			--prefix=$(DEFAULT_PREFIX) \
 			--mandir=/.remove; \
 		$(MAKE); \
 		make install DESTDIR=$(PKGPREFIX_BASE)
