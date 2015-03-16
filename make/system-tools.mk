@@ -100,11 +100,7 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		$(PATCH)/busybox-mdev-1.21.c.diff; \
 		$(PATCH)/busybox-1.20-ifupdown.c.diff; \
 		if [ "$(BUSYBOX_VER)" = "1.21.0" ]; then \
-			if [ "$(PLATFORM)" = "nevis" ]; then \
-				cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21.config .config; \
-			else \
-				cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21-ipv6.config .config; \
-			fi; \
+			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.21.0.config .config; \
 		else \
 			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.23.1.config .config; \
 		fi; \
