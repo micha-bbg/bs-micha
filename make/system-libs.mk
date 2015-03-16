@@ -875,7 +875,7 @@ $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/fuse-$(FUSE_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-$(FUSE_VER); \
 		$(CONFIGURE) \
-			--prefix=/usr \
+			--prefix=$(DEFAULT_PREFIX) \
 			--sysconfdir=/etc \
 			--mandir=/.remove; \
 		$(MAKE) all; \

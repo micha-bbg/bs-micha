@@ -13,6 +13,8 @@ else
 BOXMODEL =
 endif
 
+KRNL_LOGO ?= none
+
 ifeq ($(PLATFORM), nevis)
 TARGET_NEVIS                ?= arm-cx2450x-linux-gnueabi
 TARGET                       = $(TARGET_NEVIS)
@@ -56,6 +58,12 @@ NEUTRINO_WORK_BRANCH_KRONOS ?= cst-next
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
 NO_USR_BUILD		     = 0
 DRIVERS_3x                   = $(DRIVERS_3x_KRONOS)
+endif
+
+ifeq ($(NO_USR_BUILD), 1)
+DEFAULT_PREFIX               = /
+else
+DEFAULT_PREFIX               = /usr
 endif
 
 CROSS_PATH     ?= cross

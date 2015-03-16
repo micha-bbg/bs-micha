@@ -212,7 +212,7 @@ $(D)/mc: $(ARCHIVE)/mc-$(MC_VER).tar.xz $(D)/libncurses $(D)/libglib | $(TARGETP
 		./configure \
 			--build=$(BUILD) \
 			--host=$(TARGET) \
-			--prefix=/usr \
+			--prefix=$(DEFAULT_PREFIX) \
 			--without-gpm-mouse \
 			--disable-doxygen-doc \
 			--disable-doxygen-dot \
@@ -338,7 +338,7 @@ $(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz | $(TARGETPREFIX)
 	set -e; cd $(BUILD_TMP)/gettext-$(GETTEXT_VER); \
 		$(CONFIGURE) \
 			--enable-silent-rules \
-			--prefix=/usr \
+			--prefix=$(DEFAULT_PREFIX) \
 			--disable-java \
 			--disable-native-java \
 			--datarootdir=/.remove \

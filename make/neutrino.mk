@@ -7,7 +7,7 @@ NEUTRINO_DEPS += openthreads luaposix luacurl openssl
 NEUTRINO_DEPS += wpa_supplicant parted
 NEUTRINO_PKG_DEPS =
 
-ifeq ($(GLIBC_BUILD), 0)
+ifeq ($(UCLIBC_BUILD), 1)
 NEUTRINO_DEPS += libiconv
 endif
 
@@ -75,7 +75,7 @@ neutrino-deps: $(NEUTRINO_DEPS)
 N_LDFLAGS =
 #N_LDFLAGS = -L$(TARGETPREFIX_BASE)/lib -lcurl -lssl -lcrypto -ldl
 N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
-ifeq ($(GLIBC_BUILD), 0)
+ifeq ($(UCLIBC_BUILD), 1)
 N_LDFLAGS += -liconv
 endif
 N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
