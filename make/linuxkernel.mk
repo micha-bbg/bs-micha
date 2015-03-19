@@ -12,8 +12,8 @@ KERNEL_BUILD    ?= 0
 KERNEL_BUILD_INT = vers:$(KERNEL_BUILD)
 K_OBJ            = $(BUILD_TMP)/kobj
 K_SRCDIR         = $(BUILD_TMP)/linux
-INSTALL_MOD_PATH = $(TARGETPREFIX_BASE)/mymodules
 KRNL_LOGO_FILE   = $(PATCHES)/kernel/$(KRNL_LOGO)
+INSTALL_MOD_PATH = $(TARGETPREFIX_BASE)
 
 #######################################################################
 
@@ -32,23 +32,8 @@ kernel-menuconfig: $(K_OBJ)/.config
 	cd $(K_SRCDIR) && \
 		make ARCH=arm CROSS_COMPILE=$(TARGET)- menuconfig O=$(K_OBJ)/
 
-kernel-clean:
-	rm -fr $(K_OBJ)
-	rm -fr $(INSTALL_MOD_PATH)
-	rm -f $(BUILD_TMP)/kernel-img/vmlinux.ub.gz
-	rm -f $(BUILD_TMP)/kernel-img/zImage_DTB
-	rm -f $(D)/cskernel
-
-
-$(D)/cskernel: $(K_OBJ)/.config
-	rm -f $(K_SRCDIR)/.config
-	set -e; cd $(K_SRCDIR); \
-		make ARCH=arm CROSS_COMPILE=$(TARGET)- silentoldconfig O=$(K_OBJ)/; \
-		$(MAKE) ARCH=arm CROSS_COMPILE=$(TARGET)- O=$(K_OBJ)/; \
-		make ARCH=arm CROSS_COMPILE=$(TARGET)- INSTALL_MOD_PATH=$(INSTALL_MOD_PATH) modules_install O=$(K_OBJ)/
-	touch $@
-
 ifneq ($(PLATFORM), nevis)
+## apollo / kronos
 DTB = xxx
 ifeq ($(PLATFORM), apollo)
 DTB = hd849x.dtb
@@ -61,7 +46,20 @@ endif
 
 TEXT_ADDR=0x8000
 LOAD_ADDR=0x8000
-cskernel-image: $(D)/cskernel | $(HOSTPREFIX)/bin/mkimage
+
+kernel-clean:
+	rm -fr $(K_OBJ)
+	rm -fr $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/kernel
+	rm -f $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/modules.*
+	rm -f $(BUILD_TMP)/kernel-img/vmlinux.ub.gz
+	rm -f $(BUILD_TMP)/kernel-img/zImage_DTB
+	rm -f $(D)/cskernel
+
+cskernel-image: $(D)/cskernel
+	if [ ! -e $(HOSTPREFIX)/bin/mkimage ]; then \
+		echo "$(HOSTPREFIX)/bin/mkimage not found!"; \
+		false; \
+	fi;
 	mkdir -p $(BUILD_TMP)/kernel-img
 	cat $(K_OBJ)/arch/arm/boot/zImage \
 		$(SOURCE_DIR)/cst-public-drivers/$(PLATFORM)-3.x/device-tree-overlay/$(DTB) \
@@ -71,17 +69,55 @@ cskernel-image: $(D)/cskernel | $(HOSTPREFIX)/bin/mkimage
 		mkimage -A ARM -O linux -T kernel -C none -a $(LOAD_ADDR) -e $(TEXT_ADDR) \
 			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d zImage_DTB vmlinux.ub.gz
 
-else ## ifneq ($(PLATFORM), nevis)
+$(D)/cskernel: $(K_OBJ)/.config
+	rm -f $(K_SRCDIR)/.config
+	set -e; cd $(K_SRCDIR); \
+		make ARCH=arm CROSS_COMPILE=$(TARGET)- silentoldconfig O=$(K_OBJ)/; \
+		$(MAKE) ARCH=arm CROSS_COMPILE=$(TARGET)- O=$(K_OBJ)/; \
+		make ARCH=arm CROSS_COMPILE=$(TARGET)- INSTALL_MOD_PATH=$(INSTALL_MOD_PATH) modules_install O=$(K_OBJ)/
+	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)/build
+	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)/source
+	sudo $$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION)
+	touch $@
 
+else ## ifneq ($(PLATFORM), nevis)
+## nevis
 KRNL_NAME = CST Nevis Kernel
+KVERSION_FULL = $(KVERSION)-nevis
+
 TEXT_ADDR=0x48000
 LOAD_ADDR=0x48000
+
+kernel-clean:
+	rm -fr $(K_OBJ)
+	rm -fr $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION_FULL)/kernel
+	rm -f $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION_FULL)/modules.*
+	rm -f $(BUILD_TMP)/kernel-img/kernel.img
+	rm -f $(D)/cskernel
+
 cskernel-image: $(D)/cskernel | $(HOSTPREFIX)/bin/mkimage
 	mkdir -p $(BUILD_TMP)/kernel-img
 	cd $(BUILD_TMP)/kernel-img && \
 		rm -f kernel.img; \
 		mkimage -A ARM -O linux -T kernel -C none -a $(LOAD_ADDR) -e $(TEXT_ADDR) \
 			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d $(K_OBJ)/arch/arm/boot/zImage kernel.img
+
+$(D)/cskernel: $(K_OBJ)/.config
+	rm -f $(K_SRCDIR)/.config
+	set -e; cd $(K_SRCDIR); \
+		make ARCH=arm CROSS_COMPILE=$(TARGET)- silentoldconfig O=$(K_OBJ)/; \
+		$(MAKE) ARCH=arm CROSS_COMPILE=$(TARGET)- O=$(K_OBJ)/; \
+		make ARCH=arm CROSS_COMPILE=$(TARGET)- INSTALL_MOD_PATH=$(INSTALL_MOD_PATH) modules_install O=$(K_OBJ)/
+	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/build
+	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/source
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/crypto
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/drivers/media
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/drivers/misc
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/drivers/scsi
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/fs/nls
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/lib
+	sudo $$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION_FULL)
+	touch $@
 
 endif ## ifneq ($(PLATFORM), nevis)
 
