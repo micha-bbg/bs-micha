@@ -16,6 +16,12 @@ PLAT_INCS  = cst-firmware
 
 bootstrap: $(BOOTSTRAP)
 
+ifeq ($(UCLIBC_BUILD), 1)
+CST_LIBS = libs
+else
+CST_LIBS = libs-eglibc
+endif
+
 targetprefix:
 	@PATH=$(PATH):$(CROSS_DIR)/bin && \
 	if ! type -p $(TARGET)-gcc >/dev/null 2>&1; then \
@@ -58,7 +64,7 @@ cst-libs: | $(TARGETPREFIX)
 	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs/*.so $(TARGETPREFIX_BASE)/lib
 else
 cst-libs: | $(TARGETPREFIX)
-	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs-eglibc/*.so $(TARGETPREFIX_BASE)/lib
+	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(TARGETPREFIX_BASE)/lib
 endif
 
 cst-firmware: | $(TARGETPREFIX)

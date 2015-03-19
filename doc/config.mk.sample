@@ -30,10 +30,10 @@ BOXMODEL=trinity
 
 # either "cst" or "sf" or "privat"
 # default (if empty) is "cst"
-GIT_SOURCE = privat
+#GIT_SOURCE = privat
 # either "git" or "http" or "ssh"
 # default (if empty) is "git"
-GIT_PROTO = ssh
+#GIT_PROTO = ssh
 
 # default (if empty) is "cst-next"
 #NEUTRINO_BRANCH_APOLLO = cst-next
@@ -73,8 +73,8 @@ SOURCE_TOOLS        = cst-public-tools
 #SOURCE_FIRMWARE     = firmware-test
 
 DRIVERS_3x_NEVIS    =
-DRIVERS_3x_APOLLO   = "-3.x"
-DRIVERS_3x_KRONOS   = "-3.x"
+DRIVERS_3x_APOLLO   = -3.x
+DRIVERS_3x_KRONOS   = -3.x
 #DRIVERS_3x_KRONOS   =
 
 # default (if empty) is "2.6.34.13"

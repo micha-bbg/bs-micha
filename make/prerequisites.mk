@@ -43,6 +43,7 @@ $(N_HD_SOURCE):
 		cd neutrino-hd && \
 		git checkout --track -b $(NEUTRINO_BRANCH) origin/$(NEUTRINO_BRANCH)
 ifneq ($(NEUTRINO_BRANCH), $(NEUTRINO_WORK_BRANCH))
+	cd $(SOURCE_DIR)/neutrino-hd && \
 		git checkout -b $(NEUTRINO_WORK_BRANCH)
 endif
 		@echo "Cloning neutrino-hd git repo OK"
