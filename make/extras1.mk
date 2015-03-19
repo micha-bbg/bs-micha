@@ -365,3 +365,25 @@ $(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	touch $@
 endif
+
+$(D)/kernelcheck: $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz | $(TARGETPREFIX)
+	$(REMOVE)/kernelcheck-$(KERNELCHECK_VER)
+	$(UNTAR)/kernelcheck-$(KERNELCHECK_VER).tar.xz
+	## build for host
+	set -e; cd $(BUILD_TMP)/kernelcheck-$(KERNELCHECK_VER); \
+		$(MAKE) all BUILD_FOR_HOST=1; \
+		make install DESTDIR=$(HOSTPREFIX)
+	## build for target
+	$(REMOVE)/kernelcheck-$(KERNELCHECK_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/kernelcheck-$(KERNELCHECK_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/kernelcheck-$(KERNELCHECK_VER); \
+		make all CC=$(TARGET)-g++ STRIP=$(TARGET)-strip; \
+		make install DESTDIR=$(PKGPREFIX); \
+		make install DESTDIR=$(TARGETPREFIX)
+	PKG_VER=$(KERNELCHECK_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/kernelcheck
+	$(REMOVE)/kernelcheck-$(KERNELCHECK_VER)
+	$(RM_PKGPREFIX)
+	touch $@

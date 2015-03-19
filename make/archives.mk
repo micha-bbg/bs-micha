@@ -266,3 +266,6 @@ $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 
 $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
 	$(WGET) https://slknet.de/bs-micha-download/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+
+$(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
+	$(WGET) https://slknet.de/bs-micha-download/kernelcheck-$(KERNELCHECK_VER).tar.xz

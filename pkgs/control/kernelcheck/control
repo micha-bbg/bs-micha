@@ -1,0 +1,10 @@
+Package: kernelcheck
+Version: @VER@-1
+Description: Info about the kernel image
+Section: extras/comsole
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage:
+Source: https://slknet.de/bs-micha-download
+Depends: @DEP@
