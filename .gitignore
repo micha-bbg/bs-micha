@@ -1,1 +1,10 @@
 config.mk
+pkgs/opkg
+_Scripts
+cross
+deps
+download
+host
+root
+source
+build_tmp
