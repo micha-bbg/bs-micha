@@ -1,11 +1,18 @@
 # makefile to build crosstool
 
 ## crosstool config ##############################################
+
+USE_UCLIBC_NG = 1
+
 ifeq ($(PLATFORM), nevis)
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-nevis-1.20.0-2.config
 else
 ifeq ($(UCLIBC_BUILD), 1)
+ifeq ($(USE_UCLIBC_NG), 1)
+CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-3.config
+else
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-2.config
+endif ## ($(USE_UCLIBC_NG), 1)
 else
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-1-glibc.config
 endif ## ifeq ($(UCLIBC_BUILD), 1)
@@ -84,11 +91,18 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 			cp $(PATCHES)/ct-ng-1.20/999-ppl-0_11_2-fix-configure-for-64bit-host.patch patches/ppl/0.11.2; \
 			cp $(PATCHES)/ct-ng-1.20/900-pull-socket_type-h-from-eglibc.patch patches/uClibc/0.9.33.2; \
 			cp $(PATCHES)/ct-ng-1.20/901-gettimeofday.c-use-the-same-type-as-in-header.patch patches/uClibc/0.9.33.2; \
-			export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-0.9.33.2.config"; \
+			if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
+				export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-ng-1.0.1.config"; \
+			else \
+				export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-0.9.33.2.config"; \
+			fi;\
 		fi; \
 		\
 		export CST_BASE_DIR=$(BASE_DIR); \
 		export CST_CUSTOM_KERNEL=$(ARCHIVE)/cst-kernel_cst_3.10_2015-03-13_1913_a32e261.tar.xz; \
+		if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
+			export CST_CUSTOM_UCLIBC=$(ARCHIVE)/uClibc-ng-1.0.1.tar.xz; \
+		fi; \
 		test -f ./configure || ./bootstrap && \
 		./configure --enable-local; MAKELEVEL=0 make; chmod 0755 ct-ng; \
 		./ct-ng oldconfig; \

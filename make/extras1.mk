@@ -336,7 +336,11 @@ $(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/gettext-$(GETTEXT_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/gettext-$(GETTEXT_VER); \
-		$(CONFIGURE) \
+		$(BUILDENV) \
+		LIBS="-lrt" \
+		./configure \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
 			--enable-silent-rules \
 			--prefix=$(DEFAULT_PREFIX) \
 			--disable-java \
