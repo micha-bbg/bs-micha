@@ -7,7 +7,7 @@ OPKG_VER=0.2.4
 #OPKG_SVN_VER=$(OPKG-VER)+svnr$(OPKG_SVN)
 
 # pkg-config; a helper tool used when compiling applications and libraries to insert the correct compiler options
-PKGCONFIG_VER=0.26
+PKGCONFIG_VER=0.28
 
 # zlib; compression an decompressin library
 ZLIB_VER=1.2.7
