@@ -55,11 +55,7 @@ kernel-clean:
 	rm -f $(BUILD_TMP)/kernel-img/zImage_DTB
 	rm -f $(D)/cskernel
 
-cskernel-image: $(D)/cskernel
-	if [ ! -e $(HOSTPREFIX)/bin/mkimage ]; then \
-		echo "$(HOSTPREFIX)/bin/mkimage not found!"; \
-		false; \
-	fi;
+cskernel-image: $(D)/cskernel $(HOSTPREFIX)/bin/mkimage
 	mkdir -p $(BUILD_TMP)/kernel-img
 	cat $(K_OBJ)/arch/arm/boot/zImage \
 		$(SOURCE_DIR)/cst-public-drivers/$(PLATFORM)-3.x/device-tree-overlay/$(DTB) \

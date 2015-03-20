@@ -475,20 +475,18 @@ $(D)/wget: $(D)/e2fsprogs $(D)/openssl $(ARCHIVE)/wget-$(WGET_VER).tar.xz | $(TA
 	$(RM_PKGPREFIX)
 	touch $@
 
-
 mkimage: $(HOSTPREFIX)/bin/mkimage
 
-$(HOSTPREFIX)/bin/mkimage: cs-uboot
-
-$(D)/cs-uboot: $(ARCHIVE)/u-boot-2009.03.tar.bz2 $(PATCHES)/u-boot-2009.3-CST.diff
-	$(REMOVE)/u-boot-2009.03
-	$(UNTAR)/u-boot-2009.03.tar.bz2
-	set -e; cd $(BUILD_TMP)/u-boot-2009.03; \
-		$(PATCH)/u-boot-2009.3-CST.diff; \
-		make coolstream_hdx_config; \
-		$(MAKE)
-	cp -a $(BUILD_TMP)/u-boot-2009.03/tools/mkimage $(HOSTPREFIX)/bin
-	touch $@
+$(HOSTPREFIX)/bin/mkimage: $(ARCHIVE)/u-boot-$(UBOOT_VER).tar.bz2
+	$(REMOVE)/u-boot-$(UBOOT_VER)
+	$(UNTAR)/u-boot-$(UBOOT_VER).tar.bz2
+	set -e; cd $(BUILD_TMP)/u-boot-$(UBOOT_VER); \
+		make defconfig tools/; \
+	cp -a $(BUILD_TMP)/u-boot-$(UBOOT_VER)/tools/mkimage $(HOSTPREFIX)/bin
+	cp -a $(BUILD_TMP)/u-boot-$(UBOOT_VER)/tools/mkenvimage $(HOSTPREFIX)/bin
+	strip $(HOSTPREFIX)/bin/mkimage
+	strip $(HOSTPREFIX)/bin/mkenvimage
+	$(REMOVE)/u-boot-$(UBOOT_VER)
 
 $(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.xz | $(TARGETPREFIX)
 	$(UNTAR)/openvpn-$(OPENVPN_VER).tar.xz
@@ -660,16 +658,13 @@ $(D)/systemlibs-dummy:
 	install -D -m 755 $(SCRIPTS)/find-system-libs.sh $(PKGPREFIX_BASE)/var/bin/find-system-libs.sh
 	PKG_VER=$(SYSTEMLIBS_DUMMY_VER) \
 		$(OPKG_SH) $(CONTROL_DIR)/systemlibs-dummy
-
-#	$(RM_PKGPREFIX)
-#	touch $@
+	$(RM_PKGPREFIX)
+	touch $@
 
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
 SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables
-ifeq ($(PLATFORM), nevis)
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage
-endif
 
 system-tools: $(SYSTEM_TOOLS)
 system-tools-opt: $(D)/samba2
