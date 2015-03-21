@@ -101,6 +101,7 @@ KERNEL_BUILD = 01
 KRNL_LOGO       = splash_img_01.h
 
 UCLIBC_BUILD    = 1
+USE_UCLIBC_NG   = 0
 endif
 
 # crosstool-ng versions
