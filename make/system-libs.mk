@@ -976,6 +976,7 @@ $(D)/libsigc++: $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz | $(TARGETPREFIX)
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/libsigc++
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/sigc++-2.0.pc
 	$(REMOVE)/libsigc++-$(LIBSIGCPP_VER)
 	$(RM_PKGPREFIX)
 	touch $@
