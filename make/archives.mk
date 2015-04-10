@@ -269,3 +269,12 @@ $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
 
 $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
 	$(WGET) https://slknet.de/bs-micha-download/kernelcheck-$(KERNELCHECK_VER).tar.xz
+
+$(ARCHIVE)/libtirpc-$(LIBTIRPC_VER).tar.bz2:
+	$(WGET) http://sourceforge.net/projects/libtirpc/files/libtirpc/$(LIBTIRPC_VER)/libtirpc-$(LIBTIRPC_VER).tar.bz2
+
+$(ARCHIVE)/rpcbind-$(RPCBIND_VER).tar.bz2:
+	$(WGET) http://sourceforge.net/projects/rpcbind/files/rpcbind/$(RPCBIND_VER)/rpcbind-$(RPCBIND_VER).tar.bz2
+
+$(ARCHIVE)/nfs-utils-$(NFS_UTILS_VER).tar.bz2:
+	$(WGET) http://sourceforge.net/projects/nfs/files/nfs-utils/$(NFS_UTILS_VER)/nfs-utils-$(NFS_UTILS_VER).tar.bz2

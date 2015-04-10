@@ -1,0 +1,11 @@
+Package: libtirpc
+Version: @VER@-1
+Description: A port of Suns Transport-Independent RPC library to Linux.
+Section: base/network
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://sourceforge.net/projects/libtirpc
+Source:
+Depends: @DEP@
+Provides: @PROV@

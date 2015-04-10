@@ -95,6 +95,7 @@ include make/bootstrap.mk
 include make/system-libs.mk
 include make/system-tools.mk
 include make/devel-tools.mk
+include make/nfsd.mk
 include make/neutrino.mk
 #include make/cleantargets.mk
 include make/linuxkernel.mk

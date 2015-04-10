@@ -1,0 +1,11 @@
+Package: rpcbind
+Version: @VER@-1
+Description: A server that converts RPC program numbers into universal addresses.
+Section: base/network
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://sourceforge.net/projects/rpcbind
+Source:
+Depends: @DEP@
+Provides:

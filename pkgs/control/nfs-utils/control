@@ -1,0 +1,11 @@
+Package: nfs-utils
+Version: @VER@-1
+Description: linux nfs utils
+Section: base/network
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://sourceforge.net/projects/nfs
+Source:
+Depends: @DEP@
+Provides:
