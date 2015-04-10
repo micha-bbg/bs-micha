@@ -53,7 +53,7 @@ NCURSES_VER=5.9
 NTP_VER=4.2.8
 
 # ntfs-3g; file system driver for the NTFS file system, enabling read/write support of NTFS file systems
-NTFS_3G_VER=2014.2.15
+NTFS_3G_VER=2015.3.14
 
 # fbshot;  a small program that allowes you to take screenshots from the framebuffer
 FBSHOT_VER=0.3

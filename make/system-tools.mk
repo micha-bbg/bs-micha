@@ -196,6 +196,7 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 			--disable-ldconfig \
 			--disable-ntfsprogs \
 			--disable-static \
+			--enable-silent-rules \
 			; \
 		$(MAKE); \
 		make install DESTDIR=$(PKGPREFIX_BASE)
@@ -209,6 +210,7 @@ $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
 		$(PKGPREFIX_BASE)/lib/pkgconfig/ $(PKGPREFIX_BASE)/bin/ntfs-3g.{usermap,secaudit}
 	find $(PKGPREFIX_BASE) -name '*lowntfs*' | xargs rm
 	PKG_VER=$(NTFS_3G_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX_BASE)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ntfs-3g
 	$(RM_PKGPREFIX)

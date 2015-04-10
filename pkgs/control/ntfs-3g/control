@@ -5,7 +5,7 @@ Section: base
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://www.tuxera.com/community/
+Homepage: http://www.tuxera.com/community/open-source-ntfs-3g
 Source:
-Depends:
+Depends: @DEP@
 Provides: @PROV@, ntfs-3g, mount.ntfs-3g, ntfs-3g.probe
