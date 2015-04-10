@@ -662,6 +662,51 @@ $(D)/systemlibs-dummy:
 	touch $@
 
 
+
+FONTCONFIG_VER = 2.11.93
+
+$(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2:
+	$(WGET) http://www.freedesktop.org/software/fontconfig/release/fontconfig-$(FONTCONFIG_VER).tar.bz2
+
+
+$(D)/fontconfig: $(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2 | $(TARGETPREFIX)
+	$(REMOVE)/fontconfig-$(FONTCONFIG_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/fontconfig-$(FONTCONFIG_VER).tar.bz2
+	set -e; cd $(BUILD_TMP)/fontconfig-$(FONTCONFIG_VER); \
+		$(BUILDENV) \
+		FREETYPE_CFLAGS="-I$(TARGETPREFIX)/include/freetype2" \
+		FREETYPE_LIBS="-L$(TARGETPREFIX)/lib -lfreetype" \
+		./configure \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--prefix=$(DEFAULT_PREFIX) \
+			--sysconfdir=/etc \
+			--enable-libxml2 \
+			--disable-docs \
+			; \
+		$(MAKE) all; \
+		make install DESTDIR=$(PKGPREFIX_BASE); \
+		make install DESTDIR=$(TARGETPREFIX_BASE)
+	rm -rf $(PKGPREFIX)/lib/pkgconfig
+	rm -rf $(PKGPREFIX)/include
+	rm -f $(PKGPREFIX)/lib/*.la
+	rm -f $(PKGPREFIX)/lib/*.so
+	$(REWRITE_LIBTOOL)/libfontconfig.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/fontconfig.pc
+	PKG_VER=$(FONTCONFIG_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/fontconfig
+
+
+#	$(REMOVE)/fontconfig-$(FONTCONFIG_VER)
+#	$(RM_PKGPREFIX)
+#	TOUCH 4@
+
+
+
+
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
 SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage

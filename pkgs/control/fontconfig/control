@@ -1,0 +1,11 @@
+Package: fontconfig
+Version: @VER@-1
+Description: A library for configuring and customizing font acces
+Section: base/libraries
+Priority: standard
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.freedesktop.org/wiki/Software/fontconfig
+Source: http://www.freedesktop.org/software/fontconfig/release
+Depends: @DEP@
+Provides: @PROV@
