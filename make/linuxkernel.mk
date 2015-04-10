@@ -27,6 +27,7 @@ $(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
 	fi; \
 	cp -a $(KERNEL_CONFIG) $@
+	touch $@
 
 kernel-menuconfig: $(K_OBJ)/.config
 	cd $(K_SRCDIR) && \
@@ -55,8 +56,12 @@ kernel-clean:
 	rm -f $(BUILD_TMP)/kernel-img/zImage_DTB
 	rm -f $(D)/cskernel
 
-cskernel-image: $(D)/cskernel $(HOSTPREFIX)/bin/mkimage
+cskernel-image: $(HOSTPREFIX)/bin/mkimage
 	mkdir -p $(BUILD_TMP)/kernel-img
+	@if [ ! -e $(K_OBJ)/arch/arm/boot/zImage ]; then \
+		echo "\"$(K_OBJ)/arch/arm/boot/zImage\" not found."; \
+		false; \
+	fi;
 	cat $(K_OBJ)/arch/arm/boot/zImage \
 		$(SOURCE_DIR)/cst-public-drivers/$(PLATFORM)-3.x/device-tree-overlay/$(DTB) \
 		> $(BUILD_TMP)/kernel-img/zImage_DTB;
@@ -67,13 +72,15 @@ cskernel-image: $(D)/cskernel $(HOSTPREFIX)/bin/mkimage
 
 $(D)/cskernel: $(K_OBJ)/.config
 	rm -f $(K_SRCDIR)/.config
+	rm -fr $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/kernel
+	rm -f $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/modules.*
 	set -e; cd $(K_SRCDIR); \
 		make ARCH=arm CROSS_COMPILE=$(TARGET)- silentoldconfig O=$(K_OBJ)/; \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(TARGET)- O=$(K_OBJ)/; \
 		make ARCH=arm CROSS_COMPILE=$(TARGET)- INSTALL_MOD_PATH=$(INSTALL_MOD_PATH) modules_install O=$(K_OBJ)/
 	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)/build
 	rm -f $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)/source
-	sudo $$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION)
+	$$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION)
 	touch $@
 
 else ## ifneq ($(PLATFORM), nevis)
@@ -112,7 +119,7 @@ $(D)/cskernel: $(K_OBJ)/.config
 	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/drivers/scsi
 	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/fs/nls
 	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION_FULL)/kernel/lib
-	sudo $$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION_FULL)
+	$$(which depmod) -b $(TARGETPREFIX_BASE) $(KVERSION_FULL)
 	touch $@
 
 endif ## ifneq ($(PLATFORM), nevis)
