@@ -1,7 +1,7 @@
 #Makefile to build devel-tools
 
 $(D)/strace: $(ARCHIVE)/strace-$(STRACE_VER).tar.xz | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/strace-$(STRACE_VER).tar.xz
 ifeq ($(PLATFORM), tripledragon)
 	cd $(BUILD_TMP)/strace-$(STRACE_VER) && \
@@ -9,23 +9,24 @@ ifeq ($(PLATFORM), tripledragon)
 endif
 	set -e; cd $(BUILD_TMP)/strace-$(STRACE_VER); \
 		CFLAGS="$(TARGET_CFLAGS)" \
-		CPPFLAGS="-I$(TARGETPREFIX)/include" \
+		CPPFLAGS="-I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include" \
 		CXXFLAGS="$(TARGET_CXXFLAGS)" \
 		LDFLAGS="$(TARGET_LDFLAGS)" \
 		./configure --prefix= --build=$(BUILD) --host=$(TARGET) --mandir=$(BUILD_TMP)/.remove; \
 		$(MAKE) all; \
-		make install prefix=$(PKGPREFIX)
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	rm $(PKGPREFIX)/bin/strace-graph
+		make install prefix=$(PKGPREFIX_BASE)
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	rm $(PKGPREFIX_BASE)/bin/strace-graph
 	PKG_VER=$(STRACE_VER) $(OPKG_SH) $(CONTROL_DIR)/strace
-	$(REMOVE)/strace-$(STRACE_VER) $(PKGPREFIX)
+	$(REMOVE)/strace-$(STRACE_VER)
 	$(REMOVE)/.remove
+	$(RM_PKGPREFIX)
 	touch $@
 
 #  NOTE:
 #  gdb built for target or local-PC
-$(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 libncurses zlib | $(TARGETPREFIX)
-	rm -rf $(PKGPREFIX)
+$(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 $(D)/libncurses $(D)/zlib | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/gdb-$(GDB_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/gdb-$(GDB_VER); \
 		$(PATCH)/gdb-7.1-remove-builddate.diff; \
@@ -37,20 +38,21 @@ $(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 libncurses zlib | $(TARGETPREFIX)
 			--infodir=$(BUILD_TMP)/.remove \
 			--build=$(BUILD) --host=$(TARGET); \
 		$(MAKE) all-gdb; \
-		make install-gdb prefix=$(PKGPREFIX)/opt/pkg
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
-	rm -fr $(PKGPREFIX)/opt/pkg/share
-	rm -f $(PKGPREFIX)/opt/pkg/bin/gdbtui
+		make install-gdb prefix=$(PKGPREFIX_BASE)/opt/pkg
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	rm -fr $(PKGPREFIX_BASE)/opt/pkg/share
+	rm -f $(PKGPREFIX_BASE)/opt/pkg/bin/gdbtui
 	rm -rf $(BUILD_TMP)/gdb-tmp
 	mkdir $(BUILD_TMP)/gdb-tmp
-	mv $(PKGPREFIX)/opt/pkg/bin/gdbserver $(BUILD_TMP)/gdb-tmp
+	mv $(PKGPREFIX_BASE)/opt/pkg/bin/gdbserver $(BUILD_TMP)/gdb-tmp
 	PKG_VER=$(GDB_VER) $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb
-	rm -rf $(PKGPREFIX)
-	mkdir -p $(PKGPREFIX)/bin
-	cp $(BUILD_TMP)/gdb-tmp/gdbserver $(TARGETPREFIX)/bin
-	mv $(BUILD_TMP)/gdb-tmp/gdbserver $(PKGPREFIX)/bin
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX_BASE)/bin
+	cp $(BUILD_TMP)/gdb-tmp/gdbserver $(TARGETPREFIX_BASE)/bin
+	mv $(BUILD_TMP)/gdb-tmp/gdbserver $(PKGPREFIX_BASE)/bin
 	PKG_VER=$(GDB_VER) $(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver
-	$(REMOVE)/gdb-$(GDB_VER) $(PKGPREFIX) $(BUILD_TMP)/gdb-tmp $(BUILD_TMP)/.remove
+	$(REMOVE)/gdb-$(GDB_VER) $(BUILD_TMP)/gdb-tmp $(BUILD_TMP)/.remove
+	$(RM_PKGPREFIX)
 	touch $@
 
 #  NOTE:
