@@ -78,9 +78,35 @@ cst-modules-kronos: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
 	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
 
+NEVIS_MODULES = \
+	8192cu.ko \
+	8712u.ko \
+	avl2108.ko \
+	cnxt_alsa.ko \
+	cnxt_base.ko \
+	cnxt_fb.ko \
+	cnxt_i2c.ko \
+	cnxt_kal.ko \
+	cnxt_lnx.ko \
+	cnxt_sata_drv.ko \
+	cnxtmcstats.ko \
+	cs_control.ko \
+	cs_frontend.ko \
+	cs_frontend_prop.ko \
+	cs_frontpanel.ko \
+	cx24116.ko \
+	dvb-core.ko \
+	max2112.ko \
+	stv090x.ko \
+	stv6110.ko \
+	tda10023.ko
+
 cst-modules-nevis: | $(TARGETPREFIX)
-	mkdir -p $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION)-nevis $(TARGETPREFIX_BASE)/lib/modules
+	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra
+	mkdir -p $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra
+	for m in $(NEVIS_MODULES); do \
+		cp $(CST_GIT)/$(SOURCE_DRIVERS)/nevis/drivers/$(KVERSION)-nevis/$$m $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra; \
+	done
 
 $(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)
 	# stlinux RPM puts libstdc++ into /usr/lib...
