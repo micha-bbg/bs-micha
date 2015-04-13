@@ -1,5 +1,17 @@
 # makefile to build crosstool
 
+ifeq ($(PLATFORM), nevis)
+CROSSTOOL_NG_VER = $(CT_VER_NEVIS)
+endif
+
+ifeq ($(PLATFORM), apollo)
+CROSSTOOL_NG_VER = $(CT_VER_APOLLO)
+endif
+
+ifeq ($(PLATFORM), kronos)
+CROSSTOOL_NG_VER = $(CT_VER_KRONOS)
+endif
+
 ## nevis crosstool ###############################################
 ifeq ($(PLATFORM), nevis)
 
