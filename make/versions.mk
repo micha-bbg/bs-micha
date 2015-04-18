@@ -25,8 +25,8 @@ MTD_UTILS_VER = 1.5.0
 UNRAR_VER = 5.0.10
 
 # busybox; combines tiny versions of many common UNIX utilities into a single binary
-ifeq ($(PLATFORM), kronos)
-BUSYBOX_VER=1.23.1
+ifneq ($(PLATFORM), nevis)
+BUSYBOX_VER=1.23.2
 else
 BUSYBOX_VER=1.21.0
 endif
