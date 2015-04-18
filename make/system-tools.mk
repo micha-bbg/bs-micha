@@ -104,17 +104,12 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 		else \
 			cp $(PATCHES)/$(PLATFORM)/busybox-$(PLATFORM)-1.23.1.config .config; \
 		fi; \
-		sed -i -e 's#^CONFIG_PREFIX.*#CONFIG_PREFIX="$(PKGPREFIX)"#' .config; \
+		sed -i -e 's#^CONFIG_PREFIX.*#CONFIG_PREFIX="$(PKGPREFIX_BASE)"#' .config; \
 		grep -q DBB_BT=AUTOCONF_TIMESTAMP Makefile.flags && \
 		sed -i 's#AUTOCONF_TIMESTAMP#"\\"$(PLATFORM)\\""#' Makefile.flags || true; \
 		$(BUILDENV) $(MAKE) busybox CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"; \
 		make install CROSS_COMPILE=$(TARGET)- CFLAGS_EXTRA="$(TARGET_CFLAGS)"
-	install -m 0755 $(SCRIPTS)/run-parts $(PKGPREFIX)/bin
-	if [ ! "$(PLATFORM)" = "nevis" ]; then \
-		mv $(PKGPREFIX_BASE)/usr $(PKGPREFIX_BASE)/.TEMP; \
-		mv -f $(PKGPREFIX_BASE)/.TEMP/* $(PKGPREFIX_BASE); \
-		rm -fr $(PKGPREFIX_BASE)/.TEMP; \
-	fi;
+	install -m 0755 $(SCRIPTS)/run-parts $(PKGPREFIX_BASE)/bin
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
 	cp -a $(CONTROL_DIR)/busybox $(BUILD_TMP)/bb-control
 	# "auto-provides/conflicts". let's hope opkg can deal with this...
