@@ -222,11 +222,14 @@ $(D)/mc: $(ARCHIVE)/mc-$(MC_VER).tar.xz $(D)/libncurses $(D)/libglib | $(TARGETP
 			--with-ncurses-libs="$(TARGETPREFIX)/lib" \
 			--sysconfdir=/etc \
 			--mandir=/.remove \
+			--with-homedir=/var/tuxbox/config/mc \
 			--without-x; \
 			$(BUILDENV) $(MAKE) all; \
 			make install DESTDIR=$(PKGPREFIX_BASE)
 	rm -rf $(PKGPREFIX_BASE)/.remove
 	rm -rf $(PKGPREFIX)/share/locale # who needs localization?
+	install -m 0644 -D $(SCRIPTS)/mc-ini $(PKGPREFIX_BASE)/var/tuxbox/config/mc/ini
+	install -m 0644 -D $(SCRIPTS)/mc-panels.ini $(PKGPREFIX_BASE)/var/tuxbox/config/mc/panels.ini
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
 	PKG_VER=$(MC_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
