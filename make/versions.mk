@@ -157,7 +157,7 @@ READLINE_VER = 6.2
 PARTED_VER = 3.2
 
 # mc; the famous midnight commander
-MC_VER=4.8.13
+MC_VER=4.8.14
 
 LIBFFI_VER = 3.2.1
 
