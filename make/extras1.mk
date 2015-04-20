@@ -257,7 +257,7 @@ $(HOSTPREFIX)/bin/glib-genmarshal: | $(HOSTPREFIX)/bin
 	$(REMOVE)/glib-$(GLIB_VER)
 
 #http://www.dbox2world.net/board293-coolstream-hd1/board314-coolstream-development/9363-idee-midnight-commander/
-$(D)/libglib: $(HOSTPREFIX)/bin/glib-genmarshal $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(D)/zlib $(D)/libffi | $(TARGETPREFIX)
+$(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarshal $(D)/zlib $(D)/libffi | $(TARGETPREFIX)
 	$(REMOVE)/glib-$(GLIB_VER)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/glib-$(GLIB_VER).tar.xz

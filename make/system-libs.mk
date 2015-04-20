@@ -1,6 +1,6 @@
 
-$(D)/zlib: $(ARCHIVE)/zlib-$(ZLIB_VER).tar.bz2 | $(TARGETPREFIX)
-	$(UNTAR)/zlib-$(ZLIB_VER).tar.bz2
+$(D)/zlib: $(ARCHIVE)/zlib-$(ZLIB_VER).tar.xz | $(TARGETPREFIX)
+	$(UNTAR)/zlib-$(ZLIB_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/zlib-$(ZLIB_VER); \
 		CC=$(TARGET)-gcc mandir=$(BUILD_TMP)/.remove ./configure --prefix= --shared; \
 		$(MAKE); \
@@ -315,7 +315,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	fi;
 	cp -a $(TARGETPREFIX)/.TEMP/lib/lib{crypto,ssl}.so* $(TARGETPREFIX)/lib
 	pushd $(TARGETPREFIX)/lib && \
-	if [ "$(OPENSSL_VER)" = "1.0.1" ]; then \
+	if [ "$(OPENSSL_VER)" = "1.0.1" -o "$(OPENSSL_VER)" = "1.0.2"]; then \
 		OPENSSL_VER_X=1.0.0; \
 	else \
 		OPENSSL_VER_X=$(OPENSSL_VER); \

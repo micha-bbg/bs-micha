@@ -10,8 +10,8 @@ $(ARCHIVE)/opkg-$(OPKG_SVN_VER).tar.gz:
 		tar cvpzf $@ opkg-$(OPKG_SVN_VER); \
 		rm -rf opkg-$(OPKG_SVN_VER)
 
-$(ARCHIVE)/zlib-$(ZLIB_VER).tar.bz2:
-	$(WGET) http://downloads.sourceforge.net/project/libpng/zlib/$(ZLIB_VER)/zlib-$(ZLIB_VER).tar.bz2
+$(ARCHIVE)/zlib-$(ZLIB_VER).tar.xz:
+	$(WGET) http://downloads.sourceforge.net/project/libpng/zlib/$(ZLIB_VER)/zlib-$(ZLIB_VER).tar.xz
 
 $(ARCHIVE)/openssh-$(OPENSSH_VER).tar.gz:
 	$(WGET) http://artfiles.org/openbsd/OpenSSH/portable/openssh-$(OPENSSH_VER).tar.gz

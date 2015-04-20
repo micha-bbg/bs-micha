@@ -10,7 +10,7 @@ OPKG_VER=0.2.4
 PKGCONFIG_VER=0.28
 
 # zlib; compression an decompressin library
-ZLIB_VER=1.2.7
+ZLIB_VER=1.2.8
 
 # openssh
 OPENSSH_VER = 6.2p2
@@ -22,7 +22,7 @@ LZO_VER = 2.06
 MTD_UTILS_VER = 1.5.0
 
 # unrar
-UNRAR_VER = 5.0.10
+UNRAR_VER = 5.2.7
 
 # busybox; combines tiny versions of many common UNIX utilities into a single binary
 ifneq ($(PLATFORM), nevis)
@@ -70,10 +70,6 @@ ID3TAG_SUBVER=b
 MAD_VER=0.15.1b
 
 # freetype; free, high-quality and portable Font engine
-#FREETYPE_MAJOR=2
-#FREETYPE_MINOR=5
-#FREETYPE_MICRO=0
-#FREETYPE_NANO=1
 FREETYPE_MAJOR=2
 FREETYPE_MINOR=5
 FREETYPE_MICRO=5
@@ -120,14 +116,10 @@ VORBISIDEC_VER=1.0.2+svn$(VORBISIDEC_SVN)
 VORBISIDEC_VER_APPEND=.orig
 
 # libFLAC
-#FLAC_VER = 1.2.1
 FLAC_VER = 1.3.0
 
 # libffmpeg; complete, cross-platform solution to record, convert and stream audio and video
 FFMPEG_VER=2.3.3
-#ifeq ($(PLATFORM), nevis)
-#FFMPEG_VER=1.2
-#endif
 
 # libogg; encoding, decoding of the ogg file format
 OGG_VER=1.3.0
@@ -139,7 +131,6 @@ GDB_VER=7.5.1
 STRACE_VER=4.7
 
 # timezone files
-#TZ_VER = 2012b
 TZ_VER = 2013d
 
 # libiconv; converting encodings
@@ -159,8 +150,8 @@ LIBFFI_VER = 3.2.1
 
 # glib; the low-level core library that forms the basis for projects such as GTK+ and GNOME
 GLIB_MAJOR=2
-GLIB_MINOR=43
-GLIB_MICRO=4
+GLIB_MINOR=44
+GLIB_MICRO=0
 GLIB_VER=$(GLIB_MAJOR).$(GLIB_MINOR).$(GLIB_MICRO)
 
 # gettext
@@ -181,16 +172,6 @@ GMP_VER = 5.1.2
 NETTLE_VER  = 2.7.1
 
 ## build tools for host ###############
-## suse 12.3
-#MAKE_VER = 3.82
-#M4_VER = 1.4.16
-#AUTOCONF_VER = 2.69
-#AUTOMAKE_VER = 1.12.1
-#AUTOMAKE_ARCH=xz
-#LIBTOOL_VER = 2.4.2
-
-## last version
-#MAKE_VER = 4.0
 MAKE_VER = 3.82
 M4_VER = 1.4.17
 AUTOCONF_VER = 2.69
@@ -221,20 +202,20 @@ KILLPROC_VER=2.13
 NCFTP_VER=3.2.5
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.40.0
+CURL_VER=7.41.0
 
 ifeq ($(PLATFORM), nevis)
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=0.9.8
-OPENSSL_SUBVER=ze
+OPENSSL_SUBVER=zf
 
 LIBXML2_VER = 2.8.0
 
 else
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=1.0.1
-OPENSSL_SUBVER=l
+OPENSSL_VER=1.0.2
+OPENSSL_SUBVER=a
 
 LIBXML2_VER = 2.9.1
 endif	# ifeq ($(PLATFORM), nevis)
