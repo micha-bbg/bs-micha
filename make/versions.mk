@@ -59,12 +59,8 @@ NTFS_3G_VER=2015.3.14
 FBSHOT_VER=0.3
 
 # libpng; reference library for reading and writing PNGs
-#PNG_VER_X=12
-#PNG_VER=1.2.50
-#PNG_VER_X=15
-#PNG_VER=1.5.17
-PNG_VER_X=16
-PNG_VER=1.6.6
+PNG_VER_X=15
+PNG_VER=1.5.22
 
 # libdid3tag; writing, reading and manipulating ID3 tags
 ID3TAG_VER=0.15.1
