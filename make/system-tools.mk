@@ -695,11 +695,9 @@ $(D)/fontconfig: $(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2 | $(TARGETPREFI
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/fontconfig
-
-
-#	$(REMOVE)/fontconfig-$(FONTCONFIG_VER)
-#	$(RM_PKGPREFIX)
-#	TOUCH 4@
+	$(REMOVE)/fontconfig-$(FONTCONFIG_VER)
+	$(RM_PKGPREFIX)
+	TOUCH 4@
 
 
 
