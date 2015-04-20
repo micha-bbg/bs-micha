@@ -89,6 +89,7 @@ help:
 
 # define package versions first...
 include make/versions.mk
+include make/crosstool.mk
 include make/build-tools.mk
 include make/prerequisites.mk
 include make/bootstrap.mk
@@ -109,7 +110,6 @@ include make/extras2.mk
 #include make/example.mk
 include make/flashimage.mk
 include make/rootfs.mk
-include make/crosstool.mk
 include make/tuxwetter.mk
 -include make/micha-seine.mk
 
