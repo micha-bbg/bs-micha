@@ -73,6 +73,8 @@ case "$ACTION" in
 		log_info "mounting /dev/$MDEV to $MOUNTPOINT"
 		NTFSMOUNT=$(which ntfs-3g)
 		RET2=$?
+		EXFATMOUNT=$(which mount.exfat-fuse)
+		RET3=$?
 		# remove old mountpoint symlinks we might have for this device
 		rm -f $MOUNTPOINT
 		mkdir -p $MOUNTPOINT
@@ -83,22 +85,41 @@ case "$ACTION" in
 			[ $RET1 = 0 ] && break
 			sleep 1
 		done
-		if [ $RET1 != 0 -a -n "$NTFSMOUNT" ]; then
+		if [ "$RET1" != "0" -a -n "$NTFSMOUNT" ]; then
 			# failed,retry with ntfs-3g
 			for i in 1 2; do # retry only twice, waited already 5 seconds
-				$NTFSMOUNT /dev/$MDEV $MOUNTPOINT
+				$NTFSMOUNT /dev/$MDEV $MOUNTPOINT 2>&1 >/dev/null
 				RET2=$?
 				[ $RET2 = 0 ] && break
 				sleep 1
 			done
 		fi
-		if [ $RET1 = 0 -o $RET2 = 0 ]; then
+		if [ "$RET2" != "0" -a -n "$EXFATMOUNT" ]; then
+			# failed,retry with mount.exfat-fuse
+			modprobe fuse
+			for i in 1 2; do # retry only twice, waited already 5 seconds
+				$EXFATMOUNT /dev/$MDEV $MOUNTPOINT 2>&1 >/dev/null
+				RET3=$?
+				if [ $RET3 = 0 ]; then
+					EXFATLABEL=$(which exfatlabel)
+					if [ -n "$EXFATLABEL" ]; then
+						LABEL=$($EXFATLABEL /dev/$MDEV 2>/dev/null)
+					fi
+					break
+				fi
+				sleep 1
+			done
+		fi
+		if [ "$RET1" = "0" -o "$RET2" = "0" -o "$RET3" = "0" ]; then
 			create_symlinks
 		else
 			log_warn "mount   /dev/$MDEV $MOUNTPOINT failed with $RET1"
 			log_warn "        $OUT1"
 			if [ -n "$NTFSMOUNT" ]; then
 				log_warn "ntfs-3g /dev/$MDEV $MOUNTPOINT failed with $RET2"
+			fi
+			if [ -n "$EXFATMOUNT" ]; then
+				log_warn "mount.exfat-fuse /dev/$MDEV $MOUNTPOINT failed with $RET3"
 			fi
 			rmdir $MOUNTPOINT
 		fi

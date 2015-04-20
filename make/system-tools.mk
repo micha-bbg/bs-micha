@@ -579,6 +579,8 @@ $(D)/parted: $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREF
 	touch $@
 
 $(D)/exfat-utils: $(ARCHIVE)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/exfat-utils-$(EXFAT_UTILS_VER)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/exfat-utils-$(EXFAT_UTILS_VER); \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
@@ -592,8 +594,13 @@ $(D)/exfat-utils: $(ARCHIVE)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz | $(TARGETPRE
 	touch $@
 
 $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER); \
+		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
+			$(PATCH)/fuse-exfat.diff; \
+		fi; \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
 		$(SCONS) DESTDIR=$(PKGPREFIX)/sbin install
 	cp -a $(PKGPREFIX)/sbin $(TARGETPREFIX)
