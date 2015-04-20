@@ -1,13 +1,13 @@
 # makefile to build crosstool
 
 BOOTSTRAP  = targetprefix build-tools $(BUILD_TMP) $(CROSS_BASE) $(HOSTPREFIX)/bin
-BOOTSTRAP += $(TARGETPREFIX_BASE)/lib/libc.so.6 includes-and-libs
+BOOTSTRAP += $(TARGETPREFIX_BASE)/lib/libc.so.6
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg.sh $(HOSTPREFIX)/bin/opkg-chksvn.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-gitdescribe.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-find-requires.sh $(HOSTPREFIX)/bin/opkg-find-provides.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-module-deps.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/get-git-archive.sh
-BOOTSTRAP += pkg-config
+BOOTSTRAP += pkg-config includes-and-libs
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-controlver-from-svn.sh
 BOOTSTRAP += $(TARGETPREFIX_BASE)/sbin/ldconfig
 
@@ -59,13 +59,16 @@ $(BUILD_TMP):
 $(CROSS_BASE):
 	mkdir -p $(CROSS_BASE)
 
-ifeq ($(PLATFORM), nevis)
 cst-libs: | $(TARGETPREFIX)
-	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/libs/*.so $(TARGETPREFIX_BASE)/lib
-else
-cst-libs: | $(TARGETPREFIX)
+	mkdir -p $(TARGETPREFIX_BASE)/lib
 	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(TARGETPREFIX_BASE)/lib
-endif
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX_BASE)/lib
+	cp -a $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(PKGPREFIX_BASE)/lib
+	PKG_VER=1.0 \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+			$(OPKG_SH) $(CONTROL_DIR)/cs-libs
+	$(RM_PKGPREFIX)
 
 cst-firmware: | $(TARGETPREFIX)
 	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/firmware $(TARGETPREFIX_BASE)/lib
