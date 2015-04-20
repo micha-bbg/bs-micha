@@ -230,6 +230,11 @@ $(D)/mc: $(ARCHIVE)/mc-$(MC_VER).tar.xz $(D)/libncurses $(D)/libglib | $(TARGETP
 	rm -rf $(PKGPREFIX)/share/locale # who needs localization?
 	install -m 0644 -D $(SCRIPTS)/mc-ini $(PKGPREFIX_BASE)/var/tuxbox/config/mc/ini
 	install -m 0644 -D $(SCRIPTS)/mc-panels.ini $(PKGPREFIX_BASE)/var/tuxbox/config/mc/panels.ini
+	if [ "$(NO_USR_BUILD)" = "1" ]; then \
+		mkdir -p $(PKGPREFIX)/usr; \
+		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
+		ln -sf usr/share $(PKGPREFIX)/share; \
+	fi;
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)/
 	PKG_VER=$(MC_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
@@ -296,11 +301,14 @@ $(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarsh
 	rm -f $(PKGPREFIX)/bin/gtester-report # no python available on the box
 	sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/lib'," $(PKGPREFIX)/lib/*.la
 	rm -f $(PKGPREFIX)/bin/gdbus
+	if [ "$(NO_USR_BUILD)" = "1" ]; then \
+		cp -a $(PKGPREFIX)/share $(TARGETPREFIX)/usr; \
+		rm -fr $(PKGPREFIX)/share; \
+	fi;
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	cd $(PKGPREFIX) && \
-		rm -fr include lib/*.so lib/*.la share etc/bash_completion.d \
-		bin/gtester-report bin/glib-gettextize
-	rm -fr $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/etc
+		rm -fr include lib/*.so lib/*.la lib/*.a etc/bash_completion.d \
+		bin/gtester-report bin/glib-gettextize lib/pkgconfig etc
 	PKG_VER=$(GLIB_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
