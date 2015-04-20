@@ -474,28 +474,17 @@ FFMPEG_CONFIGURE = \
 --disable-neon
 endif # ifeq ($(BOXARCH), arm)
 
-ifeq ($(PLATFORM), apollo)
-FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
---enable-decoder=h264 \
---enable-decoder=vc1 \
---extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
-FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS = $(D)/libxml2
-endif
-
-ifeq ($(PLATFORM), kronos)
-FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
---enable-decoder=h264 \
---enable-decoder=vc1 \
---extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
-FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
-FFMPEG_DEPS = $(D)/libxml2
-endif
-
 ifeq ($(PLATFORM), nevis)
 FFMPEG_CONFIGURE += --cpu=armv6 --extra-cflags="-I$(TARGETPREFIX)/include" \
 --disable-iconv \
 --extra-ldflags="-lfreetype -lpng -lxml2 -lz -L$(TARGETPREFIX)/lib"
+FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
+FFMPEG_DEPS = $(D)/libxml2
+else
+FFMPEG_CONFIGURE += --cpu=cortex-a9 --extra-cflags="-mfpu=vfpv3-d16 -mfloat-abi=hard -I$(TARGETPREFIX)/include" \
+--enable-decoder=h264 \
+--enable-decoder=vc1 \
+--extra-ldflags="-lfreetype -lpng -lxml2 -lz -liconv -L$(TARGETPREFIX)/lib"
 FFMPEG_WORK_BRANCH = ffmpeg-$(FFMPEG_VER)
 FFMPEG_DEPS = $(D)/libxml2
 endif
