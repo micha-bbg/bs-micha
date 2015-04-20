@@ -21,6 +21,9 @@ CST_LIBS = libs
 else
 CST_LIBS = libs-eglibc
 endif
+ifeq ($(PLATFORM), nevis)
+CST_LIBS = libs
+endif
 
 targetprefix:
 	@PATH=$(PATH):$(CROSS_DIR)/bin && \
