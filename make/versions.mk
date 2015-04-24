@@ -241,6 +241,6 @@ RPCBIND_VER   = 0.2.1
 NFS_UTILS_VER = 1.2.6
 
 # crosstool-ng versions
-CT_VER_NEVIS  = 1.20.0
+CT_VER_NEVIS  = 1.20.0_20150218-2311_git-master_41722f5
 CT_VER_APOLLO = 1.20.0_20150414-1721_git-master_00edcaf
 CT_VER_KRONOS = 1.20.0_20150414-1721_git-master_00edcaf
