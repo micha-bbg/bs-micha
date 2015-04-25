@@ -286,6 +286,8 @@ BUILD_OPENSSL_BINARY = 1
 endif
 # openssl seems to have problem with parallel builds, so use "make" instead of "$(MAKE)"
 $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARGETPREFIX)
+	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz
 	set -e; cd $(BUILD_TMP)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER); \
 		sed -i 's/#define DATE.*/#define DATE \\"($(PLATFORM))\\""; \\/' crypto/Makefile; \
@@ -293,55 +295,39 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 		./Configure shared no-hw no-engine linux-generic32 --prefix=/ --openssldir=/etc/ssl; \
 		make depend; \
 		make all; \
-		make install_sw INSTALL_PREFIX=$(TARGETPREFIX)/.TEMP
-	mkdir -p $(PKG_CONFIG_PATH)
-	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/openssl.pc $(PKG_CONFIG_PATH)
-	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/libcrypto.pc $(PKG_CONFIG_PATH)
-	cp -a $(TARGETPREFIX)/.TEMP/lib/pkgconfig/libssl.pc $(PKG_CONFIG_PATH)
+		make install_sw INSTALL_PREFIX=$(PKGPREFIX)
+	chmod 0755 $(PKGPREFIX)/lib/libcrypto.so.* $(PKGPREFIX)/lib/libssl.so.*
+	if [ ! "$(BUILD_OPENSSL_BINARY)" = "1" ]; then \
+		rm -fr $(PKGPREFIX)/bin; \
+		rm -fr $(PKGPREFIX)/etc; \
+	fi;
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	pushd $(PKGPREFIX)/lib && \
+		if [ "$(OPENSSL_VER)" = "1.0.1" -o "$(OPENSSL_VER)" = "1.0.2" ]; then \
+			OPENSSL_VER_X=1.0.0; \
+		else \
+			OPENSSL_VER_X=$(OPENSSL_VER); \
+		fi; \
+		ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.7; \
+		ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.7; \
+		if [ ! "$(OPENSSL_VER)" = "0.9.8" ]; then \
+			ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8; \
+			ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8; \
+		fi;
+	rm -fr $(PKGPREFIX)/include
+	rm -fr $(PKGPREFIX)/lib/engines
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a
+	rm -f $(PKGPREFIX)/lib/*.so
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/openssl.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcrypto.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libssl.pc
-	mkdir -p $(TARGETPREFIX)/include
-	mkdir -p $(TARGETPREFIX)/lib
-	cp -frd $(TARGETPREFIX)/.TEMP/include/openssl $(TARGETPREFIX)/include
-	chmod 0755 $(TARGETPREFIX)/.TEMP/lib/libcrypto.so.* $(TARGETPREFIX)/.TEMP/lib/libssl.so.*
-	if [ "$(BUILD_OPENSSL_BINARY)" = "1" ]; then \
-		mkdir -p $(TARGETPREFIX)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/bin/* $(TARGETPREFIX)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/etc $(TARGETPREFIX_BASE); \
-	else \
-		rm -fr $(TARGETPREFIX)/.TEMP/bin; \
-		rm -fr $(TARGETPREFIX)/.TEMP/etc; \
-	fi;
-	cp -a $(TARGETPREFIX)/.TEMP/lib/lib{crypto,ssl}.so* $(TARGETPREFIX)/lib
-	pushd $(TARGETPREFIX)/lib && \
-	if [ "$(OPENSSL_VER)" = "1.0.1" -o "$(OPENSSL_VER)" = "1.0.2"]; then \
-		OPENSSL_VER_X=1.0.0; \
-	else \
-		OPENSSL_VER_X=$(OPENSSL_VER); \
-	fi; \
-	ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.7 && \
-	ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.7 && \
-	if [ ! "$(OPENSSL_VER)" = "0.9.8" ]; then \
-		ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8 && \
-		ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8; \
-	fi;
-	$(RM_PKGPREFIX)
-	mkdir -p $(PKGPREFIX)/lib
-	if [ "$(BUILD_OPENSSL_BINARY)" = "1" ]; then \
-		mkdir -p $(PKGPREFIX)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/bin/* $(PKGPREFIX)/bin; \
-		cp -a $(TARGETPREFIX)/.TEMP/etc $(PKGPREFIX_BASE); \
-	fi;
-	cp -a $(TARGETPREFIX)/lib/lib{crypto,ssl}.so* $(PKGPREFIX)/lib
 	PKG_VER=$(OPENSSL_VER)$(OPENSSL_SUBVER) \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
 	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
-	rm -rf $(TARGETPREFIX)/.TEMP
 	$(RM_PKGPREFIX)
 	touch $@
-
 
 ifeq ($(PLATFORM), nevis)
 NEVIS_XML2_FLAGS = --without-iconv --with-minimum
