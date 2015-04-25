@@ -204,19 +204,13 @@ NCFTP_VER=3.2.5
 # curl; command line tool for transferring data with URL syntax
 CURL_VER=7.41.0
 
-ifeq ($(PLATFORM), nevis)
-# openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
-OPENSSL_VER=0.9.8
-OPENSSL_SUBVER=zf
-
-LIBXML2_VER = 2.8.0
-
-else
-
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
 OPENSSL_SUBVER=a
 
+ifeq ($(PLATFORM), nevis)
+LIBXML2_VER = 2.8.0
+else
 LIBXML2_VER = 2.9.1
 endif	# ifeq ($(PLATFORM), nevis)
 
