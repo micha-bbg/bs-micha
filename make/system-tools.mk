@@ -551,13 +551,17 @@ $(D)/parted: $(ARCHIVE)/parted-$(PARTED_VER).tar.xz $(D)/readline | $(TARGETPREF
 	$(UNTAR)/parted-$(PARTED_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/parted-$(PARTED_VER); \
 		$(PATCH)/parted-3.2-device-mapper.patch; \
-		ICONV_X=""; \
 		$(CONFIGURE) \
 			--prefix= \
 			--disable-device-mapper \
 			--infodir=/.remove \
 			--mandir=/.remove; \
-		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="-luuid"; \
+		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
+			ICONV_X="-liconv"; \
+		else \
+			ICONV_X=""; \
+		fi; \
+		$(MAKE) all LDFLAGS="$(LD_FLAGS)" LIBS="-luuid $$ICONV_X"; \
 		make install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/.remove
 	rm -fr $(PKGPREFIX)/share

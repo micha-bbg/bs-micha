@@ -2,14 +2,13 @@
 
 AUDIODEC = ffmpeg
 NEUTRINO_DEPS  = $(SYSTEM_TOOLS)
+ifeq ($(UCLIBC_BUILD), 1)
+NEUTRINO_DEPS += libiconv
+endif
 NEUTRINO_DEPS += libcurl libjpeg freetype libbluray ffmpeg libdvbsi++ giflib libsigc++
 NEUTRINO_DEPS += openthreads luaposix luacurl openssl
 NEUTRINO_DEPS += wpa_supplicant parted
 NEUTRINO_PKG_DEPS =
-
-ifeq ($(UCLIBC_BUILD), 1)
-NEUTRINO_DEPS += libiconv
-endif
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
