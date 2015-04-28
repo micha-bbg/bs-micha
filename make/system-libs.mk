@@ -1228,3 +1228,28 @@ $(D)/lua-socket: $(ARCHIVE)/luasocket-master.zip | $(TARGETPREFIX)
 	cp -a $(BUILD_TMP)/luasocket-master/test $(TARGETPREFIX)/share/doc/lua/lua-socket
 	rm -fr $(BUILD_TMP)/luasocket-master $(PKGPREFIX)
 	touch $@
+
+$(D)/pugixml: $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz | $(TARGETPREFIX)
+	rm -fr $(BUILD_TMP)/pugixml-$(PUGIXML_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/pugixml-$(PUGIXML_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/pugixml-$(PUGIXML_VER); \
+		cmake \
+		--no-warn-unused-cli \
+		-DCMAKE_INSTALL_PREFIX=$(PKGPREFIX) \
+		-DBUILD_SHARED_LIBS=ON \
+		-DCMAKE_BUILD_TYPE=Linux \
+		-DCMAKE_C_COMPILER=$(TARGET)-gcc \
+		-DCMAKE_CXX_COMPILER=$(TARGET)-g++ \
+		scripts; \
+		$(MAKE); \
+		make install
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/lib/cmake $(PKGPREFIX)/lib/*.so $(PKGPREFIX)/include
+	PKG_VER=$(PUGIXML_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/libpugixml
+	rm -fr $(BUILD_TMP)/pugixml-$(PUGIXML_VER)
+	$(RM_PKGPREFIX)
+	touch $@

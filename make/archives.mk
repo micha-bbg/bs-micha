@@ -278,3 +278,6 @@ $(ARCHIVE)/rpcbind-$(RPCBIND_VER).tar.bz2:
 
 $(ARCHIVE)/nfs-utils-$(NFS_UTILS_VER).tar.bz2:
 	$(WGET) http://sourceforge.net/projects/nfs/files/nfs-utils/$(NFS_UTILS_VER)/nfs-utils-$(NFS_UTILS_VER).tar.bz2
+
+$(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz:
+	$(WGET) http://github.com/zeux/pugixml/releases/download/v$(PUGIXML_VER)/pugixml-$(PUGIXML_VER).tar.gz
