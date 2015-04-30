@@ -1,7 +1,6 @@
 
 $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz:
 	$(WGET) http://git.yoctoproject.org/cgit/cgit.cgi/opkg/snapshot/opkg-$(OPKG_VER).tar.gz
-#	$(WGET) http://opkg.googlecode.com/files/opkg-$(OPKG_VER).tar.gz
 
 $(ARCHIVE)/opkg-$(OPKG_SVN_VER).tar.gz:
 	set -e; cd $(BUILD_TMP); \
@@ -23,7 +22,7 @@ $(ARCHIVE)/mtd-utils-$(MTD_UTILS_VER).tar.bz2:
 	$(WGET) ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-$(MTD_UTILS_VER).tar.bz2
 
 $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
+	$(WGET) https://slknet.de/bs-micha-download/crosstool-ng/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 
 $(ARCHIVE)/unrarsrc-$(UNRAR_VER).tar.gz:
 	$(WGET) http://www.rarlab.com/rar/unrarsrc-$(UNRAR_VER).tar.gz
@@ -37,7 +36,6 @@ $(ARCHIVE)/wget-$(WGET_VER).tar.xz:
 
 $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz:
 	$(WGET) http://sourceforge.net/projects/e2fsprogs/files/e2fsprogs/v$(E2FSPROGS_VER)/e2fsprogs-$(E2FSPROGS_VER).tar.gz
-#	$(WGET) http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-$(E2FSPROGS_VER).tar.gz
 
 $(ARCHIVE)/vsftpd-$(VSFTPD_VER).tar.gz:
 	$(WGET) https://security.appspot.com/downloads/vsftpd-$(VSFTPD_VER).tar.gz
@@ -59,7 +57,6 @@ $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz:
 
 $(ARCHIVE)/fbshot-$(FBSHOT_VER).tar.gz:
 	$(WGET) http://www.dbox2world.net/download/fbshot-$(FBSHOT_VER).tar.gz
-#	$(WGET) http://www.sfires.net/stuff/fbshot/fbshot-$(FBSHOT_VER).tar.gz
 
 $(ARCHIVE)/libpng-$(PNG_VER).tar.xz:
 	$(WGET) http://download.sourceforge.net/libpng/$(notdir $@)
@@ -265,7 +262,7 @@ $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2
 
 $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+	$(WGET) https://slknet.de/bs-micha-download/cst-kernel/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 
 $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
 	$(WGET) https://slknet.de/bs-micha-download/kernelcheck-$(KERNELCHECK_VER).tar.xz
