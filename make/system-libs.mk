@@ -846,36 +846,30 @@ $(D)/libiconv: $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz | $(TARGETPREFIX)
 endif
 
 $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
+	$(REMOVE)/fuse-$(FUSE_VER)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/fuse-$(FUSE_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-$(FUSE_VER); \
 		$(CONFIGURE) \
-			--prefix=$(DEFAULT_PREFIX) \
+			--prefix=/ \
 			--sysconfdir=/etc \
 			--mandir=/.remove; \
 		$(MAKE) all; \
 		make install DESTDIR=$(PKGPREFIX_BASE); \
-		make install DESTDIR=$(TARGETPREFIX_BASE)
-	rm $(TARGETPREFIX_BASE)/etc/init.d/fuse
-	rm -fr $(TARGETPREFIX_BASE)/.remove
-	$(REWRITE_LIBTOOL)/libfuse.la
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/fuse.pc
-	set -e; cd $(PKGPREFIX_BASE); \
-		rm -rf dev etc .remove; \
-	set -e; cd $(PKGPREFIX); \
-		rm -rf lib/pkgconfig include; \
-		rm lib/*.so lib/*.la lib/*.a
-	if [ "$(PLATFORM)" = "nevis" ]; then \
-		install -m 755 -D $(SCRIPTS)/load-fuse.init $(PKGPREFIX_BASE)/etc/init.d/load-fuse; \
-		install -m 755 -D $(SCRIPTS)/load-fuse.init $(TARGETPREFIX_BASE)/etc/init.d/load-fuse; \
-		PKG_DEP="fuse.ko `opkg-find-requires.sh $(PKGPREFIX)`" \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-		PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse; \
-	else \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-		PKG_VER=$(FUSE_VER) $(OPKG_SH) $(CONTROL_DIR)/fuse; \
-	fi;
+		rm -fr $(PKGPREFIX_BASE)/.remove $(PKGPREFIX_BASE)/dev $(PKGPREFIX_BASE)/etc
+	cp -a $(PKGPREFIX_BASE)/lib/pkgconfig $(TARGETPREFIX)/lib
+	rm -fr $(PKGPREFIX_BASE)/lib/pkgconfig
+	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	rm -fr $(PKGPREFIX_BASE)/include
+	rm -f $(PKGPREFIX_BASE)/lib/*.a $(PKGPREFIX_BASE)/lib/*.la $(PKGPREFIX_BASE)/lib/*.so
+	$(REWRITE_LIBTOOL_BASE)/libfuse.la
+	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH)/fuse.pc
+	install -m 755 -D $(SCRIPTS)/load-fuse.init $(PKGPREFIX_BASE)/etc/init.d/load-fuse; \
+	install -m 755 -D $(SCRIPTS)/load-fuse.init $(TARGETPREFIX_BASE)/etc/init.d/load-fuse; \
+	PKG_VER=$(FUSE_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX_BASE)` \
+			$(OPKG_SH) $(CONTROL_DIR)/fuse
 	$(REMOVE)/fuse-$(FUSE_VER)
 	$(RM_PKGPREFIX)
 	touch $@
