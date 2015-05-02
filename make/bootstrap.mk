@@ -1,6 +1,6 @@
 # makefile to build crosstool
 
-BOOTSTRAP  = targetprefix build-tools $(BUILD_TMP) $(CROSS_BASE) $(HOSTPREFIX)/bin
+BOOTSTRAP  = targetprefix build-tools $(BUILD_TMP) $(CROSS_DIR) $(HOSTPREFIX)/bin
 BOOTSTRAP += $(TARGETPREFIX_BASE)/lib/libc.so.6
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg.sh $(HOSTPREFIX)/bin/opkg-chksvn.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-gitdescribe.sh
@@ -59,8 +59,8 @@ $(HOSTPREFIX)/bin/opkg%sh: | $(HOSTPREFIX)/bin
 $(BUILD_TMP):
 	mkdir -p $(BUILD_TMP)
 
-$(CROSS_BASE):
-	mkdir -p $(CROSS_BASE)
+$(CROSS_DIR):
+	mkdir -p $(CROSS_DIR)
 
 cst-libs: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib

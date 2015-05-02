@@ -54,7 +54,7 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 		./configure --enable-local; MAKELEVEL=0 make; chmod 0755 ct-ng; \
 		./ct-ng oldconfig; \
 		./ct-ng build
-	ln -sf sys-root/lib $(CROSS_BASE)/$(TARGET)/
+	ln -sf sys-root/lib $(CROSS_DIR)/$(TARGET)/
 
 else ## ifeq ($(PLATFORM), nevis)
 ## apollo / kronos crosstool ###############################################
@@ -112,7 +112,7 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 		./configure --enable-local; MAKELEVEL=0 make; chmod 0755 ct-ng; \
 		./ct-ng oldconfig; \
 		./ct-ng build
-	ln -sf sys-root/lib $(CROSS_BASE)/$(TARGET)/
+	ln -sf sys-root/lib $(CROSS_DIR)/$(TARGET)/
 
 ############################################
 

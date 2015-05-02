@@ -64,8 +64,7 @@ DEFAULT_PREFIX               = /usr
 endif
 
 CROSS_PATH     ?= cross
-CROSS_BASE      = $(BASE_DIR)/$(CROSS_PATH)
-CROSS_DIR       = $(CROSS_BASE)
+CROSS_DIR       = $(BASE_DIR)/$(CROSS_PATH)
 FLAVOUR        ?= neutrino-hd
 BOXARCH        ?= arm
 
