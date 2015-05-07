@@ -433,7 +433,22 @@ FFMPEG_CONFIGURE = \
 --disable-programs \
 --disable-static \
 --disable-filters \
---disable-protocols \
+--enable-librtmp \
+--disable-protocol=data \
+--disable-protocol=cache \
+--disable-protocol=concat \
+--disable-protocol=crypto \
+--disable-protocol=ftp \
+--disable-protocol=gopher \
+--disable-protocol=httpproxy \
+--disable-protocol=pipe \
+--disable-protocol=sctp \
+--disable-protocol=srtp \
+--disable-protocol=subfile \
+--disable-protocol=unix \
+--disable-protocol=md5 \
+--disable-protocol=hls \
+--enable-openssl \
 --enable-protocol=file \
 --enable-protocol=http \
 --enable-protocol=rtmp \
@@ -442,6 +457,9 @@ FFMPEG_CONFIGURE = \
 --enable-protocol=rtmpte \
 --enable-protocol=mmsh \
 --enable-protocol=mmst \
+--enable-protocol=rtp \
+--enable-protocol=tcp \
+--enable-protocol=udp \
 --enable-bsfs \
 --disable-devices \
 --enable-swresample \
@@ -477,7 +495,7 @@ endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
 	touch $@
-$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(ARCHIVE)/ffmpeg-$(FFMPEG_VER).tar.bz2 | $(TARGETPREFIX)
+$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(D)/librtmp | $(TARGETPREFIX)
 	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
 		echo "******************************************************"; \
 		echo "* cst-public-libraries-ffmpeg missing, please create *"; \
