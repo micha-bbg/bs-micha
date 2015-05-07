@@ -1247,3 +1247,32 @@ $(D)/pugixml: $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz | $(TARGETPREFIX)
 	rm -fr $(BUILD_TMP)/pugixml-$(PUGIXML_VER)
 	$(RM_PKGPREFIX)
 	touch $@
+
+$(D)/librtmp: $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
+	$(REMOVE)/rtmpdump-$(LIBRTMP_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/rtmpdump-$(LIBRTMP_VER).tgz
+	set -e; cd $(BUILD_TMP)/rtmpdump-$(LIBRTMP_VER); \
+		sed -i "s!^prefix=.*!prefix=$(DEFAULT_PREFIX)!;" Makefile; \
+		sed -i "s!^prefix=.*!prefix=$(DEFAULT_PREFIX)!;" librtmp/Makefile; \
+		$(MAKE) \
+			CROSS_COMPILE=$(TARGET)- \
+			XCFLAGS="-I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include " \
+			LDFLAGS="-L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib" \
+			; \
+		make install DESTDIR=$(PKGPREFIX_BASE)
+	rm -fr $(PKGPREFIX)/man
+	rm -fr $(PKGPREFIX)/bin
+	rm -fr $(PKGPREFIX)/sbin
+	cp -frd $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
+	rm -fr $(PKGPREFIX)/include
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/librtmp.pc
+	PKG_VER=$(LIBRTMP_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/librtmp
+	$(REMOVE)/rtmpdump-$(LIBRTMP_VER)
+	$(RM_PKGPREFIX)
+	touch $@

@@ -278,3 +278,6 @@ $(ARCHIVE)/nfs-utils-$(NFS_UTILS_VER).tar.bz2:
 
 $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz:
 	$(WGET) http://github.com/zeux/pugixml/releases/download/v$(PUGIXML_VER)/pugixml-$(PUGIXML_VER).tar.gz
+
+$(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz:
+	$(WGET) http://rtmpdump.mplayerhq.hu/download/rtmpdump-$(LIBRTMP_VER).tgz
