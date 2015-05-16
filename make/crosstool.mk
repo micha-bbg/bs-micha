@@ -18,7 +18,8 @@ ifeq ($(PLATFORM), nevis)
 CT_NG_CONFIG  = $(PATCHES)/ct-ng-1.20/ct-ng-nevis-1.20.0-2.config
 #CUSTOM_KERNEL = $(ARCHIVE)/cst-kernel_2.6.34.13-cnxt_2012-12-09_1613_6ff43b3.tar.xz
 CUSTOM_KERNEL = $(ARCHIVE)/linux-2.6.26.8.tar.bz2
-CUSTOM_GCC    = $(ARCHIVE)/gcc-linaro-4.9-2015.03.tar.xz
+CUSTOM_GCC_VER = linaro-4.9-2015.03
+CUSTOM_GCC     = $(ARCHIVE)/gcc-$(CUSTOM_GCC_VER).tar.xz
 
 crosstool: $(CROSS_DIR)/bin/$(TARGET)-gcc
 
@@ -31,6 +32,10 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 	$(UNTAR)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER); \
 		cp $(PATCHES)/ct-ng-1.20/999-ppl-0_11_2-fix-configure-for-64bit-host.patch patches/ppl/0.11.2; \
+		\
+		mkdir -p patches/gcc/custom; \
+		cp $(PATCHES)/ct-ng-1.20/900-gcc-linaro-4.9.3-libstdc++-configure.patch patches/gcc/custom; \
+		\
 		cp -a $(CT_NG_CONFIG) .config; \
 		\
 		NUM_CPUS=$$(expr `getconf _NPROCESSORS_ONLN` \* 2); \
