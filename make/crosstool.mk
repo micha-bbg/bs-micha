@@ -31,11 +31,10 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 	$(REMOVE)/crosstool-ng-$(CROSSTOOL_NG_VER)
 	$(UNTAR)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER); \
-		cp $(PATCHES)/ct-ng-1.20/999-ppl-0_11_2-fix-configure-for-64bit-host.patch patches/ppl/0.11.2; \
 		\
+		tar -xf $(PATCHES)/ct-ng-1.20/libstdc++_configure_patch.tar.xz; \
 		mkdir -p patches/gcc/custom; \
-		cp $(PATCHES)/ct-ng-1.20/900-gcc-linaro-4.9.3-libstdc++-configure.patch patches/gcc/custom; \
-		\
+		cp -a patches/gcc/$(CUSTOM_GCC_VER)/* patches/gcc/custom; \
 		cp -a $(CT_NG_CONFIG) .config; \
 		\
 		NUM_CPUS=$$(expr `getconf _NPROCESSORS_ONLN` \* 2); \
@@ -89,6 +88,8 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 	$(REMOVE)/crosstool-ng-$(CROSSTOOL_NG_VER)
 	$(UNTAR)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER); \
+		\
+		tar -xf $(PATCHES)/ct-ng-1.20/libstdc++_configure_patch.tar.xz; \
 		cp -a $(CT_NG_CONFIG) .config; \
 		\
 		NUM_CPUS=$$(expr `getconf _NPROCESSORS_ONLN` \* 2); \
@@ -98,7 +99,6 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 		sed -i "s@^CT_PARALLEL_JOBS=.*@CT_PARALLEL_JOBS=$$NUM_CPUS@" .config; \
 		\
 		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
-			cp $(PATCHES)/ct-ng-1.20/999-ppl-0_11_2-fix-configure-for-64bit-host.patch patches/ppl/0.11.2; \
 			cp $(PATCHES)/ct-ng-1.20/900-pull-socket_type-h-from-eglibc.patch patches/uClibc/0.9.33.2; \
 			cp $(PATCHES)/ct-ng-1.20/901-gettimeofday.c-use-the-same-type-as-in-header.patch patches/uClibc/0.9.33.2; \
 			if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
