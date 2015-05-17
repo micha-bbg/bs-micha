@@ -715,6 +715,9 @@ $(D)/fontconfig: $(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2 | $(TARGETPREFI
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
 SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables
+ifeq ($(UCLIBC_BUILD), 1)
+SYSTEM_TOOLS += $(D)/libiconv
+endif
 SYSTEM_TOOLS += $(HOSTPREFIX)/bin/mkimage $(D)/exfat-utils $(D)/fuse-exfat
 
 system-tools: $(SYSTEM_TOOLS)

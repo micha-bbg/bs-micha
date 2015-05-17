@@ -8,6 +8,9 @@ endif
 NEUTRINO_DEPS += libcurl libjpeg freetype libbluray ffmpeg libdvbsi++ giflib libsigc++
 NEUTRINO_DEPS += openthreads luaposix luacurl openssl pugixml
 NEUTRINO_DEPS += wpa_supplicant parted
+ifneq ($(PLATFORM), nevis)
+NEUTRINO_DEPS += $(EXTRAS_MC)
+endif
 NEUTRINO_PKG_DEPS =
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare

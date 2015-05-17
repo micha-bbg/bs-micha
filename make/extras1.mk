@@ -402,3 +402,11 @@ $(D)/kernelcheck: $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz | $(TARGETPRE
 	$(REMOVE)/kernelcheck-$(KERNELCHECK_VER)
 	$(RM_PKGPREFIX)
 	touch $@
+
+
+EXTRAS_MC =
+ifeq ($(UCLIBC_BUILD), 1)
+EXTRAS_MC += $(D)/libiconv $(D)/gettext
+endif
+EXTRAS_MC += $(D)/libffi $(D)/libglib $(D)/mc
+extras-mc: $(EXTRAS_MC)
