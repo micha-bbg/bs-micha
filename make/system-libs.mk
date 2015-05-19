@@ -301,7 +301,10 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 		rm -fr $(PKGPREFIX)/bin; \
 		rm -fr $(PKGPREFIX)/etc; \
 	fi;
-	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	if [ -d $(PKGPREFIX)/etc -a ! $(PKGPREFIX) = $(PKGPREFIX_BASE) ]; then \
+		cp -a $(PKGPREFIX)/etc/* $(PKGPREFIX_BASE)/etc; \
+		rm -fr $(PKGPREFIX)/etc; \
+	fi;
 	pushd $(PKGPREFIX)/lib && \
 		if [ "$(OPENSSL_VER)" = "1.0.1" -o "$(OPENSSL_VER)" = "1.0.2" ]; then \
 			OPENSSL_VER_X=1.0.0; \
@@ -314,6 +317,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 			ln -sf libcrypto.so.$$OPENSSL_VER_X libcrypto.so.0.9.8; \
 			ln -sf libssl.so.$$OPENSSL_VER_X libssl.so.0.9.8; \
 		fi;
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
 	rm -fr $(PKGPREFIX)/include
 	rm -fr $(PKGPREFIX)/lib/engines
 	rm -fr $(PKGPREFIX)/lib/pkgconfig
