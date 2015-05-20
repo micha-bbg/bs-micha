@@ -91,10 +91,14 @@ $(D)/giflib-$(GIFLIB_VER): $(ARCHIVE)/giflib-$(GIFLIB_VER).tar.bz2 | $(TARGETPRE
 
 $(D)/libcurl: $(D)/libcurl-$(CURL_VER)
 	touch $@
-$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/zlib | $(TARGETPREFIX)
+$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/librtmp $(D)/zlib | $(TARGETPREFIX)
 	$(UNTAR)/curl-$(CURL_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/curl-$(CURL_VER); \
-		$(BUILDENV) LIBS="-lssl -lcrypto -lz" ./configure --prefix=${PREFIX} --build=$(BUILD) --host=$(TARGET) \
+		$(BUILDENV) LIBS="-lssl -lcrypto -lrtmp -lz" \
+		./configure \
+			--prefix=${PREFIX} \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
 			--disable-manual \
 			--disable-file \
 			--disable-rtsp \
@@ -105,6 +109,7 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 			--enable-shared \
 			--with-random \
 			--with-ssl=$(TARGETPREFIX) \
+			--with-librtmp=$(TARGETPREFIX)/lib \
 			--mandir=/.remove; \
 		$(MAKE) all; \
 		mkdir -p $(HOSTPREFIX)/bin; \
