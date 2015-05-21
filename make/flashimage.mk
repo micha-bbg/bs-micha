@@ -50,16 +50,21 @@ endif # ($(PLATFORM), apollo)
 
 ifeq ($(PLATFORM), nevis)
 
-FLASHIMG = $(BUILD_TMP)/flashroot-$(PLATFORM)-$(TIME).img
-SUMIMG   = $(BUILD_TMP)/flashroot-$(PLATFORM)-$(TIME).sum.img
+FLASHIMG = $(IMGs)/flashroot-$(PLATFORM)-$(TIME).img
+SUMIMG   = $(IMGs)/flashroot-$(PLATFORM)-$(TIME).sum.img
 
 flash-prepare: local-install find-mkfs.jffs2 find-sumtool
 
 flash-build: 
+	mkdir -p $(IMGs)
 	echo "/dev/console c 0600 0 0 5 1 0 0 0" > $(BUILD_TMP)/devtable
-	ln -sf /share/zoneinfo/CET $(BUILD_TMP)/install/etc/localtime # CET is the default in a fresh neutrino install
-	mkfs.jffs2 -e 0x20000 -p -U -D $(BUILD_TMP)/devtable -d $(BUILD_TMP)/install -o $(FLASHIMG)
+	@echo ""
+	@du -shk $$(realpath $(INSTALL))
+	@echo ""
+	mkfs.jffs2 -C -e 0x20000 -p -U -D $(BUILD_TMP)/devtable -d $(BUILD_TMP)/install -o $(FLASHIMG)
 	sumtool    -e 0x20000 -p -i $(FLASHIMG) -o $(SUMIMG)
+	rm -f $(FLASHIMG)
+	rm -f $(BUILD_TMP)/devtable
 
 # the devtable is used for having a console device on first boot.
 flashimage: flash-prepare cskernel flash-build
