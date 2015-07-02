@@ -32,7 +32,7 @@ BUSYBOX_VER=1.21.0
 endif
 
 # wget for retrieving files using HTTP, HTTPS and FTP
-WGET_VER=1.15
+WGET_VER=1.16
 
 # e2fsprogs; filesystem utilities for use with the ext[x] filesystem
 E2FSPROGS_VER=1.42.12
@@ -50,7 +50,7 @@ PROCPS_VER=3.2.8
 NCURSES_VER=5.9
 
 # ntp; synchronize system clock over a network
-NTP_VER=4.2.8
+NTP_VER=4.2.8p3
 
 # ntfs-3g; file system driver for the NTFS file system, enabling read/write support of NTFS file systems
 NTFS_3G_VER=2015.3.14
@@ -71,10 +71,14 @@ MAD_VER=0.15.1b
 
 # freetype; free, high-quality and portable Font engine
 FREETYPE_MAJOR=2
-FREETYPE_MINOR=5
-FREETYPE_MICRO=5
+FREETYPE_MINOR=6
+FREETYPE_MICRO=n/a
 FREETYPE_NANO=n/a
+ifeq ($(FREETYPE_MICRO), n/a)
+FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR)
+else
 FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR).$(FREETYPE_MICRO)
+endif
 ifeq ($(FREETYPE_NANO), n/a)
 FREETYPE_VER=$(FREETYPE_VER_PATH)
 else
@@ -196,17 +200,17 @@ LIBSDL2_VER = 2.0.1
 SDL2_TTF_VER=2.0.12
 SDL2_MIXER_VER=2.0.0
 
-OPENVPN_VER=2.3.6
+OPENVPN_VER=2.3.7
 KILLPROC_VER=2.13
 
 NCFTP_VER=3.2.5
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.41.0
+CURL_VER=7.43.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
-OPENSSL_SUBVER=a
+OPENSSL_SUBVER=c
 
 ifeq ($(PLATFORM), nevis)
 LIBXML2_VER = 2.8.0
