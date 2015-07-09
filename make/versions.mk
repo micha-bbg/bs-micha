@@ -210,7 +210,7 @@ CURL_VER=7.43.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
-OPENSSL_SUBVER=c
+OPENSSL_SUBVER=d
 
 ifeq ($(PLATFORM), nevis)
 LIBXML2_VER = 2.8.0
