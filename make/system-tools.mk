@@ -708,13 +708,90 @@ $(D)/fontconfig: $(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2 | $(TARGETPREFI
 		$(OPKG_SH) $(CONTROL_DIR)/fontconfig
 	$(REMOVE)/fontconfig-$(FONTCONFIG_VER)
 	$(RM_PKGPREFIX)
-	TOUCH 4@
+	touch $@
 
-
+$(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPREFIX)
+	$(REMOVE)/util-linux-$(UTIL_LINUX_VER)
+	$(RM_PKGPREFIX)
+	$(UNTAR)/util-linux-$(UTIL_LINUX_VER).tar.xz
+	set -e; cd $(BUILD_TMP)/util-linux-$(UTIL_LINUX_VER); \
+		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
+			$(PATCH)/util-linux/0001-sscanf-no-ms-as.patch; \
+			$(PATCH)/util-linux/0003-c.h-define-mkostemp-for-older-version-of-uClibc.patch; \
+		fi; \
+		$(PATCH)/util-linux/0002-program-invocation-short-name.patch; \
+		$(BUILDENV) \
+		NCURSES_CFLAGS="-I$(TARGETPREFIX)/include/ncurses" \
+		NCURSES_LIBS="-L$(TARGETPREFIX)/lib -lncurses" \
+		./configure \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--prefix=$(DEFAULT_PREFIX) \
+			--sysconfdir=/etc \
+			--mandir=/.remove \
+			--docdir=/.remove \
+			--without-python \
+			--without-user \
+			--with-ncurses \
+			--disable-login \
+			--disable-su \
+			--disable-fsck \
+			--disable-uuidd \
+			--disable-tls \
+			--disable-libmount \
+			--disable-mount \
+			--disable-losetup \
+			--disable-zramctl \
+			--disable-fsck \
+			--disable-mountpoint \
+			--disable-fallocate \
+			--disable-unshare \
+			--disable-nsenter \
+			--disable-setpriv \
+			--disable-eject \
+			--disable-agetty \
+			--disable-cramfs \
+			--disable-bfs \
+			--disable-minix \
+			--disable-hwclock \
+			--disable-wdctl \
+			--disable-switch_root \
+			--disable-pivot_root \
+			--disable-kill \
+			--disable-last \
+			--disable-utmpdump \
+			--disable-mesg \
+			--disable-raw \
+			--disable-rename \
+			--disable-nologin \
+			--disable-sulogin \
+			--disable-su \
+			--disable-runuser \
+			--disable-ul \
+			--disable-more \
+			--disable-pg \
+			--disable-setterm \
+			--disable-schedutils \
+			--disable-partx \
+			--disable-fdformat \
+			--disable-wall \
+			--disable-bash-completion \
+			--disable-rpath \
+			--disable-nls \
+			--enable-static-programs=sfdisk \
+			; \
+		$(MAKE); \
+		install -D -m 755 sfdisk.static $(PKGPREFIX_BASE)/sbin/sfdisk; \
+		install -D -m 755 sfdisk.static $(TARGETPREFIX_BASE)/sbin/sfdisk
+	PKG_VER=$(UTIL_LINUX_VER) \
+		$(OPKG_SH) $(CONTROL_DIR)/util-linux/sfdisk-static
+	$(REMOVE)/util-linux-$(UTIL_LINUX_VER)
+	$(RM_PKGPREFIX)
+	touch $@
 
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
-SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables
+SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables $(D)/sfdisk-static
 ifeq ($(UCLIBC_BUILD), 1)
 SYSTEM_TOOLS += $(D)/libiconv
 endif

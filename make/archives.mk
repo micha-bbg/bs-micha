@@ -280,3 +280,6 @@ $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz:
 
 $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz:
 	$(WGET) http://rtmpdump.mplayerhq.hu/download/rtmpdump-$(LIBRTMP_VER).tgz
+
+$(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz:
+	$(WGET) https://www.kernel.org/pub/linux/utils/util-linux/v$(UTIL_LINUX_MAJOR)/util-linux-$(UTIL_LINUX_VER).tar.xz
