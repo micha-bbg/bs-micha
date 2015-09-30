@@ -46,7 +46,7 @@ N_CONFIG_OPTS =
 N_CONFIG_OPTS += --enable-giflib
 N_CONFIG_OPTS += --enable-pip
 N_CONFIG_OPTS += --enable-lua
-N_CONFIG_OPTS += --enable-testing
+#N_CONFIG_OPTS += --enable-testing
 N_CONFIG_OPTS += --enable-pugixml 
 
 ifeq ($(AUDIODEC), ffmpeg)
@@ -123,6 +123,10 @@ $(TARGETPREFIX_BASE)/.version:
 	echo "homepage=$(HOMEPAGE)"		>> $@
 
 PHONY += $(PKGPREFIX_BASE)/.version $(TARGETPREFIX_BASE)/.version
+
+$(D)/locales: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
+	cd $(BUILD_TMP)/$(FLAVOUR)/data/locale; \
+		make locals
 
 $(D)/neutrino: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 	rm -f $(N_OBJDIR)/src/neutrino # trigger relinking, to pick up newly built libstb-hal
