@@ -69,14 +69,14 @@ ifeq ($(USE_UCLIBC_NG), 1)
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-3.config
 else
 ## build apollo/kronos uClibc
-CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-2.config
+CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.21.0-1.config
 endif ## ($(USE_UCLIBC_NG), 1)
 else
 ## build apollo/kronos eglibc
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-1-glibc.config
 endif ## ifeq ($(UCLIBC_BUILD), 1)
 
-CUSTOM_KERNEL = $(ARCHIVE)/cst-kernel_cst_3.10_2015-03-13_1913_a32e261.tar.xz
+CUSTOM_KERNEL = $(ARCHIVE)/cst-kernel_cst_3.10_2015-10-17_0818_6b9df41.tar.xz
 
 crosstool: $(CROSS_DIR)/bin/$(TARGET)-gcc
 
