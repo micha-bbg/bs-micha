@@ -250,3 +250,21 @@ LIBRTMP_VER = 2.3
 UTIL_LINUX_MAJOR = 2.26
 UTIL_LINUX_MINOR = 2
 UTIL_LINUX_VER = $(UTIL_LINUX_MAJOR).$(UTIL_LINUX_MINOR)
+
+ifeq ($(PLATFORM), nevis)
+## nevis platform
+KERNEL_FILE_VER = 2.6.34.13-cnxt_2012-12-09_1613_6ff43b3
+KERNEL_BUILD = 49
+else
+## apollo / kronos platform
+KERNEL_FILE_VER = cst_3.10_2015-10-17_0818_6b9df41
+KERNEL_BUILD = 13
+
+## 'GIMP header image file' in $(PATCHES)/kernel,
+## exported by GIMP from a picture
+## default (if empty) is none
+KRNL_LOGO       = splash_img_02.h
+
+UCLIBC_BUILD    = 1
+USE_UCLIBC_NG   = 0
+endif

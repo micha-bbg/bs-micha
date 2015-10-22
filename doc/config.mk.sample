@@ -86,24 +86,6 @@ KVERSION_APOLLO = 3.10.70
 # default (if empty) is "3.10.70"
 KVERSION_KRONOS = 3.10.70
 
-ifeq ($(PLATFORM), nevis)
-## nevis platform
-KERNEL_FILE_VER = 2.6.34.13-cnxt_2012-12-09_1613_6ff43b3
-KERNEL_BUILD = 01
-else
-## apollo / kronos platform
-KERNEL_FILE_VER = cst_3.10_2015-03-13_1913_a32e261
-KERNEL_BUILD = 01
-
-## 'GIMP header image file' in $(PATCHES)/kernel,
-## exported by GIMP from a picture
-## default (if empty) is none
-KRNL_LOGO       = splash_img_01.h
-
-UCLIBC_BUILD    = 1
-USE_UCLIBC_NG   = 0
-endif
-
 # default (if empty) is "/Data/Cross/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
 BUILD_TOOLS = /Data/coolstream/Cross/build-tools
