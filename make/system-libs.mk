@@ -1275,7 +1275,7 @@ $(D)/pugixml: $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	touch $@
 
-$(D)/librtmp: $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
+$(D)/librtmp: $(D)/zlib $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
 	$(REMOVE)/rtmpdump-$(LIBRTMP_VER)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/rtmpdump-$(LIBRTMP_VER).tgz
