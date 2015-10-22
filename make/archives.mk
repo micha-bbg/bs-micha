@@ -242,20 +242,10 @@ $(ARCHIVE)/libbluray-$(LIBBLURAY_VER).tar.bz2:
 	$(WGET) http://ftp.videolan.org/pub/videolan/libbluray/$(LIBBLURAY_VER)/libbluray-$(LIBBLURAY_VER).tar.bz2
 
 $(ARCHIVE)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz:
-ifeq ($(EXFAT_UTILS_VER), 1.1.1)
-	$(WGET) -O $(ARCHIVE)/$(notdir $@) "https://docs.google.com/uc?export=download&id=0B7CLI-REKbE3UzNtSkRvdHBpdjQ"
-else ifeq ($(EXFAT_UTILS_VER), 1.1.0)
-	$(WGET) -O $(ARCHIVE)/$(notdir $@) "https://docs.google.com/uc?export=download&id=0B7CLI-REKbE3bnR2WHowZXNtUVU"
-else
-	$(WGET) https://exfat.googlecode.com/files/exfat-utils-$(EXFAT_UTILS_VER).tar.gz
-endif
+	$(WGET) https://github.com/relan/exfat/releases/download/v1.2.1/exfat-utils-$(EXFAT_UTILS_VER).tar.gz
 
 $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz:
-ifeq ($(FUSE_EXFAT_VER), 1.1.0)
-	$(WGET) -O $(ARCHIVE)/$(notdir $@) "https://docs.google.com/uc?export=download&id=0B7CLI-REKbE3VTdaa0EzTkhYdU0"
-else
-	$(WGET) https://exfat.googlecode.com/files/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
-endif
+	$(WGET) https://github.com/relan/exfat/releases/download/v1.2.1/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
 
 $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2

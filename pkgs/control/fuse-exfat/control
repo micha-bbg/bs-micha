@@ -5,7 +5,7 @@ Section: base
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: https://code.google.com/p/exfat/
-Source: https://code.google.com/p/exfat/wiki/Downloads
+Homepage: https://github.com/relan/exfat
+Source: https://github.com/relan/exfat/releases
 Depends: @DEP@
 Provides:

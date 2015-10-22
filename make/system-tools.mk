@@ -588,7 +588,12 @@ $(D)/exfat-utils: $(ARCHIVE)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz | $(TARGETPRE
 	$(UNTAR)/exfat-utils-$(EXFAT_UTILS_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/exfat-utils-$(EXFAT_UTILS_VER); \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
-		$(SCONS) DESTDIR=$(PKGPREFIX_BASE)/sbin install
+		autoreconf --install; \
+		$(CONFIGURE) \
+			--prefix=$(DEFAULT_PREFIX_BASE) \
+			; \
+		$(MAKE); \
+		make install DESTDIR=$(PKGPREFIX_BASE)
 	cp -a $(PKGPREFIX_BASE)/sbin $(TARGETPREFIX_BASE)
 	PKG_VER=$(EXFAT_UTILS_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
@@ -602,11 +607,13 @@ $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TA
 	$(RM_PKGPREFIX)
 	$(UNTAR)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER); \
-		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
-			$(PATCH)/fuse-exfat.diff; \
-		fi; \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
-		$(SCONS) DESTDIR=$(PKGPREFIX_BASE)/sbin install
+		autoreconf --install; \
+		$(CONFIGURE) \
+			--prefix=$(DEFAULT_PREFIX_BASE) \
+			; \
+		$(MAKE); \
+		make install DESTDIR=$(PKGPREFIX_BASE)
 	cp -a $(PKGPREFIX_BASE)/sbin $(TARGETPREFIX_BASE)
 	PKG_VER=$(FUSE_EXFAT_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
