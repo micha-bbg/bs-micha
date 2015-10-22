@@ -32,7 +32,7 @@ BUSYBOX_VER=1.21.0
 endif
 
 # wget for retrieving files using HTTP, HTTPS and FTP
-WGET_VER=1.16
+WGET_VER=1.16.3
 
 # e2fsprogs; filesystem utilities for use with the ext[x] filesystem
 E2FSPROGS_VER=1.42.12
@@ -72,7 +72,7 @@ MAD_VER=0.15.1b
 # freetype; free, high-quality and portable Font engine
 FREETYPE_MAJOR=2
 FREETYPE_MINOR=6
-FREETYPE_MICRO=n/a
+FREETYPE_MICRO=1
 FREETYPE_NANO=n/a
 ifeq ($(FREETYPE_MICRO), n/a)
 FREETYPE_VER_PATH=$(FREETYPE_MAJOR).$(FREETYPE_MINOR)
@@ -200,13 +200,13 @@ LIBSDL2_VER = 2.0.1
 SDL2_TTF_VER=2.0.12
 SDL2_MIXER_VER=2.0.0
 
-OPENVPN_VER=2.3.7
+OPENVPN_VER=2.3.8
 KILLPROC_VER=2.13
 
 NCFTP_VER=3.2.5
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.43.0
+CURL_VER=7.45.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
