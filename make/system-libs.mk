@@ -1289,7 +1289,6 @@ $(D)/librtmp: $(D)/zlib $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
 			; \
 		make install DESTDIR=$(PKGPREFIX_BASE)
 	rm -fr $(PKGPREFIX)/man
-	rm -fr $(PKGPREFIX)/bin
 	rm -fr $(PKGPREFIX)/sbin
 	cp -frd $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
 	rm -fr $(PKGPREFIX)/include
