@@ -258,7 +258,7 @@ KERNEL_BUILD = 49
 else
 ## apollo / kronos platform
 KERNEL_FILE_VER = cst_3.10_2015-10-17_0818_6b9df41
-KERNEL_BUILD = 13
+KERNEL_BUILD = 14
 
 ## 'GIMP header image file' in $(PATCHES)/kernel,
 ## exported by GIMP from a picture
