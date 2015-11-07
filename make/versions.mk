@@ -241,7 +241,7 @@ NFS_UTILS_VER = 1.2.6
 # crosstool-ng versions
 CT_VER_NEVIS  = 1.20.0_20150218-2311_git-master_41722f5
 CT_VER_APOLLO = 1.20.0_20150513-0053_git-master_9e01e15
-CT_VER_KRONOS = 1.21.0_20151020-0508_git-master_720e0b4
+CT_VER_KRONOS = 1.21.0_20151104-1150_git-master_85f9814
 
 PUGIXML_VER = 1.6
 
@@ -266,5 +266,5 @@ KERNEL_BUILD = 14
 KRNL_LOGO       = splash_img_02.h
 
 UCLIBC_BUILD    = 1
-USE_UCLIBC_NG   = 0
+USE_UCLIBC_NG   = 1
 endif

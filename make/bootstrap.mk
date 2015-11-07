@@ -124,6 +124,21 @@ $(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)
 	else \
 		cp -a $(CROSS_DIR)/$(TARGET)/lib/*so* $(TARGETPREFIX_BASE)/lib; \
 	fi
+	if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
+		cd $(TARGETPREFIX_BASE)/lib; \
+		cp -fd ld-uClibc.so.1 ld-uClibc.so.0; \
+		cp -fd libc.so.1 libc.so.0; \
+		cp -fd libcrypt.so.1 libcrypt.so.0; \
+		cp -fd libdl.so.1 libdl.so.0; \
+		cp -fd libm.so.1 libm.so.0; \
+		cp -fd libpthread.so.1 libpthread.so.0; \
+		cp -fd libresolv.so.1 libresolv.so.0; \
+		cp -fd librt.so.1 librt.so.0; \
+		cp -fd libthread_db.so.1 libthread_db.so.0; \
+		cp -fd libutil.so.1 libutil.so.0; \
+		cd $(CROSS_DIR)/$(TARGET); \
+		$(PATCH)/ct-ng-1.20/unistd.h_uclibc-ng.diff; \
+	fi
 
 includes-and-libs: $(PLAT_LIBS) $(PLAT_INCS)
 

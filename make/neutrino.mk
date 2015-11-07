@@ -94,6 +94,8 @@ $(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk
 	cd $(N_HD_SOURCE); \
 		git checkout $(NEUTRINO_WORK_BRANCH)
 	set -e; cd $(N_OBJDIR); \
+		export DVB_API_VERSION=5; \
+		export DVB_API_VERSION_MINOR=10; \
 		CC=$(TARGET)-gcc CFLAGS="$(N_CFLAGS)" CXXFLAGS="$(N_CFLAGS)" CPPFLAGS="$(N_CPPFLAGS)" \
 		LDFLAGS="$(N_LDFLAGS)" PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
 		$(N_HD_SOURCE)/configure --host=$(TARGET) --build=$(BUILD) --prefix=${PREFIX} \

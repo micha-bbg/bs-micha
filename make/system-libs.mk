@@ -560,6 +560,8 @@ ncurses-prereq:
 		false; \
 	fi
 
+#		$(PATCH)/gcc5/ncurses_5.9-patch_20141206.patch; \
+
 $(D)/libncurses: $(ARCHIVE)/ncurses-$(NCURSES_VER).tar.gz | ncurses-prereq $(TARGETPREFIX)
 	$(UNTAR)/ncurses-$(NCURSES_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/ncurses-$(NCURSES_VER); \

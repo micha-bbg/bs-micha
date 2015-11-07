@@ -3,7 +3,7 @@
 TOOLCHECK  = find-git find-svn find-gzip find-bzip2 find-patch find-gawk
 TOOLCHECK += find-makeinfo find-automake find-gcc find-libtool
 TOOLCHECK += find-yacc find-flex find-tic find-pkg-config
-TOOLCHECK += find-cmake find-gperf find-makedepend find-scons
+TOOLCHECK += find-cmake find-gperf find-makedepend
 
 SYS_TOOLS1 = procps busybox vsftpd rsync e2fsprogs ntfs-3g wget timezone fuse parted readline
 SYS_TOOLS2 = liblzo mtd-utils unrar
