@@ -60,7 +60,7 @@ FBSHOT_VER=0.3
 
 # libpng; reference library for reading and writing PNGs
 PNG_VER_X=15
-PNG_VER=1.5.22
+PNG_VER=1.5.24
 
 # libdid3tag; writing, reading and manipulating ID3 tags
 ID3TAG_VER=0.15.1
