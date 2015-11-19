@@ -190,7 +190,7 @@ $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz:
 	$(WGET) http://ftp.gnome.org/pub/GNOME/sources/libsigc++/$(LIBSIGCPP_MAJOR).$(LIBSIGCPP_MINOR)/libsigc++-$(LIBSIGCPP_VER).tar.xz
 
 $(ARCHIVE)/u-boot-$(UBOOT_VER).tar.bz2:
-	$(WGET) ftp://ftp.denx.de/pub/u-boot/u-boot-$(UBOOT_VER).tar.bz2
+	$(WGET) http://ftp.denx.de/pub/u-boot/u-boot-$(UBOOT_VER).tar.bz2
 
 ## libSDL V1
 $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz:

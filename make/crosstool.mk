@@ -66,7 +66,7 @@ else ## ifeq ($(PLATFORM), nevis)
 ifeq ($(UCLIBC_BUILD), 1)
 ifeq ($(USE_UCLIBC_NG), 1)
 ## build apollo/kronos uClibc-ng
-CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.21.0-3.config
+CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-3.config
 else
 ## build apollo/kronos uClibc
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.21.0-1.config
@@ -77,8 +77,6 @@ CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-1-glibc.config
 endif ## ifeq ($(UCLIBC_BUILD), 1)
 
 CUSTOM_KERNEL = $(ARCHIVE)/cst-kernel_cst_3.10_2015-10-17_0818_6b9df41.tar.xz
-#CUSTOM_GCC_VER = linaro-5.1-2015.08
-#CUSTOM_GCC     = $(ARCHIVE)/gcc-$(CUSTOM_GCC_VER).tar.xz
 
 crosstool: $(CROSS_DIR)/bin/$(TARGET)-gcc
 
@@ -92,10 +90,6 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER); \
 		\
 		tar -xf $(PATCHES)/ct-ng-1.20/libstdc++_configure_patch.tar.xz; \
-		if [ ! "$(CUSTOM_GCC)" = "" ]; then \
-			mkdir -p patches/gcc/custom; \
-			cp -a patches/gcc/$(CUSTOM_GCC_VER)/* patches/gcc/custom; \
-		fi; \
 		cp -a $(CT_NG_CONFIG) .config; \
 		\
 		NUM_CPUS=$$(expr `getconf _NPROCESSORS_ONLN` \* 2); \
@@ -108,7 +102,7 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 			cp $(PATCHES)/ct-ng-1.20/900-pull-socket_type-h-from-eglibc.patch patches/uClibc/0.9.33.2; \
 			cp $(PATCHES)/ct-ng-1.20/901-gettimeofday.c-use-the-same-type-as-in-header.patch patches/uClibc/0.9.33.2; \
 			if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
-				export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-ng-1.0.8.config"; \
+				export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-ng-1.0.1.config"; \
 			else \
 				export CST_UCLIBC_CONFIG="$(PATCHES)/ct-ng-1.20/ct-ng-uClibc-0.9.33.2.config"; \
 			fi;\
@@ -117,17 +111,13 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 		export CST_BASE_DIR=$(BASE_DIR); \
 		export CST_CUSTOM_KERNEL=$(CUSTOM_KERNEL); \
 		if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
-			export CST_CUSTOM_UCLIBC=$(ARCHIVE)/uClibc-ng-1.0.8.tar.xz; \
-		fi; \
-		if [ ! "$(CUSTOM_GCC)" = "" ]; then \
-			export CST_CUSTOM_GCC=$(CUSTOM_GCC); \
+			export CST_CUSTOM_UCLIBC=$(ARCHIVE)/uClibc-ng-1.0.1.tar.xz; \
 		fi; \
 		test -f ./configure || ./bootstrap && \
 		./configure --enable-local; MAKELEVEL=0 make; chmod 0755 ct-ng; \
 		./ct-ng oldconfig; \
 		./ct-ng build
 	ln -sf sys-root/lib $(CROSS_DIR)/$(TARGET)/
-
 
 ############################################
 

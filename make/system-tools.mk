@@ -609,14 +609,8 @@ $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TA
 	set -e; cd $(BUILD_TMP)/fuse-exfat-$(FUSE_EXFAT_VER); \
 		sed -i -e 's/^#error C99-compliant compiler is required/#warning C99-compliant compiler is required/' libexfat/compiler.h; \
 		autoreconf --install; \
-		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
-			ICONV_X="-liconv"; \
-		else \
-			ICONV_X=""; \
-		fi; \
 		$(CONFIGURE) \
 			--prefix=$(DEFAULT_PREFIX_BASE) \
-			LIBS="$$ICONV_X" \
 			; \
 		$(MAKE); \
 		make install DESTDIR=$(PKGPREFIX_BASE)
