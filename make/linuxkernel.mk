@@ -4,7 +4,8 @@ ifeq ($(PLATFORM), nevis)
 KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-01.config
 else
 ## apollo/kronos kernel
-KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-01.config
+#KERNEL_CONFIG = $(PATCHES)/kernel/$(PLATFORM)-$(KVERSION)-01.config
+KERNEL_CONFIG = $(PATCHES)/kernel/cst-$(PLATFORM)-$(KVERSION)_3.01-01.config
 endif
 
 USE_KRNL_LOGO   ?= 0
@@ -26,7 +27,13 @@ $(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
 		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
 	fi; \
-	cp -a $(KERNEL_CONFIG) $@
+	cp -a $(KERNEL_CONFIG) $@; \
+	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
+		cd $(K_OBJ); \
+			$(PATCH)/kernel/config_comp-xz.diff; \
+			$(PATCH)/kernel/config_ipv6.diff; \
+			$(PATCH)/kernel/config_nfsd.diff; \
+	fi;
 	touch $@
 
 kernel-menuconfig: $(K_OBJ)/.config
