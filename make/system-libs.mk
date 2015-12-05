@@ -91,9 +91,16 @@ $(D)/giflib-$(GIFLIB_VER): $(ARCHIVE)/giflib-$(GIFLIB_VER).tar.bz2 | $(TARGETPRE
 
 $(D)/libcurl: $(D)/libcurl-$(CURL_VER)
 	touch $@
-$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/librtmp $(D)/zlib | $(TARGETPREFIX)
+$(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(ARCHIVE)/curl-ca-bundle.crt $(D)/openssl $(D)/librtmp $(D)/zlib | $(TARGETPREFIX)
 	$(UNTAR)/curl-$(CURL_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/curl-$(CURL_VER); \
+		if [ "$(PLATFORM)" = "nevis" ]; then \
+			IPV6="--disable-ipv6"; \
+			CABUNDLE="--with-ca-bundle=/share/curl/curl-ca-bundle.crt"; \
+		else \
+			IPV6="--enable-ipv6"; \
+			CABUNDLE="--with-ca-bundle=/usr/share/curl/curl-ca-bundle.crt"; \
+		fi; \
 		$(BUILDENV) LIBS="-lssl -lcrypto -lrtmp -lz" \
 		./configure \
 			--prefix=${PREFIX} \
@@ -108,6 +115,8 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 			--disable-smtp \
 			--enable-shared \
 			--with-random \
+			$$CABUNDLE \
+			$$IPV6 \
 			--with-ssl=$(TARGETPREFIX) \
 			--with-librtmp=$(TARGETPREFIX)/lib \
 			--mandir=/.remove; \
@@ -123,6 +132,8 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 		ln -sf usr/share $(PKGPREFIX)/share; \
 	fi;
 	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	mkdir -p $(TARGETPREFIX)/share/curl
+	cp -a $(ARCHIVE)/curl-ca-bundle.crt $(TARGETPREFIX)/share/curl
 	$(REMOVE)/pkg-lib; mkdir $(BUILD_TMP)/pkg-lib
 	cd $(PKGPREFIX) && rm -rf share usr include lib/pkgconfig lib/*.so lib/*a .remove/ && mv lib $(BUILD_TMP)/pkg-lib
 	PKG_VER=$(CURL_VER) \
@@ -131,6 +142,8 @@ $(D)/libcurl-$(CURL_VER): $(ARCHIVE)/curl-$(CURL_VER).tar.bz2 $(D)/openssl $(D)/
 	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX)
 	mv $(BUILD_TMP)/pkg-lib/* $(PKGPREFIX)/
+	mkdir -p $(PKGPREFIX)/share/curl
+	cp -a $(ARCHIVE)/curl-ca-bundle.crt $(PKGPREFIX)/share/curl
 	PKG_VER=$(CURL_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \

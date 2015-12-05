@@ -64,6 +64,12 @@ $(ARCHIVE)/libpng-$(PNG_VER).tar.xz:
 $(ARCHIVE)/curl-$(CURL_VER).tar.bz2:
 	$(WGET) http://curl.haxx.se/download/$(lastword $(subst /, ,$@))
 
+$(ARCHIVE)/curl-ca-bundle.crt:
+	cd $(ARCHIVE); \
+		wget http://curl.haxx.se/ca/cacert.pem.bz2; \
+		bunzip2 cacert.pem.bz2; \
+		mv cacert.pem curl-ca-bundle.crt
+
 $(ARCHIVE)/libmad-$(MAD_VER).tar.gz:
 	$(WGET) http://downloads.sourceforge.net/project/mad/libmad/$(MAD_VER)/libmad-$(MAD_VER).tar.gz
 
