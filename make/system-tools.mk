@@ -612,7 +612,12 @@ $(D)/fuse-exfat: $(D)/fuse $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz | $(TA
 		$(CONFIGURE) \
 			--prefix=$(DEFAULT_PREFIX_BASE) \
 			; \
-		$(MAKE); \
+		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
+			ICONV_X="-liconv"; \
+		else \
+			ICONV_X=""; \
+		fi; \
+		$(MAKE) LIBS="$$ICONV_X"; \
 		make install DESTDIR=$(PKGPREFIX_BASE)
 	cp -a $(PKGPREFIX_BASE)/sbin $(TARGETPREFIX_BASE)
 	PKG_VER=$(FUSE_EXFAT_VER) \
