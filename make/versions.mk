@@ -206,11 +206,11 @@ KILLPROC_VER=2.13
 NCFTP_VER=3.2.5
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.45.0
+CURL_VER=7.46.0
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
-OPENSSL_SUBVER=d
+OPENSSL_SUBVER=e
 
 ifeq ($(PLATFORM), nevis)
 LIBXML2_VER = 2.8.0
