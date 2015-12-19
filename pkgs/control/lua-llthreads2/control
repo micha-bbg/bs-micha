@@ -1,0 +1,11 @@
+Package: lua-llthreads2
+Version: @VER@-1
+Description: Low-Level threads for Lua
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://github.com/moteus/lua-llthreads2
+Source:
+Depends: @DEP@
+Provides:

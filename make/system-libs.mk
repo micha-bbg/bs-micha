@@ -822,6 +822,30 @@ $(D)/luaposix: $(D)/lua $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2 | $(TARGETPR
 	$(RM_PKGPREFIX)
 	touch $@
 
+$(D)/lua-llthreads2: $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER)
+	cd $(BUILD_TMP); unzip -q $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip
+	set -e; cd $(BUILD_TMP)/lua-llthreads2-$(LUA_LLTHREADS2_VER); \
+		$(PATCH)/llthreads2-Add-thread-cancel-function.patch; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/l52util.c -o src/l52util.o -DLLTHREAD_MODULE_NAME=llthreads2; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/llthread.c -o src/llthread.o -DLLTHREAD_MODULE_NAME=llthreads2; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o llthreads2.so -L$(TARGETLIB) src/l52util.o src/llthread.o -lpthread; \
+		mkdir -p $(TARGETPREFIX)/lib/lua/5.2; \
+		mkdir -p $(TARGETPREFIX)/share/lua/5.2; \
+		cp -f llthreads2.so $(TARGETPREFIX)/lib/lua/5.2; \
+		cp -fr src/lua/llthreads2 $(TARGETPREFIX)/share/lua/5.2; \
+		mkdir -p $(PKGPREFIX)/lib/lua/5.2; \
+		mkdir -p $(PKGPREFIX)/share/lua/5.2; \
+		cp -f llthreads2.so $(PKGPREFIX)/lib/lua/5.2; \
+		cp -fr src/lua/llthreads2 $(PKGPREFIX)/share/lua/5.2
+	PKG_VER=$(LUA_LLTHREADS2_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
+			$(OPKG_SH) $(CONTROL_DIR)/lua-llthreads2
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER)
+	touch $@
+
 $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/Lua-cURL$(LUACURL_VER).tar.xz

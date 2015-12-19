@@ -97,6 +97,9 @@ $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2: | $(HOSTPREFIX)/bin/get-git-archive
 $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz:
 	$(WGET) https://slknet.de/bs-micha-download/Lua-cURL$(LUACURL_VER).tar.xz
 
+$(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip:
+	$(WGET) -O $@ https://github.com/moteus/lua-llthreads2/archive/v$(LUA_LLTHREADS2_VER).zip
+
 $(ARCHIVE)/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz:
 	$(WGET) http://ftp.de.debian.org/debian/pool/main/libv/libvorbisidec/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz
 

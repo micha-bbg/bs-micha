@@ -114,6 +114,8 @@ LUA_EXPAT_VER = 1.2.0
 
 LUA_SOCKET_VER = 3.0-rc1
 
+LUA_LLTHREADS2_VER = 0.1.3
+
 # libvorbisidec;  libvorbisidec is an Ogg Vorbis audio decoder (also known as "tremor") with no floating point arithmatic
 VORBISIDEC_SVN=18153
 VORBISIDEC_VER=1.0.2+svn$(VORBISIDEC_SVN)
