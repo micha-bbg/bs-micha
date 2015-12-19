@@ -38,8 +38,8 @@ if [ -e /tmp/.reboot ] ; then
 	/bin/dt -t"Rebooting..."
 	/sbin/reboot -f
 else
-	/bin/dt -t"Panic..."
-	echo "Panic..."
+	/bin/dt -t"No panic!"
+	echo "No panic!"
 #	sleep 15
 #	/sbin/reboot -f
 fi
