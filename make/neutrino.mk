@@ -8,13 +8,14 @@ endif
 NEUTRINO_DEPS += libcurl libjpeg freetype libbluray ffmpeg libdvbsi++ giflib libsigc++
 NEUTRINO_DEPS += openthreads luaposix luacurl lua-expat openssl pugixml
 NEUTRINO_DEPS += wpa_supplicant parted
-ifneq ($(PLATFORM), nevis)
-NEUTRINO_DEPS += extras-mc
-endif
+#ifneq ($(PLATFORM), nevis)
+#NEUTRINO_DEPS += extras-mc
+#endif
 NEUTRINO_PKG_DEPS =
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
+N_CFLAGS += -Wfloat-equal
 N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
