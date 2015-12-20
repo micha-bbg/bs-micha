@@ -1,0 +1,11 @@
+Package: lzmq
+Version: @VER@-1
+Description: Lua bindings to ZeroMQ
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: https://github.com/zeromq/lzmq
+Source:
+Depends: @DEP@
+Provides:

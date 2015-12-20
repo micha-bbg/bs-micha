@@ -846,6 +846,68 @@ $(D)/lua-llthreads2: $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip | $(TAR
 	$(REMOVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER)
 	touch $@
 
+
+$(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lzmq-$(LUA_LZMQ_VER)
+	cd $(BUILD_TMP); unzip -q $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip
+	set -e; cd $(BUILD_TMP)/lzmq-$(LUA_LZMQ_VER); \
+		mkdir -p lzmq; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/ztimer.c -o src/ztimer.o; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/lzutils.c -o src/lzutils.o; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o lzmq/timer.so -L$(TARGETLIB) src/ztimer.o src/lzutils.o -lrt; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/lzmq.c -o src/lzmq.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/lzutils.c -o src/lzutils.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/poller.c -o src/poller.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zcontext.c -o src/zcontext.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zerror.c -o src/zerror.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zmsg.c -o src/zmsg.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zpoller.c -o src/zpoller.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zsocket.c -o src/zsocket.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o lzmq.so -L$(TARGET_LDFLAGS) src/lzmq.o src/lzutils.o src/poller.o src/zcontext.o src/zerror.o src/zmsg.o src/zpoller.o src/zsocket.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		mkdir -p $(TARGETPREFIX)/lib/lua/5.2/lzmq; \
+		mkdir -p $(TARGETPREFIX)/share/lua/5.2; \
+		cp -f lzmq.so $(TARGETPREFIX)/lib/lua/5.2; \
+		cp -f lzmq/timer.so $(TARGETPREFIX)/lib/lua/5.2/lzmq; \
+		cp -fr src/lua/lzmq $(TARGETPREFIX)/share/lua/5.2; \
+		mkdir -p $(PKGPREFIX)/lib/lua/5.2/lzmq; \
+		mkdir -p $(PKGPREFIX)/share/lua/5.2; \
+		cp -f lzmq.so $(PKGPREFIX)/lib/lua/5.2; \
+		cp -f lzmq/timer.so $(PKGPREFIX)/lib/lua/5.2/lzmq; \
+		cp -fr src/lua/lzmq $(PKGPREFIX)/share/lua/5.2
+	PKG_VER=$(LUA_LZMQ_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
+			$(OPKG_SH) $(CONTROL_DIR)/lzmq
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lzmq-$(LUA_LZMQ_VER)
+	touch $@
+
+## static only build for lzmq
+$(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
+	$(REMOVE)/zeromq-$(ZEROMQ_VER)
+	$(UNTAR)/zeromq-$(ZEROMQ_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/zeromq-$(ZEROMQ_VER); \
+		./autogen.sh; \
+		$(CONFIGURE) \
+			--prefix= \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--mandir=/.remove \
+			--without-documentation \
+			--with-gcov=no \
+			--with-poller \
+			--enable-static=yes \
+			--enable-shared=yes \
+			--with-pic \
+			;\
+		$(MAKE); \
+		make install DESTDIR=$(TARGETPREFIX)
+	rm -fr $(TARGETPREFIX)/.remove
+	$(REWRITE_LIBTOOL)/libzmq.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libzmq.pc
+	$(REMOVE)/zeromq-$(ZEROMQ_VER)
+	touch $@
+
 $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/Lua-cURL$(LUACURL_VER).tar.xz
