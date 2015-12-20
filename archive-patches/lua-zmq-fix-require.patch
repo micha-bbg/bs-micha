@@ -1,0 +1,25 @@
+From 421b5f98baa56e4cc9bb987924b73785f22e6b04 Mon Sep 17 00:00:00 2001
+From: "M. Liebmann" <tuxcode.bbg@gmail.com>
+Date: Sun, 20 Dec 2015 08:18:07 +0100
+Subject: [PATCH] fix require
+
+---
+ src/threads.lua | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/threads.lua b/src/threads.lua
+index dbdd3e7..e539a19 100644
+--- a/src/threads.lua
++++ b/src/threads.lua
+@@ -23,7 +23,7 @@
+ --
+ 
+ local zmq = require"zmq"
+-local llthreads = require"llthreads"
++local llthreads = require"llthreads2"
+ 
+ local bootstrap_pre = [[
+ local action, action_arg, parent_ctx = ...
+-- 
+2.6.4
+

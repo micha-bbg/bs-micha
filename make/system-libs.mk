@@ -882,7 +882,32 @@ $(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
 	$(REMOVE)/lzmq-$(LUA_LZMQ_VER)
 	touch $@
 
-## static only build for lzmq
+$(D)/lua-zmq: $(D)/zeromq $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
+	cd $(BUILD_TMP); unzip -q $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip
+	set -e; cd $(BUILD_TMP)/lua-zmq-$(LUA_ZMQ_VER); \
+		$(PATCH)/lua-zmq-fix-require.patch; \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/pre_generated-zmq.nobj.c -o src/pre_generated-zmq.nobj.o $(TARGET_CFLAGS); \
+		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		mkdir -p $(PKGPREFIX)/lib/lua/5.2; \
+		mkdir -p $(PKGPREFIX)/share/lua/5.2/zmq; \
+		cp -f zmq.so $(PKGPREFIX)/lib/lua/5.2; \
+		cp -f src/poller.lua $(PKGPREFIX)/share/lua/5.2/zmq; \
+		cp -f src/threads.lua $(PKGPREFIX)/share/lua/5.2/zmq; \
+		mkdir -p $(TARGETPREFIX)/lib/lua/5.2; \
+		mkdir -p $(TARGETPREFIX)/share/lua/5.2/zmq; \
+		cp -f zmq.so $(TARGETPREFIX)/lib/lua/5.2; \
+		cp -f src/poller.lua $(TARGETPREFIX)/share/lua/5.2/zmq; \
+		cp -f src/threads.lua $(TARGETPREFIX)/share/lua/5.2/zmq
+	PKG_VER=$(LUA_ZMQ_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
+			$(OPKG_SH) $(CONTROL_DIR)/lua-zmq
+	$(RM_PKGPREFIX)
+	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
+	touch $@
+
+## static only build for lzmq / lua-zmq
 $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/zeromq-$(ZEROMQ_VER)
 	$(UNTAR)/zeromq-$(ZEROMQ_VER).tar.gz

@@ -1,0 +1,11 @@
+Package: lua-zmq
+Version: @VER@-1
+Description: Lua bindings to zeromq
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://github.com/Neopallium/lua-zmq
+Source:
+Depends: @DEP@
+Provides:
