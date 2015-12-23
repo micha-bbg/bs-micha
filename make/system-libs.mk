@@ -846,6 +846,7 @@ $(D)/lua-llthreads2: $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip | $(TAR
 	$(REMOVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER)
 	touch $@
 
+LZMQ_STATIC = 0
 
 $(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
@@ -864,7 +865,11 @@ $(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
 		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zmsg.c -o src/zmsg.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
 		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zpoller.c -o src/zpoller.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
 		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/zsocket.c -o src/zsocket.o -DLUAZMQ_USE_SEND_AS_BUF -DLUAZMQ_USE_TEMP_BUFFERS -DLUAZMQ_USE_ERR_TYPE_OBJECT $(TARGET_CFLAGS); \
-		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o lzmq.so -L$(TARGET_LDFLAGS) src/lzmq.o src/lzutils.o src/poller.o src/zcontext.o src/zerror.o src/zmsg.o src/zpoller.o src/zsocket.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		if [ "$(LZMQ_STATIC)" = "1" ]; then \
+			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o lzmq.so -L$(TARGET_LDFLAGS) src/lzmq.o src/lzutils.o src/poller.o src/zcontext.o src/zerror.o src/zmsg.o src/zpoller.o src/zsocket.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		else \
+			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o lzmq.so -L$(TARGET_LDFLAGS) src/lzmq.o src/lzutils.o src/poller.o src/zcontext.o src/zerror.o src/zmsg.o src/zpoller.o src/zsocket.o -lzmq; \
+		fi; \
 		mkdir -p $(TARGETPREFIX)/lib/lua/5.2/lzmq; \
 		mkdir -p $(TARGETPREFIX)/share/lua/5.2; \
 		cp -f lzmq.so $(TARGETPREFIX)/lib/lua/5.2; \
@@ -882,6 +887,8 @@ $(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
 	$(REMOVE)/lzmq-$(LUA_LZMQ_VER)
 	touch $@
 
+LUA_ZMQ_STATIC = 0
+
 $(D)/lua-zmq: $(D)/zeromq $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
@@ -889,7 +896,11 @@ $(D)/lua-zmq: $(D)/zeromq $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip | $(TARGETPREFIX
 	set -e; cd $(BUILD_TMP)/lua-zmq-$(LUA_ZMQ_VER); \
 		$(PATCH)/lua-zmq-fix-require.patch; \
 		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/pre_generated-zmq.nobj.c -o src/pre_generated-zmq.nobj.o $(TARGET_CFLAGS); \
-		$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		if [ "$(LUA_ZMQ_STATIC)" = "1" ]; then \
+			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
+		else \
+			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o -lzmq; \
+		fi; \
 		mkdir -p $(PKGPREFIX)/lib/lua/5.2; \
 		mkdir -p $(PKGPREFIX)/share/lua/5.2/zmq; \
 		cp -f zmq.so $(PKGPREFIX)/lib/lua/5.2; \
@@ -907,8 +918,8 @@ $(D)/lua-zmq: $(D)/zeromq $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip | $(TARGETPREFIX
 	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
 	touch $@
 
-## static only build for lzmq / lua-zmq
 $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
 	$(REMOVE)/zeromq-$(ZEROMQ_VER)
 	$(UNTAR)/zeromq-$(ZEROMQ_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/zeromq-$(ZEROMQ_VER); \
@@ -926,11 +937,19 @@ $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
 			--with-pic \
 			;\
 		$(MAKE); \
-		make install DESTDIR=$(TARGETPREFIX)
+		make install DESTDIR=$(TARGETPREFIX); \
+		make install DESTDIR=$(PKGPREFIX)
 	rm -fr $(TARGETPREFIX)/.remove
 	$(REWRITE_LIBTOOL)/libzmq.la
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libzmq.pc
+	rm -fr $(PKGPREFIX)/.remove; rm -fr $(PKGPREFIX)/include; rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a; rm -f $(PKGPREFIX)/lib/*.la; rm -f $(PKGPREFIX)/lib/*.so
+	PKG_VER=$(ZEROMQ_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/zeromq
 	$(REMOVE)/zeromq-$(ZEROMQ_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/luacurl: $(D)/libcurl $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz | $(TARGETPREFIX)

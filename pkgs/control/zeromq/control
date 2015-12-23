@@ -1,0 +1,11 @@
+Package: zeromq
+Version: @VER@-1
+Description: A library that allows for building efficient and flexible messaging systems
+Section:
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://zeromq.org
+Source: http://zeromq.org/intro:get-the-software
+Depends: @DEP@
+Provides: @PROV@
