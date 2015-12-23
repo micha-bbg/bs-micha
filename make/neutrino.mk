@@ -15,7 +15,7 @@ NEUTRINO_PKG_DEPS =
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
-N_CFLAGS += -Wfloat-equal
+#N_CFLAGS += -Wfloat-equal
 N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
@@ -49,6 +49,7 @@ N_CONFIG_OPTS += --enable-pip
 N_CONFIG_OPTS += --enable-lua
 #N_CONFIG_OPTS += --enable-testing
 N_CONFIG_OPTS += --enable-pugixml 
+N_CONFIG_OPTS += --enable-zeromq
 
 ifeq ($(AUDIODEC), ffmpeg)
 # enable ffmpeg audio decoder in neutrino
