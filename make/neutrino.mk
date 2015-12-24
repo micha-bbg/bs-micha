@@ -17,12 +17,23 @@ N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
 #N_CFLAGS += -Wfloat-equal
 N_CFLAGS += -fmax-errors=10
-N_CFLAGS += -O -g -ggdb3 -D__KERNEL_STRICT_NAMES
+N_CFLAGS += -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
 N_CFLAGS += -fno-strict-aliasing -rdynamic 
 N_CFLAGS += -D__STDC_FORMAT_MACROS
 N_CFLAGS += -D__STDC_CONSTANT_MACROS
 N_CFLAGS += -DASSUME_MDEV
+
+N_GCC_OPTIMIZE ?= normal
+ifeq ($(N_GCC_OPTIMIZE), debug)
+N_CFLAGS += -O0 -g -ggdb3
+endif
+ifeq ($(N_GCC_OPTIMIZE), size)
+N_CFLAGS += -Os
+endif
+ifeq ($(N_GCC_OPTIMIZE), normal)
+N_CFLAGS += -O2
+endif
 
 ifeq ($(PLATFORM), apollo)
 N_CFLAGS += -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard -DFB_HW_ACCELERATION

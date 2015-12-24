@@ -89,3 +89,8 @@ KVERSION_KRONOS = 3.10.70
 # default (if empty) is "/Data/Cross/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
 BUILD_TOOLS = /Data/coolstream/Cross/build-tools
+
+# default (if empty) is "normal"
+#GCC_OPTIMIZE = normal
+#GCC_OPTIMIZE = size
+#GCC_OPTIMIZE = debug

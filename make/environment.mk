@@ -132,10 +132,25 @@ BUILD_TOOLS ?= /Data/coolstream/Cross/build-tools
 
 ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include
 else
 TARGETLIB       = $(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
-TARGET_CFLAGS   = -pipe -O2 -g -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include
+endif
+
+GCC_OPTIMIZE    ?= normal
+
+TARGET_CFLAGS   = -pipe
+ifeq ($(GCC_OPTIMIZE), debug)
+TARGET_CFLAGS   += -O0 -g -ggdb3
+endif
+ifeq ($(GCC_OPTIMIZE), size)
+TARGET_CFLAGS   += -Os
+endif
+ifeq ($(GCC_OPTIMIZE), normal)
+TARGET_CFLAGS   += -O2
+endif
+TARGET_CFLAGS   += -I$(TARGETPREFIX)/include
+ifneq ($(PLATFORM), nevis)
+TARGET_CFLAGS   += -I$(TARGETPREFIX_BASE)/include
 endif
 
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
