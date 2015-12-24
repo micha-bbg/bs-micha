@@ -116,8 +116,8 @@ LUA_SOCKET_VER = 3.0-rc1
 
 LUA_LLTHREADS2_VER = 0.1.3
 LUA_LZMQ_VER = 0.4.3
-LUA_ZMQ_VER = master
-ZEROMQ_VER = 3.2.5
+ZEROMQ3_VER = 3.2.5
+ZEROMQ_VER = 4.1.4
 
 # libvorbisidec;  libvorbisidec is an Ogg Vorbis audio decoder (also known as "tremor") with no floating point arithmatic
 VORBISIDEC_SVN=18153

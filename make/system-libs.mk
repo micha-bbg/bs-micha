@@ -887,37 +887,6 @@ $(D)/lzmq: $(D)/zeromq $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip | $(TARGETPREFIX)
 	$(REMOVE)/lzmq-$(LUA_LZMQ_VER)
 	touch $@
 
-LUA_ZMQ_STATIC = 0
-
-$(D)/lua-zmq: $(D)/zeromq $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip | $(TARGETPREFIX)
-	$(RM_PKGPREFIX)
-	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
-	cd $(BUILD_TMP); unzip -q $(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip
-	set -e; cd $(BUILD_TMP)/lua-zmq-$(LUA_ZMQ_VER); \
-		$(PATCH)/lua-zmq-fix-require.patch; \
-		$(CROSS_DIR)/bin/$(TARGET)-gcc -fPIC $(TARGET_CFLAGS) -c src/pre_generated-zmq.nobj.c -o src/pre_generated-zmq.nobj.o $(TARGET_CFLAGS); \
-		if [ "$(LUA_ZMQ_STATIC)" = "1" ]; then \
-			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o $(TARGETPREFIX)/lib/libzmq.a -lstdc++ -lpthread; \
-		else \
-			$(CROSS_DIR)/bin/$(TARGET)-gcc -shared -o zmq.so -L$(TARGET_LDFLAGS) src/pre_generated-zmq.nobj.o -lzmq; \
-		fi; \
-		mkdir -p $(PKGPREFIX)/lib/lua/5.2; \
-		mkdir -p $(PKGPREFIX)/share/lua/5.2/zmq; \
-		cp -f zmq.so $(PKGPREFIX)/lib/lua/5.2; \
-		cp -f src/poller.lua $(PKGPREFIX)/share/lua/5.2/zmq; \
-		cp -f src/threads.lua $(PKGPREFIX)/share/lua/5.2/zmq; \
-		mkdir -p $(TARGETPREFIX)/lib/lua/5.2; \
-		mkdir -p $(TARGETPREFIX)/share/lua/5.2/zmq; \
-		cp -f zmq.so $(TARGETPREFIX)/lib/lua/5.2; \
-		cp -f src/poller.lua $(TARGETPREFIX)/share/lua/5.2/zmq; \
-		cp -f src/threads.lua $(TARGETPREFIX)/share/lua/5.2/zmq
-	PKG_VER=$(LUA_ZMQ_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
-			$(OPKG_SH) $(CONTROL_DIR)/lua-zmq
-	$(RM_PKGPREFIX)
-	$(REMOVE)/lua-zmq-$(LUA_ZMQ_VER)
-	touch $@
-
 $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(REMOVE)/zeromq-$(ZEROMQ_VER)
@@ -930,7 +899,46 @@ $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
 			--host=$(TARGET) \
 			--mandir=/.remove \
 			--without-documentation \
-			--with-gcov=no \
+			--without-gcov \
+			--without-libgssapi_krb5 \
+			--without-libsodium \
+			--without-pgm \
+			--without-norm \
+			--with-poller \
+			--enable-static=yes \
+			--enable-shared=yes \
+			--with-pic \
+			;\
+		$(MAKE); \
+		make install DESTDIR=$(TARGETPREFIX); \
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(TARGETPREFIX)/.remove
+	rm -f $(TARGETPREFIX)/bin/curve_keygen
+	$(REWRITE_LIBTOOL)/libzmq.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libzmq.pc
+	rm -fr $(PKGPREFIX)/.remove; rm -fr $(PKGPREFIX)/include; rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.a; rm -f $(PKGPREFIX)/lib/*.la; rm -f $(PKGPREFIX)/lib/*.so; rm -fr $(PKGPREFIX)/bin
+	PKG_VER=$(ZEROMQ_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/zeromq
+	$(REMOVE)/zeromq-$(ZEROMQ_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(D)/zeromq3: $(ARCHIVE)/zeromq-$(ZEROMQ3_VER).tar.gz | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/zeromq-$(ZEROMQ3_VER)
+	$(UNTAR)/zeromq-$(ZEROMQ3_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/zeromq-$(ZEROMQ3_VER); \
+		./autogen.sh; \
+		$(CONFIGURE) \
+			--prefix= \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--mandir=/.remove \
+			--without-documentation \
+			--without-gcov \
 			--with-poller \
 			--enable-static=yes \
 			--enable-shared=yes \
@@ -944,11 +952,11 @@ $(D)/zeromq: $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz | $(TARGETPREFIX)
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libzmq.pc
 	rm -fr $(PKGPREFIX)/.remove; rm -fr $(PKGPREFIX)/include; rm -fr $(PKGPREFIX)/lib/pkgconfig
 	rm -f $(PKGPREFIX)/lib/*.a; rm -f $(PKGPREFIX)/lib/*.la; rm -f $(PKGPREFIX)/lib/*.so
-	PKG_VER=$(ZEROMQ_VER) \
+	PKG_VER=$(ZEROMQ3_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/zeromq
-	$(REMOVE)/zeromq-$(ZEROMQ_VER)
+	$(REMOVE)/zeromq-$(ZEROMQ3_VER)
 	$(RM_PKGPREFIX)
 	touch $@
 

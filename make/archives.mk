@@ -103,11 +103,11 @@ $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip:
 $(ARCHIVE)/lzmq-$(LUA_LZMQ_VER).zip:
 	$(WGET) -O $@ https://github.com/zeromq/lzmq/archive/v$(LUA_LZMQ_VER).zip
 
-$(ARCHIVE)/lua-zmq-$(LUA_ZMQ_VER).zip:
-	$(WGET) -O $@ https://github.com/Neopallium/lua-zmq/archive/master.zip
-
 $(ARCHIVE)/zeromq-$(ZEROMQ_VER).tar.gz:
 	$(WGET) http://download.zeromq.org/zeromq-$(ZEROMQ_VER).tar.gz
+
+$(ARCHIVE)/zeromq-$(ZEROMQ3_VER).tar.gz:
+	$(WGET) http://download.zeromq.org/zeromq-$(ZEROMQ3_VER).tar.gz
 
 $(ARCHIVE)/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz:
 	$(WGET) http://ftp.de.debian.org/debian/pool/main/libv/libvorbisidec/libvorbisidec_$(VORBISIDEC_VER)$(VORBISIDEC_VER_APPEND).tar.gz
