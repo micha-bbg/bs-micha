@@ -1,52 +1,55 @@
 
-$(D)/opkg: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
+$(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
+	$(REMOVE)/opkg-$(OPKG_VER)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
-		$(PATCH)/opkg-0.2.0-dont-segfault.diff; \
-		autoreconf -v --install; \
+		./autogen.sh; \
+		CFLAGS="-I/usr/include" \
+		LDFLAGS="-L/usr/lib" \
+		./configure \
+			--prefix= \
+			--disable-gpg \
+			--disable-shared \
+			--with-static-libopkg \
+			; \
+		$(MAKE) all; \
+		cp -a src/opkg $(HOSTPREFIX)/bin
+	ln -sf opkg $(HOSTPREFIX)/bin/opkg-cl
+	$(REMOVE)/opkg-$(OPKG_VER)
+	touch $@
+
+$(D)/opkg: $(D)/opkg-host $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/opkg-$(OPKG_VER)
+	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
 		echo ac_cv_func_realloc_0_nonnull=yes >> config.cache; \
 		$(CONFIGURE) \
-		--prefix= \
-		--build=$(BUILD) \
-		--host=$(TARGET) \
-		--disable-curl \
-		--disable-gpg \
-		--disable-shared \
-		--config-cache \
-		--with-opkglibdir=/var/lib \
-		--mandir=$(BUILD_TMP)/.remove; \
-		$(MAKE) all exec_prefix=; \
-		make install prefix=$(PKGPREFIX_BASE); \
-		make distclean; \
-		CFLAGS= \
-		./configure \
-		--prefix= \
-		--disable-curl \
-		--disable-gpg \
-		--disable-shared \
-		--with-opkglibdir=/var/lib; \
-		$(MAKE) all; \
-		cp -a src/opkg-cl $(HOSTPREFIX)/bin
+			--prefix= \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--disable-gpg \
+			--config-cache \
+			--mandir=/.remove \
+			--with-static-libopkg \
+			; \
+		$(MAKE) all ; \
+		make install DESTDIR=$(TARGETPREFIX_BASE); \
+		make install DESTDIR=$(PKGPREFIX_BASE); \
+	rm -fr $(TARGETPREFIX_BASE)/.remove; rm -fr $(PKGPREFIX_BASE)/.remove
+	rm -fr $(PKGPREFIX_BASE)/lib
 	install -d -m 0755 $(PKGPREFIX_BASE)/var/lib/opkg
 	install -d -m 0755 $(PKGPREFIX_BASE)/etc/opkg
-	ln -sf opkg-cl $(PKGPREFIX_BASE)/bin/opkg # convenience symlink
-	OPKG_EXAMPLE=$(PKGPREFIX_BASE)/etc/opkg/opkg.conf.example; \
-		echo "# example config file, copy to opkg.conf and edit"					 > $$OPKG_EXAMPLE; \
-		echo "src server http://server/dist/$(PLATFORM)"						>> $$OPKG_EXAMPLE; \
-		echo "# add an optional cache directory, important if not enough flash memory is available!"	>> $$OPKG_EXAMPLE; \
-		echo "# directory must exist before executing of opkg"						>> $$OPKG_EXAMPLE; \
-		echo "option cache /tmp/media/sda1/.opkg"							>> $$OPKG_EXAMPLE
-	$(REMOVE)/opkg-$(OPKG_VER) $(PKGPREFIX_BASE)/.remove
-	cp -fr $(PKGPREFIX_BASE)/share/* $(TARGETPREFIX_BASE)/share
-	rm -fr $(PKGPREFIX_BASE)/share
-	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	if [ ! $(PKG_CONFIG_PATH_BASE) = $(PKG_CONFIG_PATH) ]; then \
-		mv $(PKG_CONFIG_PATH_BASE)/libopkg.pc $(PKG_CONFIG_PATH); \
-	fi;
-	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libopkg.pc
-	$(REWRITE_LIBTOOL_BASE)/libopkg.la
-	rm -rf $(PKGPREFIX_BASE)/lib $(PKGPREFIX_BASE)/include
-	PKG_VER=$(OPKG_VER) $(OPKG_SH) $(CONTROL_DIR)/opkg
+	ln -sf opkg $(PKGPREFIX_BASE)/bin/opkg-cl
+	install -d -m 0755 $(TARGETPREFIX_BASE)/var/lib/opkg
+	install -d -m 0755 $(TARGETPREFIX_BASE)/etc/opkg
+	ln -sf opkg $(TARGETPREFIX_BASE)/bin/opkg-cl
+	rm -fr $(TARGETPREFIX_BASE)/lib/libopkg.*
+	rm -fr $(TARGETPREFIX_BASE)/lib/pkgconfig/libopkg.pc
+	PKG_VER=$(OPKG_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
+		$(OPKG_SH) $(CONTROL_DIR)/opkg
+	$(REMOVE)/opkg-$(OPKG_VER)
 	$(RM_PKGPREFIX)
 	touch $@
 

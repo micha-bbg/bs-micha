@@ -5,6 +5,6 @@ Section: base
 Priority: required
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://code.google.com/p/opkg/
+Homepage: http://git.yoctoproject.org/cgit/cgit.cgi/opkg
 Source:
-Depends: libc.so.6
+Depends: @DEP@
