@@ -291,3 +291,6 @@ $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz:
 
 $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz:
 	$(WGET) https://www.kernel.org/pub/linux/utils/util-linux/v$(UTIL_LINUX_MAJOR)/util-linux-$(UTIL_LINUX_VER).tar.xz
+
+$(ARCHIVE)/libarchive-$(LIBARCHIVE_VER).tar.gz:
+	$(WGET) http://www.libarchive.org/downloads/libarchive-$(LIBARCHIVE_VER).tar.gz

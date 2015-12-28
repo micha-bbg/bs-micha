@@ -1,0 +1,11 @@
+Package: libarchive
+Version: @VER@-1
+Description: Multi-format archive and compression library 
+Section: extras/libraries
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.libarchive.org/
+Source:
+Depends: @DEP@
+Provides: @PROV@

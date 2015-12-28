@@ -1453,3 +1453,39 @@ $(D)/librtmp: $(D)/zlib $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
 	$(REMOVE)/rtmpdump-$(LIBRTMP_VER)
 	$(RM_PKGPREFIX)
 	touch $@
+
+$(D)/libarchive: $(ARCHIVE)/libarchive-$(LIBARCHIVE_VER).tar.gz | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/libarchive-$(LIBARCHIVE_VER)
+	$(UNTAR)/libarchive-$(LIBARCHIVE_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/libarchive-$(LIBARCHIVE_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--mandir=/.remove \
+			--enable-static=no \
+			--disable-bsdtar \
+			--disable-bsdcpio \
+			--without-iconv \
+			--without-libiconv-prefix \
+			--without-lzo2 \
+			--without-nettle \
+			--without-xml2 \
+			--without-expat \
+			; \
+		$(MAKE); \
+		make install DESTDIR=$(TARGETPREFIX); \
+		make install DESTDIR=$(PKGPREFIX)
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libarchive.pc
+	$(REWRITE_LIBTOOL)/libarchive.la
+	rm -fr $(TARGETPREFIX)/.remove; rm -fr $(PKGPREFIX)/.remove
+	rm -fr $(PKGPREFIX)/bin; rm -fr $(PKGPREFIX)/include; rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.la; rm -f $(PKGPREFIX)/lib/*.so
+	PKG_VER=$(LIBARCHIVE_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libarchive
+	$(RM_PKGPREFIX)
+	$(REMOVE)/libarchive-$(LIBARCHIVE_VER)
+	touch $@
