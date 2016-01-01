@@ -69,27 +69,43 @@ ifeq ($(USE_UCLIBC_NG), 1)
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-3.config
 else
 ## build apollo/kronos uClibc
-CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.21.0-1.config
+CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.21.0-2.config
 endif ## ($(USE_UCLIBC_NG), 1)
 else
 ## build apollo/kronos eglibc
 CT_NG_CONFIG = $(PATCHES)/ct-ng-1.20/ct-ng-1.20.0-1-glibc.config
 endif ## ifeq ($(UCLIBC_BUILD), 1)
 
-CUSTOM_KERNEL = $(ARCHIVE)/cst-kernel_cst_3.10_2015-10-17_0818_6b9df41.tar.xz
+CUSTOM_KERNEL_VER = cst-kernel_cst_3.10_2015-10-17_0818_6b9df41
+CUSTOM_KERNEL     = $(ARCHIVE)/linux-$(CUSTOM_KERNEL_VER).tar.xz
+CUSTOM_GCC_VER    = linaro-5.2-2015.11
+CUSTOM_GCC        = $(ARCHIVE)/gcc-$(CUSTOM_GCC_VER).tar.xz
 
 crosstool: $(CROSS_DIR)/bin/$(TARGET)-gcc
 
-$(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz $(CUSTOM_KERNEL)
+$(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz $(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz
 	make $(BUILD_TMP)
 	if [ ! -e $(CROSS_DIR) ]; then \
 		mkdir -p $(CROSS_DIR); \
 	fi;
 	$(REMOVE)/crosstool-ng-$(CROSSTOOL_NG_VER)
 	$(UNTAR)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
+	mkdir -p $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER)/targets/src
+	# Don't patch a custom source from ct-ng, it's custom!
+	cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER)/targets; \
+		tar -xf $(PATCHES)/ct-ng-1.20/libstdc++_configure_patch.tar.xz; \
+		cd src; \
+		touch .gcc-$(CUSTOM_GCC_VER).extracting; \
+		tar -xf $(CUSTOM_GCC); \
+		rm -f .gcc-$(CUSTOM_GCC_VER).extracting; \
+		touch .gcc-$(CUSTOM_GCC_VER).extracted; \
+		cd gcc-$(CUSTOM_GCC_VER); \
+		patch -p1 < $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER)/targets/patches/gcc/$(CUSTOM_GCC_VER)/900-libstdc++_configure.patch; \
+		cd ..; \
+		touch .gcc-$(CUSTOM_GCC_VER).patched
 	set -e; unset CONFIG_SITE; cd $(BUILD_TMP)/crosstool-ng-$(CROSSTOOL_NG_VER); \
 		\
-		tar -xf $(PATCHES)/ct-ng-1.20/libstdc++_configure_patch.tar.xz; \
+		ln -sf $(CUSTOM_KERNEL_VER).tar.xz $(CUSTOM_KERNEL); \
 		cp -a $(CT_NG_CONFIG) .config; \
 		\
 		NUM_CPUS=$$(expr `getconf _NPROCESSORS_ONLN` \* 2); \
@@ -110,6 +126,8 @@ $(CROSS_DIR)/bin/$(TARGET)-gcc: $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.
 		\
 		export CST_BASE_DIR=$(BASE_DIR); \
 		export CST_CUSTOM_KERNEL=$(CUSTOM_KERNEL); \
+		export CST_CUSTOM_GCC=$(CUSTOM_GCC); \
+		export LD_LIBRARY_PATH=; \
 		if [ "$(USE_UCLIBC_NG)" = "1" ]; then \
 			export CST_CUSTOM_UCLIBC=$(ARCHIVE)/uClibc-ng-1.0.1.tar.xz; \
 		fi; \
