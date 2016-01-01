@@ -72,7 +72,10 @@ $(D)/procps: $(D)/libncurses $(ARCHIVE)/procps-$(PROCPS_VER).tar.gz | $(TARGETPR
 	mkdir -p $(PKGPREFIX)/lib $(PKGPREFIX)/bin
 	cp -a $(TARGETPREFIX)/bin/{ps,top} $(PKGPREFIX)/bin
 	cp -a $(TARGETPREFIX)/lib/libproc-$(PROCPS_VER).so $(PKGPREFIX)/lib
-	$(OPKG_SH) $(CONTROL_DIR)/procps
+	PKG_VER=$(PROCPS_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/procps
 	$(RM_PKGPREFIX)
 	touch $@
 
