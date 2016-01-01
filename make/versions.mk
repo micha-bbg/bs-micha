@@ -47,7 +47,7 @@ RSYNC_VER=3.1.1
 PROCPS_VER=3.2.8
 
 # ncurses; software for controlling writing to the console screen
-NCURSES_VER=5.9
+NCURSES_VER=6.0
 
 # ntp; synchronize system clock over a network
 NTP_VER=4.2.8p3

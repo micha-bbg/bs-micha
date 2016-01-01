@@ -574,23 +574,45 @@ ncurses-prereq:
 	fi
 
 $(D)/libncurses: $(ARCHIVE)/ncurses-$(NCURSES_VER).tar.gz | ncurses-prereq $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/ncurses-$(NCURSES_VER)
 	$(UNTAR)/ncurses-$(NCURSES_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/ncurses-$(NCURSES_VER); \
-		$(CONFIGURE) --build=$(BUILD) --host=$(TARGET) --target=$(TARGET) \
-			--prefix= --with-terminfo-dirs=/usr/share/terminfo \
-			--disable-big-core --without-debug --without-progs --without-ada --with-shared \
-			--without-profile --disable-rpath --without-cxx-binding \
-			--with-fallbacks='linux vt100 xterm'; \
+		$(CONFIGURE) \
+			--build=$(BUILD) \
+			--host=$(TARGET) \
+			--target=$(TARGET) \
+			--prefix= \
+			--without-manpages \
+			--with-terminfo-dirs=/usr/share/terminfo \
+			--enable-pc-files \
+			--with-pkg-config \
+			--with-pkg-config-libdir=/lib/pkgconfig \
+			--disable-big-core \
+			--without-debug \
+			--without-progs \
+			--without-ada \
+			--with-shared \
+			--without-profile \
+			--disable-rpath \
+			--without-cxx-binding \
+			--with-fallbacks='linux vt100 xterm' \
+			; \
 		$(MAKE) libs HOSTCC=gcc HOSTLDFLAGS="$(TARGET_LDFLAGS)" \
 			HOSTCCFLAGS="$(TARGET_CFLAGS) -DHAVE_CONFIG_H -I../ncurses -DNDEBUG -D_GNU_SOURCE -I../include"; \
 		make install.libs DESTDIR=$(PKGPREFIX); \
 		make install.libs DESTDIR=$(TARGETPREFIX); \
-		install -D -m 0755 misc/ncurses-config $(HOSTPREFIX)/bin/ncurses5-config
+		install -D -m 0755 misc/ncurses-config $(HOSTPREFIX)/bin/ncurses6-config
 	rm -rf $(PKGPREFIX)/bin
 	rm -rf $(PKGPREFIX)/include
+	rm -rf $(PKGPREFIX)/lib/pkgconfig
 	rm -f $(PKGPREFIX)/lib/*.a
 	rm -f $(PKGPREFIX)/lib/*.so
-	$(REWRITE_PKGCONF) $(HOSTPREFIX)/bin/ncurses5-config
+	$(REWRITE_PKGCONF) $(HOSTPREFIX)/bin/ncurses6-config
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/form.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/menu.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/ncurses.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/panel.pc
 	PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 	PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 	PKG_VER=$(NCURSES_VER) $(OPKG_SH) $(CONTROL_DIR)/libncurses
