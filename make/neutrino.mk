@@ -49,9 +49,11 @@ ifeq ($(PLATFORM), nevis)
 N_CFLAGS += -DUSE_NEVIS_GXA
 HW_TYPE = --with-boxtype=coolstream
 endif
+N_CFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
 
 N_CPPFLAGS = -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include
 N_CPPFLAGS += -Werror -Wsign-compare
+N_CPPFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
 
 N_CONFIG_OPTS =
 #N_CONFIG_OPTS += --disable-upnp
