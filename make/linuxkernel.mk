@@ -28,7 +28,10 @@ $(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
 	fi; \
 	cp -a $(KERNEL_CONFIG) $@; \
-	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
+	if [ ! "$(PLATFORM)" = "nevis" ]; then \
+		cd $(K_SRCDIR); \
+			$(PATCH)/kernel/0001-arch-arm-vfp-Makefile-adjust-kbuild_aflags.patch; \
+			$(PATCH)/kernel/0001-fix-build-with-gcc-5.1.patch; \
 		cd $(K_OBJ); \
 			$(PATCH)/kernel/config_comp-xz.diff; \
 			$(PATCH)/kernel/config_ipv6.diff; \

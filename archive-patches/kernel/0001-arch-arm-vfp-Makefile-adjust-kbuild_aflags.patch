@@ -1,0 +1,30 @@
+From 1647e502bc24627b9a5351b8b175c936b60dd4fb Mon Sep 17 00:00:00 2001
+From: Markus Volk <f_l_k@gmx.net>
+Date: Sat, 14 Mar 2015 07:45:34 +0100
+Subject: [PATCH 356040/356040] arch/arm/vfp/Makefile: adjust kbuild_aflags
+
+Signed-off-by: Markus Volk <f_l_k@gmx.net>
+---
+ arch/arm/vfp/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/vfp/Makefile b/arch/arm/vfp/Makefile
+index a81404c..a272a50 100644
+--- a/arch/arm/vfp/Makefile
++++ b/arch/arm/vfp/Makefile
+@@ -7,9 +7,11 @@
+ # ccflags-y := -DDEBUG
+ # asflags-y := -DDEBUG
+ 
+-KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-msoft-float=-Wa,-mfpu=softvfp+vfp -mfloat-abi=soft)
++KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-mhard-float=-Wa,-mfpu=vfpv3-d16-fp16 -mfloat-abi=hard)
+ LDFLAGS		+=--no-warn-mismatch
+ 
+ obj-y			+= vfp.o
+ 
+ vfp-$(CONFIG_VFP)	+= vfpmodule.o entry.o vfphw.o vfpsingle.o vfpdouble.o
++
++
+-- 
+2.1.4
+
