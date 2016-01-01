@@ -6,6 +6,8 @@ $(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		./autogen.sh; \
 		CFLAGS="-I/usr/include" \
 		LDFLAGS="-L/usr/lib" \
+		PKG_CONFIG="/usr/bin/pkg-config" \
+		PKG_CONFIG_PATH="/usr/lib/pkgconfig" \
 		./configure \
 			--prefix= \
 			--disable-gpg \
@@ -18,7 +20,7 @@ $(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/opkg-$(OPKG_VER)
 	touch $@
 
-$(D)/opkg: $(D)/opkg-host $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
+$(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	$(REMOVE)/opkg-$(OPKG_VER)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
