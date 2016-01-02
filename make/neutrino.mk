@@ -16,6 +16,7 @@ NEUTRINO_PKG_DEPS =
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
 #N_CFLAGS += -Wconversion
 #N_CFLAGS += -Wfloat-equal
+N_CFLAGS += -Wuninitialized
 N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -D__KERNEL_STRICT_NAMES
 N_CFLAGS += -DNEW_LIBCURL $(LOCAL_NEUTRINO_CFLAGS)
@@ -51,7 +52,7 @@ HW_TYPE = --with-boxtype=coolstream
 endif
 N_CFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
 
-N_CPPFLAGS = -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include
+N_CPPFLAGS = -I$(TARGETPREFIX)/include -I$(TARGETPREFIX_BASE)/include -I$(TARGETPREFIX)/include/freetype2
 N_CPPFLAGS += -Werror -Wsign-compare
 N_CPPFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
 
@@ -96,7 +97,8 @@ N_LDFLAGS += -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
 ifeq ($(UCLIBC_BUILD), 1)
 N_LDFLAGS += -liconv
 endif
-N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
+##N_LDFLAGS += -Wl,-rpath-link,$(TARGETLIB)
+N_LDFLAGS += -Wl,-rpath-link,$(TARGETPREFIX)/lib:$(TARGETPREFIX_BASE)/lib
 
 # finally we can build outside of the source directory
 N_OBJDIR = $(BUILD_TMP)/$(FLAVOUR)

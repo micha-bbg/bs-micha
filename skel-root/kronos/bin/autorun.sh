@@ -37,6 +37,9 @@ cd /tmp
 if [ -e /tmp/.reboot ] ; then
 	/bin/dt -t"Rebooting..."
 	/sbin/reboot -f
+elif [ -e /tmp/.shutdown ] ; then
+	/bin/dt -t"Shutdown..."
+	/sbin/halt
 else
 	/bin/dt -t"No panic!"
 	echo "No panic!"
