@@ -134,8 +134,7 @@ FFMPEG_VER=head
 OGG_VER=1.3.0
 
 # gdb; the GNU debugger
-#GDB_VER=7.4.1
-GDB_VER=7.5.1
+GDB_VER=linaro-7.8-2014.09
 
 STRACE_VER=4.7
 

@@ -25,9 +25,9 @@ endif
 
 #  NOTE:
 #  gdb built for target or local-PC
-$(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 $(D)/libncurses $(D)/zlib | $(TARGETPREFIX)
+$(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz $(D)/libncurses $(D)/zlib | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
-	$(UNTAR)/gdb-$(GDB_VER).tar.bz2
+	$(UNTAR)/gdb-$(GDB_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/gdb-$(GDB_VER); \
 		$(PATCH)/gdb-7.1-remove-builddate.diff; \
 		$(BUILDENV) \
@@ -57,8 +57,8 @@ $(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 $(D)/libncurses $(D)/zlib | $(TARGET
 
 #  NOTE:
 #  gdb-remote built for local-PC or target
-$(D)/gdb-remote: $(ARCHIVE)/gdb-$(GDB_VER).tar.bz2 | $(TARGETPREFIX)
-	$(UNTAR)/gdb-$(GDB_VER).tar.bz2
+$(D)/gdb-remote: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz | $(TARGETPREFIX)
+	$(UNTAR)/gdb-$(GDB_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/gdb-$(GDB_VER); \
 		./configure \
 			--nfp --disable-werror \
