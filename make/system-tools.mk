@@ -183,6 +183,8 @@ $(TARGETPREFIX)/lib/libuuid.so.1:
 	@false
 
 $(D)/ntfs-3g: $(ARCHIVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz | $(TARGETPREFIX)
+	$(REMOVE)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER)
+	$(RM_PKGPREFIX)
 	$(UNTAR)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER).tgz
 	set -e; cd $(BUILD_TMP)/ntfs-3g_ntfsprogs-$(NTFS_3G_VER); \
 		CFLAGS="-pipe -O2 -g" ./configure \
