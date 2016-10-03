@@ -1,0 +1,24 @@
+Even if Blackfin GNU toolchain add prefix '_' to all symbols,
+symbol prefix is not accepted in the link flag --version-script.
+Don't append prefix in the symbols in the version script file.
+
+--- a/Makefile.am
+--- b/Makefile.am
+@@ -140,7 +140,7 @@
+ # interfering with the symbol file format.
+ SYMBOL_CFLAGS = -DPNGLIB_LIBNAME='PNG@PNGLIB_MAJOR@@PNGLIB_MINOR@_0'\
+		-DPNGLIB_VERSION='@PNGLIB_VERSION@'\
+-		-DSYMBOL_PREFIX='$(SYMBOL_PREFIX)'\
++		-DSYMBOL_PREFIX=''\
+		-DPNG_NO_USE_READ_MACROS -DPNG_BUILDING_SYMBOL_TABLE
+
+ .c.out:
+--- a/Makefile.in
+--- b/Makefile.in
+@@ -534,7 +534,7 @@
+ # interfering with the symbol file format.
+ SYMBOL_CFLAGS = -DPNGLIB_LIBNAME='PNG@PNGLIB_MAJOR@@PNGLIB_MINOR@_0'\
+		-DPNGLIB_VERSION='@PNGLIB_VERSION@'\
+-		-DSYMBOL_PREFIX='$(SYMBOL_PREFIX)'\
++		-DSYMBOL_PREFIX=''\
+		-DPNG_NO_USE_READ_MACROS -DPNG_BUILDING_SYMBOL_TABLE

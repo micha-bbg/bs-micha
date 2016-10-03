@@ -1,0 +1,32 @@
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -52,7 +52,7 @@
+ libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LDFLAGS = -no-undefined -export-dynamic \
+	-version-number @PNGLIB_MAJOR@@PNGLIB_MINOR@:@PNGLIB_RELEASE@:0
+
+-if HAVE_LD_VERSION_SCRIPT
++if HAVE_LD_VERSION_SCRIPT_DUMMY
+ #   Versioned symbols and restricted exports
+ if HAVE_SOLARIS_LD
+   libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LDFLAGS += -Wl,-M -Wl,libpng.vers
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -101,7 +101,7 @@
+
+ #   Versioned symbols and restricted exports
+ @HAVE_LD_VERSION_SCRIPT_TRUE@@HAVE_SOLARIS_LD_TRUE@am__append_2 = -Wl,-M -Wl,libpng.vers
+-@HAVE_LD_VERSION_SCRIPT_TRUE@@HAVE_SOLARIS_LD_FALSE@am__append_3 = -Wl,--version-script=libpng.vers
++# @HAVE_LD_VERSION_SCRIPT_TRUE@@HAVE_SOLARIS_LD_FALSE@am__append_3 = -Wl,--version-script=libpng.vers
+ #   Only restricted exports when possible
+ @HAVE_LD_VERSION_SCRIPT_FALSE@am__append_4 = -export-symbols libpng.sym
+ subdir = .
+@@ -502,8 +502,7 @@
+	-export-dynamic -version-number \
+	@PNGLIB_MAJOR@@PNGLIB_MINOR@:@PNGLIB_RELEASE@:0 \
+	$(am__append_2) $(am__append_3) $(am__append_4)
+-@HAVE_LD_VERSION_SCRIPT_FALSE@libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES = libpng.sym
+-@HAVE_LD_VERSION_SCRIPT_TRUE@libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES = libpng.vers
++libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES = libpng.sym
+ pkginclude_HEADERS = png.h pngconf.h
+ nodist_pkginclude_HEADERS = pnglibconf.h
+ pkgconfig_DATA = libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@.pc

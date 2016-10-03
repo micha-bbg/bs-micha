@@ -197,8 +197,12 @@ $(D)/libFLAC-old: $(ARCHIVE)/flac-$(FLAC_VER).tar.gz | $(TARGETPREFIX)
 $(D)/libpng: $(D)/libpng-$(PNG_VER)
 	touch $@
 $(D)/libpng-$(PNG_VER): $(ARCHIVE)/libpng-$(PNG_VER).tar.xz $(D)/zlib | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	$(REMOVE)/libpng-$(PNG_VER)
 	$(UNTAR)/libpng-$(PNG_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/libpng-$(PNG_VER); \
+		$(PATCH)/libpng-ignore-symbol-prefix.patch; \
+		$(PATCH)/libpng-makefile.diff; \
 		$(CONFIGURE) --prefix=$(TARGETPREFIX) --build=$(BUILD) --host=$(TARGET) --bindir=$(HOSTPREFIX)/bin --mandir=$(BUILD_TMP)/tmpman; \
 		ECHO=echo $(MAKE) all; \
 		rm -f $(TARGETPREFIX)/lib/libpng.so* $(TARGETPREFIX)/lib/libpng$(PNG_VER_X).so*; \
