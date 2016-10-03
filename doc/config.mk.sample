@@ -28,12 +28,20 @@ BOXMODEL=trinity
 # default (if empty) is "neutrino-hd"
 #FLAVOUR = neutrino-hd
 
-# either "cst" or "sf" or "privat"
-# default (if empty) is "cst"
-GIT_SOURCE = privat
-# either "git" or "http" or "ssh"
-# default (if empty) is "git"
+## -------------------------------------
+## either "slknet" or "cst"
+## default (if empty) is "slknet"
+GIT_SOURCE = slknet
+## -------------------------------------
+## for GIT_SOURCE = slknet
+## either "https" or "ssh"
+## default for GIT_PROTO (if empty) is "https"
+##
+## for GIT_SOURCE = cst
+## either "git" or "http" or "ssh"
+## default for GIT_PROTO (if empty) is "git"
 GIT_PROTO = https
+## -------------------------------------
 
 # default (if empty) is "cst-next"
 #NEUTRINO_BRANCH_APOLLO = cst-next

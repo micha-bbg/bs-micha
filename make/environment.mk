@@ -68,31 +68,26 @@ CROSS_DIR       = $(BASE_DIR)/$(CROSS_PATH)
 FLAVOUR        ?= neutrino-hd
 BOXARCH        ?= arm
 
-GIT_SOURCE     ?= cst
-GIT_PROTO      ?= git
+GIT_SOURCE     ?= slknet
 ifeq ($(GIT_SOURCE), cst)
-ifeq ($(GIT_PROTO), git)
-GITSOURCE       = git://coolstreamtech.de
+## cst
+GIT_PROTO      ?= git
+ifeq ($(GIT_PROTO), ssh)
+GITSOURCE       = ssh://git@coolstreamtech.de
 else ifeq ($(GIT_PROTO), http)
 GITSOURCE       = http://coolstreamtech.de
 else
-GITSOURCE       = ssh://git@coolstreamtech.de
-endif # GIT_PROTO
-else ifeq ($(GIT_SOURCE), sf)
-ifeq ($(GIT_PROTO), git)
-GITSOURCE       = git://git.code.sf.net/p/tuxcode
-else ifeq ($(GIT_PROTO), http)
-GITSOURCE       = http://git.code.sf.net/p/tuxcode
-else
-GITSOURCE       = ssh://michabbg@git.code.sf.net/p/tuxcode
-endif # GIT_PROTO
-else # GIT_SOURCE
-ifeq ($(GIT_PROTO), https)
-GITSOURCE       = https://git.slknet.de
-else
+GITSOURCE       = git://coolstreamtech.de
+endif
+else ## end cst
+## slknet
+GIT_PROTO      ?= https
+ifeq ($(GIT_PROTO), ssh)
 GITSOURCE       = ssh://gitnorplex
-endif # GIT_PROTO
-endif # GIT_SOURCE
+else
+GITSOURCE       = https://git.slknet.de
+endif
+endif ## end slknet
 
 WHOAMI      := $(shell id -un)
 MAINTAINER  ?= $(shell getent passwd $(WHOAMI)|awk -F: '{print $$5}')
