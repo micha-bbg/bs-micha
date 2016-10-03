@@ -132,6 +132,7 @@ TARGETLIB       = $(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib
 endif
 
 GCC_OPTIMIZE    ?= normal
+HOST_LIBS       ?= /usr/lib
 
 TARGET_CFLAGS   = -pipe $(NO_CXX11_ABI)
 ifeq ($(GCC_OPTIMIZE), debug)

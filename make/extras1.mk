@@ -7,7 +7,7 @@ $(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 		CFLAGS="-I/usr/include" \
 		LDFLAGS="-L/usr/lib" \
 		PKG_CONFIG="/usr/bin/pkg-config" \
-		PKG_CONFIG_PATH="/usr/lib/pkgconfig" \
+		PKG_CONFIG_PATH="$(HOST_LIBS)/pkgconfig" \
 		./configure \
 			--prefix= \
 			--disable-gpg \
