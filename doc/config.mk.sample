@@ -63,23 +63,22 @@ NEUTRINO_WORK_BRANCH_NEVIS  = cstnext-work
 #
 MAINTAINER = micha-bbg
 
-#
-# if you want to use a different source directory, set N_HD_SOURCE here.
-# e.g. check out some test branch to source/nhd-test, then uncomment the
-# following. WARNING: "make update-neutrino" will cease to work, you'll
-# have to do this manually.
-#
-N_HD_SOURCE_BASE    = neutrino-hd
-N_HD_SOURCE_NEVIS   = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
-N_HD_SOURCE_APOLLO  = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
-N_HD_SOURCE_KRONOS  = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
-
 SOURCE_DRIVERS      = cst-public-drivers
 SOURCE_NEUTRINO     = cst-public-gui-neutrino
 SOURCE_FFMPEG       = cst-public-libraries-ffmpeg
 SOURCE_KERNEL       = cst-public-linux-kernel
 SOURCE_TOOLS        = cst-public-tools
 #SOURCE_FIRMWARE     = firmware-test
+
+#
+# if you want to use a different source directory, set N_HD_SOURCE here.
+# e.g. check out some test branch to source/nhd-test, then uncomment the
+# following. WARNING: "make update-neutrino" will cease to work, you'll
+# have to do this manually.
+#
+N_HD_SOURCE_NEVIS   = $(BASE_DIR)/source/$(SOURCE_NEUTRINO)
+N_HD_SOURCE_APOLLO  = $(BASE_DIR)/source/$(SOURCE_NEUTRINO)
+N_HD_SOURCE_KRONOS  = $(BASE_DIR)/source/$(SOURCE_NEUTRINO)
 
 DRIVERS_3x_NEVIS    =
 DRIVERS_3x_APOLLO   = -3.x

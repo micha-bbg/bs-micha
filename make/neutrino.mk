@@ -110,8 +110,7 @@ N_OBJDIR = $(BUILD_TMP)/$(FLAVOUR)
 # use this if you want to build inside the source dir - but you don't want that ;)
 # N_OBJDIR = $(N_HD_SOURCE)
 
-
-$(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk
+$(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk $(N_HD_SOURCE)
 	test -d $(N_OBJDIR) || mkdir -p $(N_OBJDIR)
 	cd $(N_HD_SOURCE) && \
 		git checkout $(NEUTRINO_WORK_BRANCH)
@@ -128,7 +127,6 @@ $(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk
 		test -e svn_version.h || echo '#define BUILT_DATE "error - not set"' > svn_version.h; \
 		test -e git_version.h || echo '#define BUILT_DATE "error - not set"' > git_version.h; \
 		test -e version.h || touch version.h
-
 
 HOMEPAGE = "http://gitorious.org/neutrino-hd"
 IMGNAME  = "HD-Neutrino"

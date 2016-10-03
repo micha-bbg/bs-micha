@@ -58,11 +58,11 @@ $(N_HD_SOURCE):
 	@echo ' ============================================================================== '
 	mkdir -p $(SOURCE_DIR)
 	cd $(SOURCE_DIR) && \
-		git clone -b master $(GITSOURCE)/$(SOURCE_NEUTRINO).git neutrino-hd && \
-		cd neutrino-hd && \
+		git clone -b master $(GITSOURCE)/$(SOURCE_NEUTRINO).git $(SOURCE_NEUTRINO) && \
+		cd $(N_HD_SOURCE) && \
 		git checkout --track -b $(NEUTRINO_BRANCH) origin/$(NEUTRINO_BRANCH)
 ifneq ($(NEUTRINO_BRANCH), $(NEUTRINO_WORK_BRANCH))
-	cd $(SOURCE_DIR)/neutrino-hd && \
+	cd $(N_HD_SOURCE) && \
 		git checkout -b $(NEUTRINO_WORK_BRANCH)
 endif
 		@echo "Cloning neutrino-hd git repo OK"
