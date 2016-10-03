@@ -30,10 +30,10 @@ BOXMODEL=trinity
 
 # either "cst" or "sf" or "privat"
 # default (if empty) is "cst"
-#GIT_SOURCE = privat
+GIT_SOURCE = privat
 # either "git" or "http" or "ssh"
 # default (if empty) is "git"
-#GIT_PROTO = ssh
+GIT_PROTO = https
 
 # default (if empty) is "cst-next"
 #NEUTRINO_BRANCH_APOLLO = cst-next
@@ -61,9 +61,10 @@ MAINTAINER = micha-bbg
 # following. WARNING: "make update-neutrino" will cease to work, you'll
 # have to do this manually.
 #
-N_HD_SOURCE_NEVIS   = $(BASE_DIR)/source/neutrino-hd
-N_HD_SOURCE_APOLLO  = $(BASE_DIR)/source/neutrino-hd
-N_HD_SOURCE_KRONOS  = $(BASE_DIR)/source/neutrino-hd
+N_HD_SOURCE_BASE    = neutrino-hd
+N_HD_SOURCE_NEVIS   = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
+N_HD_SOURCE_APOLLO  = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
+N_HD_SOURCE_KRONOS  = $(BASE_DIR)/source/$(N_HD_SOURCE_BASE)
 
 SOURCE_DRIVERS      = cst-public-drivers
 SOURCE_NEUTRINO     = cst-public-gui-neutrino
@@ -84,13 +85,15 @@ KVERSION_NEVIS = 2.6.34.13
 KVERSION_APOLLO = 3.10.70
 
 # default (if empty) is "3.10.70"
-KVERSION_KRONOS = 3.10.70
+KVERSION_KRONOS = 3.10.93
 
 # default (if empty) is "/Data/Cross/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
 BUILD_TOOLS = /Data/coolstream/Cross/build-tools
 
-# default (if empty) is "normal"
+# default (if empty) is "$(BUILD_TMP)/pc_image"
+#PC_INSTALL=
+
 #GCC_OPTIMIZE = normal
 #GCC_OPTIMIZE = size
-#GCC_OPTIMIZE = debug
+GCC_OPTIMIZE = debug

@@ -111,6 +111,8 @@ include make/extras2.mk
 include make/flashimage.mk
 include make/rootfs.mk
 include make/tuxwetter.mk
+-include make/games-work.mk
+#include make/games.mk
 -include make/micha-seine.mk
 
 update-self:

@@ -87,12 +87,10 @@ else
 GITSOURCE       = ssh://michabbg@git.code.sf.net/p/tuxcode
 endif # GIT_PROTO
 else # GIT_SOURCE
-ifeq ($(GIT_PROTO), git)
-GITSOURCE       = git://git.slknet.de/git
-else ifeq ($(GIT_PROTO), http)
-GITSOURCE       = http://git.slknet.de/git
+ifeq ($(GIT_PROTO), https)
+GITSOURCE       = https://git.slknet.de
 else
-GITSOURCE       = ssh://gitovh
+GITSOURCE       = ssh://gitnorplex
 endif # GIT_PROTO
 endif # GIT_SOURCE
 

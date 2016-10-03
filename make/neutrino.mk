@@ -14,8 +14,13 @@ NEUTRINO_DEPS += wpa_supplicant parted
 NEUTRINO_PKG_DEPS =
 
 N_CFLAGS  = -Wall -Werror -Wextra -Wshadow -Wsign-compare
+## old
 #N_CFLAGS += -Wconversion
 #N_CFLAGS += -Wfloat-equal
+## new
+#N_CFLAGS += -Wunused
+#N_CFLAGS += -Winline
+
 N_CFLAGS += -Wuninitialized
 N_CFLAGS += -fmax-errors=10
 N_CFLAGS += -D__KERNEL_STRICT_NAMES
@@ -105,8 +110,11 @@ N_OBJDIR = $(BUILD_TMP)/$(FLAVOUR)
 # use this if you want to build inside the source dir - but you don't want that ;)
 # N_OBJDIR = $(N_HD_SOURCE)
 
+
 $(N_OBJDIR)/config.status: $(NEUTRINO_DEPS) $(MAKE_DIR)/neutrino.mk
 	test -d $(N_OBJDIR) || mkdir -p $(N_OBJDIR)
+	cd $(N_HD_SOURCE) && \
+		git checkout $(NEUTRINO_WORK_BRANCH)
 	$(N_HD_SOURCE)/autogen.sh
 	set -e; cd $(N_OBJDIR); \
 		CC=$(TARGET)-gcc CFLAGS="$(N_CFLAGS)" CXXFLAGS="$(N_CFLAGS)" CPPFLAGS="$(N_CPPFLAGS)" \
@@ -145,7 +153,7 @@ $(D)/locales: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 
 $(D)/neutrino: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 	rm -f $(N_OBJDIR)/src/neutrino # trigger relinking, to pick up newly built libstb-hal
-	cd $(N_HD_SOURCE); \
+	cd $(N_HD_SOURCE) && \
 		git checkout $(NEUTRINO_WORK_BRANCH)
 	cd $(BASE_DIR)
 	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
@@ -156,7 +164,7 @@ $(D)/neutrino: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2)
 
 neutrino-pkg: $(N_OBJDIR)/config.status $(NEUTRINO_DEPS2) $(NEUTRINO_PKG_DEPS)
 	rm -rf $(PKGPREFIX_BASE) $(BUILD_TMP)/neutrino-control
-	cd $(N_HD_SOURCE); \
+	cd $(N_HD_SOURCE) && \
 		git checkout $(NEUTRINO_WORK_BRANCH)
 	cd $(BASE_DIR)
 #	$(MAKE) -C $(N_OBJDIR) clean   DESTDIR=$(TARGETPREFIX_BASE)

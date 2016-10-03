@@ -33,6 +33,25 @@ download:
 	@echo
 	@false
 
+ifeq ($(PLATFORM), pc)
+
+$(N_HD_SOURCE):
+	@echo ' ============================================================================== '
+	@echo "                  Cloning neutrino-hd git repo"
+	@echo ' ============================================================================== '
+	@mkdir $(SOURCE_DIR) | true
+	cd $(SOURCE_DIR) && \
+		git clone $(GITSOURCE)/$(SOURCE_NEUTRINO_PC).git $(N_HD_SOURCE_BASE) && \
+		cd $(N_HD_SOURCE_BASE)
+	@echo "Cloning neutrino-hd git repo OK"
+
+$(D)/neutrino-update: $(N_HD_SOURCE)
+	cd $(N_HD_SOURCE) && \
+		git checkout $(NEUTRINO_WORK_BRANCH) && \
+		git pull
+
+else
+
 $(N_HD_SOURCE):
 	@echo ' ============================================================================== '
 	@echo "                  Cloning neutrino-hd git repo"
@@ -47,6 +66,8 @@ ifneq ($(NEUTRINO_BRANCH), $(NEUTRINO_WORK_BRANCH))
 		git checkout -b $(NEUTRINO_WORK_BRANCH)
 endif
 		@echo "Cloning neutrino-hd git repo OK"
+
+endif
 
 $(PLUGIN_DIR):
 	mkdir -p $(SOURCE_DIR)
