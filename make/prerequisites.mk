@@ -70,9 +70,20 @@ endif
 endif
 
 $(PLUGIN_DIR):
-	mkdir -p $(SOURCE_DIR)
-	cd $(SOURCE_DIR) && \
-		git clone $(GITORIOUS)/neutrino-hd/neutrino-hd-plugins.git
+	mkdir $(SOURCE_DIR) | true; \
+	cd $(SOURCE_DIR); \
+		git clone $(GITSOURCE)/$(PLUGINS).git
+	cd $(PLUGIN_DIR); \
+		git submodule init; \
+		git submodule update  --recursive; \
+		git submodule foreach git pull origin master; \
+		git submodule foreach git checkout master
+
+plugins-update: $(PLUGIN_DIR)
+	cd $(PLUGIN_DIR); \
+		git pull; \
+		git submodule foreach git pull origin master
+
 $(CST_GIT):
 	mkdir -p $@
 

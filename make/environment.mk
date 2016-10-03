@@ -119,7 +119,8 @@ endif
 RM_PKGPREFIX = rm -fr $(PKGPREFIX_BASE)
 FROOTFS      = $(BASE_DIR)/root-flash
 SOURCE_DIR   = $(BASE_DIR)/source
-PLUGIN_DIR   = $(SOURCE_DIR)/neutrino-hd-plugins
+PLUGINS      = cst-public-plugins
+PLUGIN_DIR   = $(SOURCE_DIR)/$(PLUGINS)
 MAKE_DIR     = $(BASE_DIR)/make
 CONTROL_DIR  = $(BASE_DIR)/pkgs/control
 PACKAGE_DIR  = $(BASE_DIR)/pkgs/opkg
