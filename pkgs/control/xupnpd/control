@@ -6,5 +6,5 @@ Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://xupnpd.org
-Source: http://tsdemuxer.googlecode.com/svn/trunk/xupnpd
+Source: https://github.com/clark15b/xupnpd
 Depends: @DEP@

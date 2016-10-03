@@ -57,79 +57,59 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 	$(RM_PKGPREFIX)
 	touch $@
 
-XUPNP_DEFREF = r404
-XUPNP_DL_PATH = http://tsdemuxer.googlecode.com/svn/trunk/xupnpd
+XUPNPD_WORK_BRANCH = tuxcode_1
 
-$(SOURCE_DIR)/xupnp/src/Makefile:
-	if [ -e $(SOURCE_DIR)/xupnp ]; then \
-		rm -fr $(SOURCE_DIR)/xupnp; \
-	fi; \
-	mkdir -p $(SOURCE_DIR)/xupnp;
-	cd $(SOURCE_DIR)/xupnp; \
-		git svn init $(XUPNP_DL_PATH) --ignore-paths="^src/lua-5" ; \
-		git svn fetch --revision=360:HEAD; \
-		git svn rebase; \
-		ID=$$(git svn find-rev $(XUPNP_DEFREF)); \
-		git checkout $$ID; \
-		git checkout -b work; \
-		git am $(PATCHES)/xupnp/svn$(XUPNP_DEFREF)/*.patch; \
-		git rebase master
-
-xupnpd-update: $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
-	cd $(SOURCE_DIR)/xupnp; \
-		REV1=$$(git svn find-rev master --before HEAD); \
-		git checkout master; \
-		git svn fetch; \
-		git svn rebase; \
-		git checkout work; \
-		REV2=$$(git svn find-rev master --before HEAD); \
-		if [ ! "$$REV1" = "$$REV2" ]; then \
-			echo "before: r$$REV1, after: r$$REV2"; \
-			echo "git rebase master"; \
-			git rebase master; \
-		else \
-			echo "before: r$$REV1, after: r$$REV2"; \
-			echo "No changes..."; \
-		fi
-
-$(D)/xupnpd: $(D)/lua $(SOURCE_DIR)/xupnp/src/Makefile | $(TARGETPREFIX)
-	set -e; cd $(SOURCE_DIR)/xupnp; \
-		git checkout work; \
-		cd src; \
-		make clean; \
-		make embedded \
-			CC=$(TARGET)-gcc \
-			STRIP=$(TARGET)-strip \
-			LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib -L$(TARGETPREFIX_BASE)/lib"; \
+$(D)/xupnpd: $(D)/lua | $(TARGETPREFIX)
+	if ! test -d $(SOURCE_DIR)/xupnpd; then \
+		cd $(SOURCE_DIR); \
+			git clone https://git.slknet.de/xupnpd.git && \
+			cd xupnpd && \
+				git checkout --track -b $(XUPNPD_WORK_BRANCH) origin/$(XUPNPD_WORK_BRANCH); \
+		echo ""; echo "Cloning xupnpd git repo OK"; echo""; \
+	else \
+		cd $(SOURCE_DIR)/xupnpd; \
+			git checkout $(XUPNPD_WORK_BRANCH); \
+			git pull; \
+	fi;
+	make plugins-update
 	$(RM_PKGPREFIX)
-	mkdir -p $(PKGPREFIX)/bin
-	cp -a $(SOURCE_DIR)/xupnp/src/xupnpd $(PKGPREFIX)/bin
-	mkdir -p $(PKGPREFIX)/share/xupnpd/playlists/example
-	cp -a $(SOURCE_DIR)/xupnp/src/playlists/example/* $(PKGPREFIX)/share/xupnpd/playlists/example
-	cp -fd $(SOURCE_DIR)/xupnp/src/playlists/* $(PKGPREFIX)/share/xupnpd/playlists/example > /dev/null 2>&1 || true
-	mkdir -p $(PKGPREFIX)/share/xupnpd/plugins
-	cp -a $(SOURCE_DIR)/xupnp/src/plugins/* $(PKGPREFIX)/share/xupnpd/plugins
-	mkdir -p $(PKGPREFIX)/share/xupnpd/profiles
-	cp -a $(SOURCE_DIR)/xupnp/src/profiles/* $(PKGPREFIX)/share/xupnpd/profiles
-	mkdir -p $(PKGPREFIX)/share/xupnpd/ui
-	cp -a $(SOURCE_DIR)/xupnp/src/ui/* $(PKGPREFIX)/share/xupnpd/ui
-	mkdir -p $(PKGPREFIX)/share/xupnpd/www
-	cp -a $(SOURCE_DIR)/xupnp/src/www/* $(PKGPREFIX)/share/xupnpd/www
-	cp -a $(SOURCE_DIR)/xupnp/src/*.lua  $(PKGPREFIX)/share/xupnpd
-	install -m 0755 -D $(SCRIPTS)/xupnpd.init $(PKGPREFIX)/etc/init.d/xupnpd
-	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/S80xupnpd
-	ln -sf xupnpd $(PKGPREFIX)/etc/init.d/K20xupnpd
+	rm -rf $(BUILD_TMP)/xupnpd
+	cp -aL $(SOURCE_DIR)/xupnpd $(BUILD_TMP)/xupnpd
+	pushd $(BUILD_TMP)/xupnpd/src && \
+		$(BUILDENV) \
+		$(MAKE) embedded TARGET=$(TARGET) CC=$(TARGET)-gcc STRIP=$(TARGET)-strip LUAFLAGS="-I$(TARGETPREFIX)/include -L$(TARGETPREFIX)/lib" && \
+		mkdir -p $(PKGPREFIX_BASE)/bin && \
+		install -D -m 0755 xupnpd $(PKGPREFIX_BASE)/bin/ && \
+	mkdir -p $(PKGPREFIX)/share/xupnpd/config && \
+	for object in *.lua plugins/ profiles/ ui/ www/; do \
+		cp -a $$object $(PKGPREFIX)/share/xupnpd/; \
+	done;
+	rm $(PKGPREFIX)/share/xupnpd/plugins/staff/xupnpd_18plus.lua
+	install -D -m 644 $(PLUGIN_DIR)/scripts-lua/xupnpd/xupnpd_18plus.lua $(PKGPREFIX)/share/xupnpd/plugins/
+	install -D -m 644 $(PLUGIN_DIR)/scripts-lua/xupnpd/xupnpd_youtube.lua $(PKGPREFIX)/share/xupnpd/plugins/
+	install -D -m 644 $(PLUGIN_DIR)/scripts-lua/xupnpd/xupnpd_coolstream.lua $(PKGPREFIX)/share/xupnpd/plugins/
+	install -D -m 644 $(PLUGIN_DIR)/scripts-lua/xupnpd/xupnpd_cczwei.lua $(PKGPREFIX)/share/xupnpd/plugins/
+	mkdir -p $(PKGPREFIX_BASE)/etc/init.d/
+		install -D -m 0755 $(SCRIPTS)/xupnpd.init $(PKGPREFIX_BASE)/etc/init.d/xupnpd
+		ln -sf xupnpd $(PKGPREFIX_BASE)/etc/init.d/S99xupnpd
+		ln -sf xupnpd $(PKGPREFIX_BASE)/etc/init.d/K01xupnpd
 	if [ "$(NO_USR_BUILD)" = "1" ]; then \
 		mkdir -p $(PKGPREFIX)/usr; \
 		mv $(PKGPREFIX)/share $(PKGPREFIX)/usr; \
-		ln -sf usr/share $(PKGPREFIX)/share; \
 	fi;
-	cp -frd $(PKGPREFIX)/. $(TARGETPREFIX)
-	cd $(SOURCE_DIR)/xupnp; \
-		XUPNP_SVN=$$(git svn find-rev master --before HEAD); \
-		PKG_VER=svnr$$XUPNP_SVN \
-			PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+	ln -sf usr/share $(PKGPREFIX_BASE)
+	cp -a $(IMAGEFILES)/xupnpd/share/* $(PKGPREFIX)/share/
+	cp -a $(IMAGEFILES)/xupnpd/var $(PKGPREFIX_BASE)/
+	cp -frd $(PKGPREFIX_BASE)/. $(TARGETPREFIX_BASE)
+	cd $(SOURCE_DIR)/xupnpd; \
+		GIT_HASH=$$(git log master --pretty=format:'%h' -n 1); \
+		GIT_DATE=$$(git log master --pretty=format:'%ct' -n 1); \
+		GIT_DATE_X=$$(date --date=@$$GIT_DATE +%Y%m%d-%H%M); \
+		V="git-master_$$GIT_HASH"; V+="_$$GIT_DATE_X"; \
+		PKG_VER=$$V \
+			PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
 				$(OPKG_SH) $(CONTROL_DIR)/xupnpd
+	rm -rf $(BUILD_TMP)/xupnpd
 	$(RM_PKGPREFIX)
 	touch $@
 

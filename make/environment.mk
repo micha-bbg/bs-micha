@@ -99,6 +99,7 @@ MAINTAINER  ?= $(shell getent passwd $(WHOAMI)|awk -F: '{print $$5}')
 
 ARCHIVE      = $(BASE_DIR)/download
 PATCHES      = $(BASE_DIR)/archive-patches
+IMAGEFILES   = $(BASE_DIR)/archive-imagefiles
 BUILD_TMP    = $(BASE_DIR)/build_tmp
 D            = $(BASE_DIR)/deps
 # backwards compatibility
