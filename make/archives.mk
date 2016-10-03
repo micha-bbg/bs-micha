@@ -22,7 +22,7 @@ $(ARCHIVE)/mtd-utils-$(MTD_UTILS_VER).tar.bz2:
 	$(WGET) ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-$(MTD_UTILS_VER).tar.bz2
 
 $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/crosstool-ng/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
+	$(WGET) https://bs-micha.tuxcode.de/download/crosstool-ng/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
 
 $(ARCHIVE)/unrarsrc-$(UNRAR_VER).tar.gz:
 	$(WGET) http://www.rarlab.com/rar/unrarsrc-$(UNRAR_VER).tar.gz
@@ -95,7 +95,7 @@ $(ARCHIVE)/luaposix-$(LUAPOSIX_VER).tar.bz2: | $(HOSTPREFIX)/bin/get-git-archive
 	get-git-archive.sh git://github.com/luaposix/luaposix.git release-v$(LUAPOSIX_VER) $(notdir $@) $(ARCHIVE)
 
 $(ARCHIVE)/Lua-cURL$(LUACURL_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/Lua-cURL$(LUACURL_VER).tar.xz
+	$(WGET) https://bs-micha.tuxcode.de/download/Lua-cURL$(LUACURL_VER).tar.xz
 
 $(ARCHIVE)/lua-llthreads2-$(LUA_LLTHREADS2_VER).zip:
 	$(WGET) -O $@ https://github.com/moteus/lua-llthreads2/archive/v$(LUA_LLTHREADS2_VER).zip
@@ -143,7 +143,7 @@ $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz:
 	$(WGET) http://ftp.gnu.org/gnu/libiconv/libiconv-$(ICONV_VER).tar.gz
 
 $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz:
-	$(WGET) https://slknet.de/bs-micha-download/fuse-$(FUSE_VER).tar.gz
+	$(WGET) https://bs-micha.tuxcode.de/download/fuse-$(FUSE_VER).tar.gz
 #	$(WGET) https://sourceforge.net/projects/fusefilesysteminuserspace/files/fuse-$(FUSE_VER)/fuse-$(FUSE_VER).tar.bz2
 
 $(ARCHIVE)/readline-$(READLINE_VER).tar.gz:
@@ -209,7 +209,7 @@ $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz:
 	$(WGET) http://ftp.gnome.org/pub/GNOME/sources/libsigc++/$(LIBSIGCPP_MAJOR).$(LIBSIGCPP_MINOR)/libsigc++-$(LIBSIGCPP_VER).tar.xz
 
 $(ARCHIVE)/u-boot-$(UBOOT_VER).tar.bz2:
-	$(WGET) https://www.slknet.de/bs-micha-download/u-boot/u-boot-$(UBOOT_VER).tar.bz2
+	$(WGET) https://www.bs-micha.tuxcode.de/download/u-boot/u-boot-$(UBOOT_VER).tar.bz2
 
 ## libSDL V1
 $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz:
@@ -270,10 +270,13 @@ $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2
 
 $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/cst-kernel/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+
+$(ARCHIVE)/linux-2.6.26.8.tar.bz2:
+	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/linux-2.6.26.8.tar.bz2
 
 $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
-	$(WGET) https://slknet.de/bs-micha-download/kernelcheck-$(KERNELCHECK_VER).tar.xz
+	$(WGET) https://bs-micha.tuxcode.de/download/kernelcheck-$(KERNELCHECK_VER).tar.xz
 
 $(ARCHIVE)/libtirpc-$(LIBTIRPC_VER).tar.bz2:
 	$(WGET) http://sourceforge.net/projects/libtirpc/files/libtirpc/$(LIBTIRPC_VER)/libtirpc-$(LIBTIRPC_VER).tar.bz2
