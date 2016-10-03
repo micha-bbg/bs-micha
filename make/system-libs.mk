@@ -521,7 +521,7 @@ endif
 
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
 	touch $@
-$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(D)/librtmp | $(TARGETPREFIX)
+$(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/freetype $(D)/librtmp | $(TARGETPREFIX)
 	if ! test -d $(SOURCE_DIR)/$(SOURCE_FFMPEG); then \
 		mkdir $(SOURCE_DIR) | true; \
 		cd $(SOURCE_DIR); \
@@ -1453,7 +1453,7 @@ $(D)/pugixml: $(ARCHIVE)/pugixml-$(PUGIXML_VER).tar.gz | $(TARGETPREFIX)
 	$(RM_PKGPREFIX)
 	touch $@
 
-$(D)/librtmp: $(D)/zlib $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
+$(D)/librtmp: $(D)/zlib $(D)/openssl $(ARCHIVE)/rtmpdump-$(LIBRTMP_VER).tgz | $(TARGETPREFIX)
 	$(REMOVE)/rtmpdump-$(LIBRTMP_VER)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/rtmpdump-$(LIBRTMP_VER).tgz
