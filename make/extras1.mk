@@ -26,10 +26,12 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
 		echo ac_cv_func_realloc_0_nonnull=yes >> config.cache; \
-		$(CONFIGURE) \
+		test -f ./configure || ./autogen.sh && \
+		$(BUILDENV) \
+		LIBARCHIVE_LIBS="-L$(TARGETPREFIX)/lib -larchive" \
+		LIBARCHIVE_CFLAGS="-I$(TARGETPREFIX)/include" \
+		./configure $(CONFIGURE_OPTS) \
 			--prefix= \
-			--build=$(BUILD) \
-			--host=$(TARGET) \
 			--disable-gpg \
 			--config-cache \
 			--mandir=/.remove \
