@@ -111,3 +111,6 @@ NO_CXX11_ABI = -D_GLIBCXX_USE_CXX11_ABI=0
 
 # default (if empty) is "/usr/lib"
 #HOST_LIBS = /usr/lib
+
+FFMPEG_AUTO_UPDATE = 1
+XUPNPD_AUTO_UPDATE = 1

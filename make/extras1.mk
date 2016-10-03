@@ -69,9 +69,13 @@ $(D)/xupnpd: $(D)/lua | $(TARGETPREFIX)
 	else \
 		cd $(SOURCE_DIR)/xupnpd; \
 			git checkout $(XUPNPD_WORK_BRANCH); \
-			git pull; \
+			if [ "$(XUPNPD_AUTO_UPDATE)" = "1" ]; then \
+				git pull; \
+			fi; \
 	fi;
-	make plugins-update
+	if [ "$(XUPNPD_AUTO_UPDATE)" = "1" -o ! -d $(PLUGIN_DIR) ]; then \
+		make plugins-update; \
+	fi;
 	$(RM_PKGPREFIX)
 	rm -rf $(BUILD_TMP)/xupnpd
 	cp -aL $(SOURCE_DIR)/xupnpd $(BUILD_TMP)/xupnpd

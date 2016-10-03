@@ -532,7 +532,9 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/freetype $(D)/librtmp | $(TARGETP
 	else \
 		cd $(SOURCE_DIR)/$(SOURCE_FFMPEG); \
 			git checkout $(FFMPEG_WORK_BRANCH); \
-			git pull; \
+			if [ "$(FFMPEG_AUTO_UPDATE)" = "1" ]; then \
+				git pull; \
+			fi; \
 	fi;
 	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
 	cp -aL $(SOURCE_DIR)/$(SOURCE_FFMPEG) $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
