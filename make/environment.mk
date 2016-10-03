@@ -133,7 +133,7 @@ endif
 
 GCC_OPTIMIZE    ?= normal
 
-TARGET_CFLAGS   = -pipe
+TARGET_CFLAGS   = -pipe $(NO_CXX11_ABI)
 ifeq ($(GCC_OPTIMIZE), debug)
 TARGET_CFLAGS   += -O0 -g -ggdb3
 endif
@@ -147,7 +147,6 @@ TARGET_CFLAGS   += -I$(TARGETPREFIX)/include
 ifneq ($(PLATFORM), nevis)
 TARGET_CFLAGS   += -I$(TARGETPREFIX_BASE)/include
 endif
-TARGET_CFLAGS   += -D_GLIBCXX_USE_CXX11_ABI=0
 
 TARGET_CPPFLAGS = $(TARGET_CFLAGS)
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
