@@ -27,6 +27,7 @@ NEUTRINO_WORK_BRANCH_NEVIS  ?= cst-next
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_NEVIS)
 NO_USR_BUILD		     = 1
 DRIVERS_3x                   = $(DRIVERS_3x_NEVIS)
+UCLIBC_BUILD                 = 0
 endif
 
 ifeq ($(PLATFORM), apollo)
@@ -41,6 +42,7 @@ NEUTRINO_WORK_BRANCH_APOLLO ?= cst-next
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_APOLLO)
 NO_USR_BUILD		     = 0
 DRIVERS_3x                   = $(DRIVERS_3x_APOLLO)
+UCLIBC_BUILD                 = 1
 endif
 
 ifeq ($(PLATFORM), kronos)
@@ -55,6 +57,7 @@ NEUTRINO_WORK_BRANCH_KRONOS ?= cst-next
 NEUTRINO_WORK_BRANCH        ?= $(NEUTRINO_WORK_BRANCH_KRONOS)
 NO_USR_BUILD		     = 0
 DRIVERS_3x                   = $(DRIVERS_3x_KRONOS)
+UCLIBC_BUILD                 = 1
 endif
 
 ifeq ($(NO_USR_BUILD), 1)

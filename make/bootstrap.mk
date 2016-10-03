@@ -16,14 +16,7 @@ PLAT_INCS  = cst-firmware
 
 bootstrap: $(BOOTSTRAP)
 
-ifeq ($(UCLIBC_BUILD), 1)
 CST_LIBS = libs
-else
-CST_LIBS = libs-eglibc
-endif
-ifeq ($(PLATFORM), nevis)
-CST_LIBS = libs
-endif
 
 targetprefix:
 	@PATH=$(PATH):$(CROSS_DIR)/bin && \
@@ -121,6 +114,9 @@ $(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)
 	fi
 	if test -e $(CROSS_DIR)/$(TARGET)/sys-root/lib; then \
 		cp -a $(CROSS_DIR)/$(TARGET)/sys-root/lib/*so* $(TARGETPREFIX_BASE)/lib; \
+		if test ! -h $(CROSS_DIR)/$(TARGET)/lib -a -d $(CROSS_DIR)/$(TARGET)/lib; then \
+			cp -a $(CROSS_DIR)/$(TARGET)/lib/*so* $(TARGETPREFIX_BASE)/lib; \
+		fi; \
 	else \
 		cp -a $(CROSS_DIR)/$(TARGET)/lib/*so* $(TARGETPREFIX_BASE)/lib; \
 	fi

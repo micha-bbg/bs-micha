@@ -18,12 +18,12 @@ INSTALL_MOD_PATH = $(TARGETPREFIX_BASE)
 
 #######################################################################
 
-$(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+$(K_OBJ)/.config: $(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz
 	mkdir -p $(K_OBJ)
 	rm -fr $(K_SRCDIR); \
-	rm -fr $(BUILD_TMP)/cst-kernel_$(KERNEL_FILE_VER); \
-	$(UNTAR)/cst-kernel_$(KERNEL_FILE_VER).tar.xz; \
-	ln -sf cst-kernel_$(KERNEL_FILE_VER) $(K_SRCDIR); \
+	rm -fr $(BUILD_TMP)/$(CUSTOM_KERNEL_VER); \
+	$(UNTAR)/$(CUSTOM_KERNEL_VER).tar.xz; \
+	ln -sf $(CUSTOM_KERNEL_VER) $(K_SRCDIR); \
 	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
 		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
 	fi; \

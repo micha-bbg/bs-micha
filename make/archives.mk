@@ -209,7 +209,7 @@ $(ARCHIVE)/libsigc++-$(LIBSIGCPP_VER).tar.xz:
 	$(WGET) http://ftp.gnome.org/pub/GNOME/sources/libsigc++/$(LIBSIGCPP_MAJOR).$(LIBSIGCPP_MINOR)/libsigc++-$(LIBSIGCPP_VER).tar.xz
 
 $(ARCHIVE)/u-boot-$(UBOOT_VER).tar.bz2:
-	$(WGET) https://www.bs-micha.tuxcode.de/download/u-boot/u-boot-$(UBOOT_VER).tar.bz2
+	$(WGET) https://bs-micha.tuxcode.de/download/u-boot/u-boot-$(UBOOT_VER).tar.bz2
 
 ## libSDL V1
 $(ARCHIVE)/SDL-$(LIBSDL_VER).tar.gz:
@@ -269,14 +269,17 @@ $(ARCHIVE)/fuse-exfat-$(FUSE_EXFAT_VER).tar.gz:
 $(ARCHIVE)/iptables-$(IPTABLES_VER).tar.bz2:
 	$(WGET) http://www.netfilter.org/projects/iptables/files/iptables-$(IPTABLES_VER).tar.bz2
 
-$(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
-	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/cst-kernel_$(KERNEL_FILE_VER).tar.xz
+$(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz:
+	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/$(CUSTOM_KERNEL_VER).tar.xz
 
 $(ARCHIVE)/linux-2.6.26.8.tar.bz2:
 	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/linux-2.6.26.8.tar.bz2
 
 $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
 	$(WGET) https://bs-micha.tuxcode.de/download/kernelcheck-$(KERNELCHECK_VER).tar.xz
+
+$(ARCHIVE)/gcc-$(CUSTOM_GCC_VER).tar.xz:
+	$(WGET) https://bs-micha.tuxcode.de/download/gcc/gcc-$(CUSTOM_GCC_VER).tar.xz
 
 $(ARCHIVE)/libtirpc-$(LIBTIRPC_VER).tar.bz2:
 	$(WGET) http://sourceforge.net/projects/libtirpc/files/libtirpc/$(LIBTIRPC_VER)/libtirpc-$(LIBTIRPC_VER).tar.bz2

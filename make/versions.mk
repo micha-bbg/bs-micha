@@ -247,7 +247,7 @@ NFS_UTILS_VER = 1.2.6
 # crosstool-ng versions
 CT_VER_NEVIS  = 1.20.0_20150218-2311_git-master_41722f5
 CT_VER_APOLLO = 1.21.0_20151228-0417_git-master_a0d58f4
-CT_VER_KRONOS = 1.21.0_20151228-0417_git-master_a0d58f4
+CT_VER_KRONOS = 1.22.0_20160922-1733_git-master_531eab4
 
 PUGIXML_VER = 1.6
 
@@ -261,18 +261,13 @@ UTIL_LINUX_VER = $(UTIL_LINUX_MAJOR).$(UTIL_LINUX_MINOR)
 
 ifeq ($(PLATFORM), nevis)
 ## nevis platform
-KERNEL_FILE_VER = 2.6.34.13-cnxt_2012-12-09_1613_6ff43b3
 KERNEL_BUILD = 49
 else
 ## apollo / kronos platform
-KERNEL_FILE_VER = cst_3.10.93_2015-12-02_0824_c439541
 KERNEL_BUILD = 16
 
 ## 'GIMP header image file' in $(PATCHES)/kernel,
 ## exported by GIMP from a picture
 ## default (if empty) is none
 KRNL_LOGO       = splash_img_02.h
-
-UCLIBC_BUILD    = 1
-USE_UCLIBC_NG   = 0
 endif
