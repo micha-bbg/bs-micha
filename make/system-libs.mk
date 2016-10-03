@@ -522,19 +522,20 @@ endif
 $(D)/ffmpeg: $(D)/ffmpeg-$(FFMPEG_VER)
 	touch $@
 $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/libpng $(D)/librtmp | $(TARGETPREFIX)
-	if ! test -d $(CST_GIT)/cst-public-libraries-ffmpeg; then \
-		echo "******************************************************"; \
-		echo "* cst-public-libraries-ffmpeg missing, please create *"; \
-		echo "* an cst-public-libraries-ffmpeg repo on your system *"; \
-		echo "******************************************************"; \
-		false; \
+	if ! test -d $(SOURCE_DIR)/$(SOURCE_FFMPEG); then \
+		mkdir $(SOURCE_DIR) | true; \
+		cd $(SOURCE_DIR); \
+			git clone $(GITSOURCE)/$(SOURCE_FFMPEG).git && \
+			cd $(SOURCE_FFMPEG) && \
+				git checkout --track -b $(FFMPEG_WORK_BRANCH) origin/$(FFMPEG_WORK_BRANCH); \
+		echo ""; echo "Cloning ffmpeg git repo OK"; echo""; \
 	else \
-		cd $(CST_GIT)/cst-public-libraries-ffmpeg; \
-		git checkout $(FFMPEG_WORK_BRANCH); \
-		git pull; \
+		cd $(SOURCE_DIR)/$(SOURCE_FFMPEG); \
+			git checkout $(FFMPEG_WORK_BRANCH); \
+			git pull; \
 	fi;
 	rm -rf $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
-	cp -aL $(CST_GIT)/cst-public-libraries-ffmpeg $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
+	cp -aL $(SOURCE_DIR)/$(SOURCE_FFMPEG) $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER)
 	set -e; cd $(BUILD_TMP)/ffmpeg-$(FFMPEG_VER); \
 		$(BUILDENV) \
 		./configure \
