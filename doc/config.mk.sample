@@ -113,3 +113,7 @@ NO_CXX11_ABI = -D_GLIBCXX_USE_CXX11_ABI=0
 
 FFMPEG_AUTO_UPDATE = 1
 XUPNPD_AUTO_UPDATE = 1
+
+# Use gdb build from crosstool-ng
+# default (if empty) is 0
+USE_CTNG_GDB = 1

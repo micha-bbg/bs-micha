@@ -23,6 +23,8 @@ endif
 	$(RM_PKGPREFIX)
 	touch $@
 
+ifneq ($(USE_CTNG_GDB), 1)
+
 #  NOTE:
 #  gdb built for target or local-PC
 $(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz $(D)/libncurses $(D)/zlib | $(TARGETPREFIX)
@@ -45,7 +47,8 @@ $(D)/gdb: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz $(D)/libncurses $(D)/zlib | $(TARGETP
 	rm -rf $(BUILD_TMP)/gdb-tmp
 	mkdir $(BUILD_TMP)/gdb-tmp
 	mv $(PKGPREFIX_BASE)/opt/pkg/bin/gdbserver $(BUILD_TMP)/gdb-tmp
-	PKG_VER=$(GDB_VER) $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb
+	PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		PKG_VER=$(GDB_VER) $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb
 	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX_BASE)/bin
 	cp $(BUILD_TMP)/gdb-tmp/gdbserver $(TARGETPREFIX_BASE)/bin
@@ -68,6 +71,31 @@ $(D)/gdb-remote: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz | $(TARGETPREFIX)
 		make install-gdb; \
 	$(REMOVE)/gdb-$(GDB_VER)
 	touch $@
+
+else ## $(USE_CTNG_GDB)
+
+$(D)/gdb:
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX_BASE)/bin
+	set -e; cd $(PKGPREFIX_BASE); \
+		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdb bin; \
+		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore bin
+	PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
+		PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX_BASE)/bin
+	set -e; cd $(PKGPREFIX_BASE); \
+		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver bin
+	PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(D)/gdb-remote:
+	mkdir -p $(HOSTPREFIX)/bin
+	cp -fd $(CROSS_DIR)/bin/$(TARGET)-gdb $(HOSTPREFIX)/bin
+	touch $@
+
+endif ## $(USE_CTNG_GDB)
 
 devel-tools: $(D)/strace $(D)/gdb
 devel-tools-all: devel-tools $(D)/gdb-remote

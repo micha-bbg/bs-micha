@@ -7,4 +7,4 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://www.gnu.org/software/gdb/
 Source: ftp://sourceware.org/pub/gdb/releases/
-Depends: libc.so.6 libncurses.so.5 libz.so.1
+Depends: @DEP@
