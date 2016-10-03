@@ -1,6 +1,6 @@
 # makefile to build crosstool
 
-BOOTSTRAP  = targetprefix build-tools $(BUILD_TMP) $(CROSS_DIR) $(HOSTPREFIX)/bin
+BOOTSTRAP  = targetprefix $(BUILD_TMP) $(CROSS_DIR) $(HOSTPREFIX)/bin
 BOOTSTRAP += $(TARGETPREFIX_BASE)/lib/libc.so.6
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg.sh $(HOSTPREFIX)/bin/opkg-chksvn.sh
 BOOTSTRAP += $(HOSTPREFIX)/bin/opkg-gitdescribe.sh

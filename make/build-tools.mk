@@ -3,9 +3,9 @@
 build-tools-clean:
 	rm -fr $(BUILD_TOOLS)
 
-build-tools: $(BUILD_TOOLS)/bin/make $(BUILD_TOOLS)/bin/m4 $(BUILD_TOOLS)/bin/autoconf $(BUILD_TOOLS)/bin/automake $(BUILD_TOOLS)/bin/libtool
+build-tools: $(BUILD_TMP) $(BUILD_TOOLS)/bin/make $(BUILD_TOOLS)/bin/m4 $(BUILD_TOOLS)/bin/autoconf $(BUILD_TOOLS)/bin/automake $(BUILD_TOOLS)/bin/libtool
 
-$(BUILD_TOOLS)/bin/make: $(ARCHIVE)/make-$(MAKE_VER).tar.bz2 | $(TARGETPREFIX)
+$(BUILD_TOOLS)/bin/make: $(ARCHIVE)/make-$(MAKE_VER).tar.bz2
 	$(UNTAR)/make-$(MAKE_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/make-$(MAKE_VER); \
 		patch -p1 -i $(PATCHES)/build-tools/make/make-arglength.patch; \
@@ -24,7 +24,7 @@ $(BUILD_TOOLS)/bin/make: $(ARCHIVE)/make-$(MAKE_VER).tar.bz2 | $(TARGETPREFIX)
 	$(REMOVE)/make-$(MAKE_VER)
 	$(REMOVE)/.remove
 
-$(BUILD_TOOLS)/bin/m4: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/m4-$(M4_VER).tar.xz | $(TARGETPREFIX)
+$(BUILD_TOOLS)/bin/m4: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/m4-$(M4_VER).tar.xz
 	$(UNTAR)/m4-$(M4_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/m4-$(M4_VER); \
 		if [ "$(M4_VER)" = "1.4.16" ]; then \
@@ -39,7 +39,7 @@ $(BUILD_TOOLS)/bin/m4: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/m4-$(M4_VER).tar.xz | 
 	$(REMOVE)/m4-$(M4_VER)
 	$(REMOVE)/.remove
 
-$(BUILD_TOOLS)/bin/autoconf: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/autoconf-$(AUTOCONF_VER).tar.xz | $(TARGETPREFIX)
+$(BUILD_TOOLS)/bin/autoconf: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/autoconf-$(AUTOCONF_VER).tar.xz
 	$(UNTAR)/autoconf-$(AUTOCONF_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/autoconf-$(AUTOCONF_VER); \
 		patch -p0 -i $(PATCHES)/build-tools/autoconf/autoreconf-ltdl.diff; \
@@ -52,7 +52,7 @@ $(BUILD_TOOLS)/bin/autoconf: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/autoconf-$(AUTOC
 	$(REMOVE)/autoconf-$(AUTOCONF_VER)
 	$(REMOVE)/.remove
 
-$(BUILD_TOOLS)/bin/automake: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/automake-$(AUTOMAKE_VER).tar.$(AUTOMAKE_ARCH) | $(TARGETPREFIX)
+$(BUILD_TOOLS)/bin/automake: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/automake-$(AUTOMAKE_VER).tar.$(AUTOMAKE_ARCH)
 	$(UNTAR)/automake-$(AUTOMAKE_VER).tar.$(AUTOMAKE_ARCH)
 	set -e; cd $(BUILD_TMP)/automake-$(AUTOMAKE_VER); \
 		if [ "$(AUTOMAKE_VER)" = "1.13.4" -o "$(AUTOMAKE_VER)" = "1.12.1" ]; then \
@@ -68,7 +68,7 @@ $(BUILD_TOOLS)/bin/automake: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/automake-$(AUTOM
 	$(REMOVE)/automake-$(AUTOMAKE_VER)
 	$(REMOVE)/.remove
 
-$(BUILD_TOOLS)/bin/libtool: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/libtool-$(LIBTOOL_VER).tar.xz | $(TARGETPREFIX)
+$(BUILD_TOOLS)/bin/libtool: $(BUILD_TOOLS)/bin/make $(ARCHIVE)/libtool-$(LIBTOOL_VER).tar.xz
 	$(UNTAR)/libtool-$(LIBTOOL_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/libtool-$(LIBTOOL_VER); \
 		patch -p0 -i $(PATCHES)/build-tools/libtool/config-guess-sub-update.patch; \

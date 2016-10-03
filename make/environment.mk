@@ -126,7 +126,7 @@ PACKAGE_DIR  = $(BASE_DIR)/pkgs/opkg
 SCRIPTS      = $(BASE_DIR)/scripts/target
 
 BUILD       ?= $(shell /usr/share/libtool/config.guess 2>/dev/null || /usr/share/libtool/config/config.guess)
-BUILD_TOOLS ?= /Data/coolstream/Cross/build-tools
+BUILD_TOOLS ?= $(HOSTPREFIX)/build-tools
 
 ifeq ($(PLATFORM), nevis)
 TARGETLIB       = $(TARGETPREFIX)/lib

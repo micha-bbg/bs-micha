@@ -87,9 +87,9 @@ KVERSION_APOLLO = 3.10.70
 # default (if empty) is "3.10.70"
 KVERSION_KRONOS = 3.10.93
 
-# default (if empty) is "/Data/Cross/build-tools"
+# default (if empty) is "$(HOSTPREFIX)/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
-BUILD_TOOLS = /Data/coolstream/Cross/build-tools
+#BUILD_TOOLS =
 
 # default (if empty) is "$(BUILD_TMP)/pc_image"
 #PC_INSTALL=

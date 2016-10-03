@@ -50,9 +50,12 @@ endif
 	type -p $(TARGET)-pkg-config >/dev/null 2>&1 || T=true; \
 	PATH=$(PATH):$(CROSS_DIR)/bin; \
 	type -p $(TARGET)-gcc >/dev/null 2>&1 && C=false || C=true; \
+	type -p $(BUILD_TOOLS)/bin/libtool >/dev/null 2>&1 && B=false || B=true; \
 	if $$P || $$T || $$C; then \
 		echo "Your next steps are most likely (in this order):"; \
 		$$P && echo "	* 'make preqs'		for prerequisites"; \
+		$$B && echo "	* 'make build-tools'	tools for host (make, autoconf etc.)"; \
+		$$B && echo "	                        (optional)"; \
 		$$C && echo "	* 'make crosstool'	for the cross compiler"; \
 		$$T && echo "	* 'make bootstrap'	to prepare the target root"; \
 		echo; \
