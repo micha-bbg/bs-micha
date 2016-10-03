@@ -1,6 +1,7 @@
 
 # opkg; a lightweight package management system based on Ipkg
-OPKG_VER=0.3.1
+#OPKG_VER=0.3.1
+OPKG_VER=0.3.3
 
 ## for recent versions, the SVN trunk rev is used:
 #OPKG_SVN=635
@@ -32,7 +33,7 @@ BUSYBOX_VER=1.21.0
 endif
 
 # wget for retrieving files using HTTP, HTTPS and FTP
-WGET_VER=1.16.3
+WGET_VER=1.18
 
 # e2fsprogs; filesystem utilities for use with the ext[x] filesystem
 E2FSPROGS_VER=1.42.12
@@ -200,21 +201,22 @@ SDL_TTF_VER=2.0.11
 SDL_MIXER_VER=1.2.12
 
 ## libSDL V2
-LIBSDL2_VER = 2.0.1
-SDL2_TTF_VER=2.0.12
-SDL2_MIXER_VER=2.0.0
+LIBSDL2_VER = 2.0.4
+SDL2_TTF_VER=2.0.14
+SDL2_MIXER_VER=2.0.1
 
-OPENVPN_VER=2.3.8
+OPENVPN_VER=2.3.9
 KILLPROC_VER=2.13
 
 NCFTP_VER=3.2.5
 
 # curl; command line tool for transferring data with URL syntax
-CURL_VER=7.46.0
+#CURL_VER=7.46.0
+CURL_VER=7.50.3
 
 # openssl; toolkit for the SSL v2/v3 and TLS v1 protocol
 OPENSSL_VER=1.0.2
-OPENSSL_SUBVER=e
+OPENSSL_SUBVER=j
 
 ifeq ($(PLATFORM), nevis)
 LIBXML2_VER = 2.8.0
