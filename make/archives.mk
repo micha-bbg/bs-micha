@@ -275,8 +275,8 @@ $(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz:
 $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz:
 	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 
-$(ARCHIVE)/linux-2.6.26.8.tar.bz2:
-	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/linux-2.6.26.8.tar.bz2
+$(ARCHIVE)/linux-$(CUSTOM_KERNEL_VER).tar.xz:
+	$(WGET) https://bs-micha.tuxcode.de/download/cst-kernel/linux-$(CUSTOM_KERNEL_VER).tar.xz
 
 $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz:
 	$(WGET) https://bs-micha.tuxcode.de/download/kernelcheck-$(KERNELCHECK_VER).tar.xz
