@@ -261,9 +261,11 @@ UTIL_LINUX_VER = $(UTIL_LINUX_MAJOR).$(UTIL_LINUX_MINOR)
 
 ifeq ($(PLATFORM), nevis)
 ## nevis platform
+KERNEL_FILE_VER = 2.6.34.13-cnxt_2012-12-09_1613_6ff43b3
 KERNEL_BUILD = 49
 else
 ## apollo / kronos platform
+KERNEL_FILE_VER = cst_3.10.93_2015-12-02_0824_c439541
 KERNEL_BUILD = 16
 
 ## 'GIMP header image file' in $(PATCHES)/kernel,

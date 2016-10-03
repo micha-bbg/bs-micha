@@ -18,12 +18,12 @@ INSTALL_MOD_PATH = $(TARGETPREFIX_BASE)
 
 #######################################################################
 
-$(K_OBJ)/.config: $(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz
+$(K_OBJ)/.config: $(ARCHIVE)/cst-kernel_$(KERNEL_FILE_VER).tar.xz
 	mkdir -p $(K_OBJ)
 	rm -fr $(K_SRCDIR); \
-	rm -fr $(BUILD_TMP)/$(CUSTOM_KERNEL_VER); \
-	$(UNTAR)/$(CUSTOM_KERNEL_VER).tar.xz; \
-	ln -sf $(CUSTOM_KERNEL_VER) $(K_SRCDIR); \
+	rm -fr $(BUILD_TMP)/cst-kernel_$(KERNEL_FILE_VER); \
+	$(UNTAR)/cst-kernel_$(KERNEL_FILE_VER).tar.xz; \
+	ln -sf cst-kernel_$(KERNEL_FILE_VER) $(K_SRCDIR); \
 	if [ -e $(KRNL_LOGO_FILE) -a ! "$(PLATFORM)" = "nevis" ]; then \
 		cp -f $(KRNL_LOGO_FILE) $(K_SRCDIR)/arch/arm/plat-stb/include/plat/splash_img.h; \
 	fi; \
@@ -39,7 +39,7 @@ $(K_OBJ)/.config: $(ARCHIVE)/$(CUSTOM_KERNEL_VER).tar.xz
 	fi;
 	touch $@
 
-kernel-menuconfig: $(K_OBJ)/.config
+cskernel-menuconfig: $(K_OBJ)/.config
 	cd $(K_SRCDIR) && \
 		make ARCH=arm CROSS_COMPILE=$(TARGET)- menuconfig O=$(K_OBJ)/
 
@@ -58,7 +58,7 @@ endif
 TEXT_ADDR=0x8000
 LOAD_ADDR=0x8000
 
-kernel-clean:
+cskernel-clean:
 	rm -fr $(K_OBJ)
 	rm -fr $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/kernel
 	rm -f $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION)/modules.*
@@ -101,7 +101,7 @@ KVERSION_FULL = $(KVERSION)-nevis
 TEXT_ADDR=0x48000
 LOAD_ADDR=0x48000
 
-kernel-clean:
+cskernel-clean:
 	rm -fr $(K_OBJ)
 	rm -fr $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION_FULL)/kernel
 	rm -f $(INSTALL_MOD_PATH)/lib/modules/$(KVERSION_FULL)/modules.*

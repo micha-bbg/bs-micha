@@ -34,7 +34,7 @@ ifeq ($(PLATFORM), apollo)
 TARGET_APOLLO               ?= arm-cortex-linux-uclibcgnueabi
 TARGET                       = $(TARGET_APOLLO)
 N_HD_SOURCE                  = $(N_HD_SOURCE_APOLLO)
-KVERSION_APOLLO             ?= 3.10.70
+KVERSION_APOLLO             ?= 3.10.93
 KVERSION                     = $(KVERSION_APOLLO)
 NEUTRINO_BRANCH_APOLLO      ?= cst-next
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_APOLLO)
@@ -49,7 +49,7 @@ ifeq ($(PLATFORM), kronos)
 TARGET_KRONOS               ?= arm-cortex-linux-uclibcgnueabi
 TARGET                       = $(TARGET_KRONOS)
 N_HD_SOURCE                  = $(N_HD_SOURCE_KRONOS)
-KVERSION_KRONOS             ?= 3.10.70
+KVERSION_KRONOS             ?= 3.10.93
 KVERSION                     = $(KVERSION_KRONOS)
 NEUTRINO_BRANCH_KRONOS      ?= cst-next
 NEUTRINO_BRANCH              = $(NEUTRINO_BRANCH_KRONOS)

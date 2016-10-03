@@ -89,11 +89,11 @@ DRIVERS_3x_KRONOS   = -3.x
 # default (if empty) is "2.6.34.13"
 KVERSION_NEVIS = 2.6.34.13
 
-# default (if empty) is "3.10.70"
-KVERSION_APOLLO = 3.10.70
+# default (if empty) is "3.10.93"
+#KVERSION_APOLLO = 3.10.93
 
-# default (if empty) is "3.10.70"
-KVERSION_KRONOS = 3.10.93
+# default (if empty) is "3.10.93"
+#KVERSION_KRONOS = 3.10.93
 
 # default (if empty) is "$(HOSTPREFIX)/build-tools"
 # Path for host-buld-tools (make, m4, autoconf, automake, libtool)
