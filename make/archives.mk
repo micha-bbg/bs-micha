@@ -143,7 +143,8 @@ $(ARCHIVE)/libiconv-$(ICONV_VER).tar.gz:
 	$(WGET) http://ftp.gnu.org/gnu/libiconv/libiconv-$(ICONV_VER).tar.gz
 
 $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz:
-	$(WGET) http://downloads.sourceforge.net/project/fuse/fuse-2.X/$(FUSE_VER)/fuse-$(FUSE_VER).tar.gz
+	$(WGET) https://slknet.de/bs-micha-download/fuse-$(FUSE_VER).tar.gz
+#	$(WGET) https://sourceforge.net/projects/fusefilesysteminuserspace/files/fuse-$(FUSE_VER)/fuse-$(FUSE_VER).tar.bz2
 
 $(ARCHIVE)/readline-$(READLINE_VER).tar.gz:
 	$(WGET) ftp://ftp.cwru.edu/pub/bash/readline-$(READLINE_VER).tar.gz
