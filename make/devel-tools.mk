@@ -75,18 +75,25 @@ $(D)/gdb-remote: $(ARCHIVE)/gdb-$(GDB_VER).tar.xz | $(TARGETPREFIX)
 else ## $(USE_CTNG_GDB)
 
 $(D)/gdb:
-	$(RM_PKGPREFIX)
-	mkdir -p $(PKGPREFIX_BASE)/bin
-	set -e; cd $(PKGPREFIX_BASE); \
-		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdb bin; \
-		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore bin
-	PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
-		PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb
-	$(RM_PKGPREFIX)
-	mkdir -p $(PKGPREFIX_BASE)/bin
-	set -e; cd $(PKGPREFIX_BASE); \
-		cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver bin
-	PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver
+	if test -e $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdb; then \
+		$(RM_PKGPREFIX); \
+		mkdir -p $(PKGPREFIX_BASE)/bin; \
+		set -e; cd $(PKGPREFIX_BASE); \
+			cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdb bin; \
+			if test -e $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore; then \
+				cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore bin; \
+			fi; \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
+			PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb; \
+	fi;
+	if test -e $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver; then \
+		$(RM_PKGPREFIX); \
+		mkdir -p $(PKGPREFIX_BASE)/bin; \
+		set -e; cd $(PKGPREFIX_BASE); \
+			cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver bin; \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
+			PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver; \
+	fi;
 	$(RM_PKGPREFIX)
 	touch $@
 

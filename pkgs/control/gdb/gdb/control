@@ -5,6 +5,6 @@ Section: base
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://www.gnu.org/software/gdb/
-Source: ftp://sourceware.org/pub/gdb/releases/
+Homepage: https://www.gnu.org/software/gdb/
+Source: http://ftp.gnu.org/gnu/gdb/
 Depends: @DEP@
