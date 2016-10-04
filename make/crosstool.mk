@@ -18,7 +18,8 @@ ifeq ($(PLATFORM), nevis)
 CT_NG_CONFIG      = $(PATCHES)/ct-ng-1.20/ct-ng-nevis-1.22.0-1.config
 CUSTOM_KERNEL_VER = 2.6.34.13
 CUSTOM_KERNEL     = $(ARCHIVE)/linux-$(CUSTOM_KERNEL_VER).tar.xz
-CUSTOM_GCC_VER    = linaro-4.9-2016.02
+#CUSTOM_GCC_VER    = linaro-4.9-2016.02
+CUSTOM_GCC_VER    = linaro-5.2-2015.11-2
 CUSTOM_GCC        = $(ARCHIVE)/gcc-$(CUSTOM_GCC_VER).tar.xz
 
 crosstool: $(CROSS_DIR)/bin/$(TARGET)-gcc
