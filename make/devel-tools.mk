@@ -83,28 +83,44 @@ $(D)/gdb:
 			if test -e $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore; then \
 				cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gcore bin; \
 			fi; \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
-			PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdb; \
+		GDBV=$$(cat $(CT_NG_CONFIG) | grep "CT_GDB_VERSION" | sed 's/CT_GDB_VERSION=//g'); \
+			GDBV=$${GDBV/\"/}; GDBV=$${GDBV/\"/}; \
+			PKG_VER=$$GDBV \
+			PKG_DEP=$$(opkg-find-requires.sh $(PKGPREFIX_BASE)/bin) \
+			$(OPKG_SH) $(CONTROL_DIR)/gdb/gdb; \
+		$(RM_PKGPREFIX); \
+		touch $@; \
 	fi;
+
+$(D)/gdbserver:
 	if test -e $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver; then \
 		$(RM_PKGPREFIX); \
 		mkdir -p $(PKGPREFIX_BASE)/bin; \
 		set -e; cd $(PKGPREFIX_BASE); \
 			cp -fd $(CROSS_DIR)/$(TARGET)/debug-root/usr/bin/gdbserver bin; \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
-			PKG_VER=ct-ng $(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver; \
+		GDBV=$$(cat $(CT_NG_CONFIG) | grep "CT_GDB_VERSION" | sed 's/CT_GDB_VERSION=//g'); \
+			GDBV=$${GDBV/\"/}; GDBV=$${GDBV/\"/}; \
+			PKG_VER=$$GDBV \
+			PKG_DEP=$$(opkg-find-requires.sh $(PKGPREFIX_BASE)/bin) \
+			$(OPKG_SH) $(CONTROL_DIR)/gdb/gdbserver; \
+		$(RM_PKGPREFIX); \
+		touch $@; \
 	fi;
-	$(RM_PKGPREFIX)
-	touch $@
 
 $(D)/gdb-remote:
-	mkdir -p $(HOSTPREFIX)/bin
-	cp -fd $(CROSS_DIR)/bin/$(TARGET)-gdb $(HOSTPREFIX)/bin
-	touch $@
+	if test -e $(CROSS_DIR)/bin/$(TARGET)-gdb; then \
+		mkdir -p $(HOSTPREFIX)/bin; \
+		cp -fd $(CROSS_DIR)/bin/$(TARGET)-gdb $(HOSTPREFIX)/bin; \
+		touch $@; \
+	fi;
 
 endif ## $(USE_CTNG_GDB)
 
 devel-tools: $(D)/strace $(D)/gdb
+ifeq ($(USE_CTNG_GDB), 1)
+devel-tools-all: devel-tools $(D)/gdb-remote $(D)/gdbserver
+else
 devel-tools-all: devel-tools $(D)/gdb-remote
+endif
 
 PHONY += devel-tools devel-tools-all
