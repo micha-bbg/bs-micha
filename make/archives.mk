@@ -147,7 +147,7 @@ $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz:
 #	$(WGET) https://sourceforge.net/projects/fusefilesysteminuserspace/files/fuse-$(FUSE_VER)/fuse-$(FUSE_VER).tar.bz2
 
 $(ARCHIVE)/readline-$(READLINE_VER).tar.gz:
-	$(WGET) ftp://ftp.cwru.edu/pub/bash/readline-$(READLINE_VER).tar.gz
+	$(WGET) ftp://ftp.gnu.org/gnu/readline/readline-$(READLINE_VER).tar.gz
 
 $(ARCHIVE)/parted-$(PARTED_VER).tar.xz:
 	$(WGET) http://ftp.gnu.org/gnu/parted/parted-$(PARTED_VER).tar.xz

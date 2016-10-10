@@ -148,7 +148,7 @@ ICONV_VER=1.14
 # FUSE; filesystems in userspace
 FUSE_VER=2.9.3
 
-READLINE_VER = 6.2
+READLINE_VER = 6.3
 
 PARTED_VER = 3.2
 

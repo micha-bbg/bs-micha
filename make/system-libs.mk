@@ -1082,15 +1082,31 @@ $(D)/fuse: $(ARCHIVE)/fuse-$(FUSE_VER).tar.gz | $(TARGETPREFIX)
 	touch $@
 
 $(D)/readline: $(ARCHIVE)/readline-$(READLINE_VER).tar.gz | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	rm -fr $(BUILD_TMP)/readline-$(READLINE_VER)
 	$(UNTAR)/readline-$(READLINE_VER).tar.gz
+	## Is a bug in readline 6.3 -> configure: error: cannot run test program while cross compiling
+	## Workaround: rebuild configure
+	## https://lists.gnu.org/archive/html/bug-readline/2014-03/msg00052.html
 	set -e; cd $(BUILD_TMP)/readline-$(READLINE_VER); \
+		rm -f configure; autoconf; \
 		$(CONFIGURE) \
 			--prefix= \
 			--infodir=/.remove \
 			--mandir=/.remove; \
 		$(MAKE) all; \
-		make install DESTDIR=$(TARGETPREFIX)
-	rm -fr $(BUILD_TMP)/readline-$(READLINE_VER) $(TARGETPREFIX)/.remove
+		make install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove; rm -fr $(PKGPREFIX)/bin; rm -fr $(PKGPREFIX)/share
+	cp -frd $(PKGPREFIX)/include/readline $(TARGETPREFIX)/include
+	rm -fr $(PKGPREFIX)/include
+	cp -frd $(PKGPREFIX)/lib/* $(TARGETPREFIX)/lib
+	rm -fr $(PKGPREFIX)/lib/*.a; rm -fr $(PKGPREFIX)/lib/*.so
+	PKG_VER=$(READLINE_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/readline
+	rm -fr $(BUILD_TMP)/readline-$(READLINE_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 $(D)/libnl: $(ARCHIVE)/libnl-$(LIBNL_VER).tar.gz | $(TARGETPREFIX)

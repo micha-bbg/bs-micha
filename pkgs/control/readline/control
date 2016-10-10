@@ -1,0 +1,11 @@
+Package: readline
+Version: @VER@-1
+Description: The GNU Readline library
+Section: extras/libraries
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+Source: ftp://ftp.gnu.org/gnu/readline/
+Depends: @DEP@
+Provides: @PROV@
