@@ -1,0 +1,20 @@
+
+        Images auf der Basis von *.opk Paketen
+       ----------------------------------------
+
+(Zurzeit nur für Kronos Hardware möglich, der Rest folgt…)
+
+ - Alle benötigten Pakete müssen gebaut sein (Programme, Libs, Kernel)
+ - Die zu installierenden Pakete stehen im oberen Teil von 
+   "make/rootfs_opkg_install.mk" (OPKG_INSTALLS, OPKG_EXTRA_INSTALLS, 
+   OPKG_EXTRA_INSTALLS_MC)
+
+
+ - "make opkg-rootfs" erstellt ein rootFS mit den Paketen aus OPKG_INSTALLS
+ - "make opkg-rootfs-all" erstellt ein rootFS mit den Paketen aus OPKG_INSTALLS, 
+   OPKG_EXTRA_INSTALLS und OPKG_EXTRA_INSTALLS_MC
+ - "make opkg-flash-build" erzeugt das Image zum flashen.
+
+ - Das rootFS befindet sich in $(BUILD_TMP)/install_opkg/root,
+   der Kernel in $(BUILD_TMP)/install_opkg/images/kernel,
+   das Image in $(BUILD_TMP)/install_opkg/images/img-DATUM-ZEIT
