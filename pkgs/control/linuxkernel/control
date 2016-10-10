@@ -1,0 +1,9 @@
+Package: linuxkernel
+Version: @VER@-1
+Description: The linuxkernel
+Section: base
+Priority: required
+Maintainer: @MAINT@
+Architecture: arm
+Homepage:
+Source: https://gitweb.slknet.de/00/?p=cst-public-linux-kernel.git;a=summary

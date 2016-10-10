@@ -111,8 +111,9 @@ include make/extras2.mk
 #include make/packages.mk
 #include make/plugins.mk
 #include make/example.mk
-include make/flashimage.mk
-include make/rootfs.mk
+include make/rootfs_opkg_base.mk
+include make/rootfs_opkg_install.mk
+#include make/rootfs.mk
 include make/tuxwetter.mk
 -include make/games-work.mk
 #include make/games.mk

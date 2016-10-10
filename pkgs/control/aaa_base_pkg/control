@@ -1,0 +1,10 @@
+Package: aaa_base_pkg
+Version: 1-1
+Description: Base Installation Files, including init scripts, libs, config etc.
+Section: base
+Priority: required
+Maintainer: @MAINT@
+Architecture: arm
+Homepage: https://wiki.neutrino-hd.de/
+Source: https://gitweb.slknet.de/00/
+Provides: @PROV@
