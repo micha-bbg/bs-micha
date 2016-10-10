@@ -1,0 +1,9 @@
+Package: kernel-modules
+Version: @VER@-1
+Description: Modules for the linuxkernel
+Section: base
+Priority: required
+Maintainer: @MAINT@
+Architecture: arm
+Homepage: https://www.kernel.org/
+Source: https://gitweb.tuxcode.de/00/?p=cst-public-linux-kernel.git;a=summary

@@ -181,12 +181,11 @@ ifeq ($(PLATFORM), kronos)
 	install -D -m 0755 skel-root/kronos/bin/autorun.sh $(PKGPREFIX_BASE)/bin/autorun.sh;
 endif
 	make $(PKGPREFIX_BASE)/.version
-	cp -a $(CONTROL_DIR)/$(NEUTRINO_PKG) $(BUILD_TMP)/neutrino-control
+	cp -a $(CONTROL_DIR)/neutrino-hd $(BUILD_TMP)/neutrino-control
 	DEP=`$(TARGET)-objdump -p $(PKGPREFIX_BASE)/bin/neutrino | awk '/NEEDED/{print $$2}' | sort` && \
 		DEP=`echo $$DEP` && \
 		DEP="$${DEP// /, }" && \
 		sed -i "s/@DEP@/$$DEP/" $(BUILD_TMP)/neutrino-control/control
-	sed -i 's/^\(Depends:.*\)$$/\1, cs-drivers/' $(BUILD_TMP)/neutrino-control/control
 	install -p -m 0755 $(TARGETPREFIX_BASE)/bin/fbshot $(PKGPREFIX_BASE)/bin/
 	ln -s usr/share $(PKGPREFIX_BASE)/share
 	find $(PKGPREFIX_BASE)/share/tuxbox/neutrino/locale/ -type f \

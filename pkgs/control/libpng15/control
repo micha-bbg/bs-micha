@@ -7,5 +7,5 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://www.libpng.org/
 Source:
-Depends: libz.so.1
-Provides: libpng15.so.0
+Depends: @DEP@
+Provides: @PROV@

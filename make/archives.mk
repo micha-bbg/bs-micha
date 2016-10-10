@@ -18,8 +18,8 @@ $(ARCHIVE)/openssh-$(OPENSSH_VER).tar.gz:
 $(ARCHIVE)/lzo-$(LZO_VER).tar.gz:
 	$(WGET) http://www.oberhumer.com/opensource/lzo/download/lzo-$(LZO_VER).tar.gz
 
-$(ARCHIVE)/mtd-utils-$(MTD_UTILS_VER).tar.bz2:
-	$(WGET) ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-$(MTD_UTILS_VER).tar.bz2
+$(ARCHIVE)/mtd-utils-$(MTD_UTILS_VER).tar.xz:
+	$(WGET) https://bs-micha.tuxcode.de/download/mtd-utils-$(MTD_UTILS_VER).tar.xz
 
 $(ARCHIVE)/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz:
 	$(WGET) https://bs-micha.tuxcode.de/download/crosstool-ng/crosstool-ng-$(CROSSTOOL_NG_VER).tar.xz
@@ -154,6 +154,9 @@ $(ARCHIVE)/parted-$(PARTED_VER).tar.xz:
 
 $(ARCHIVE)/mc-$(MC_VER).tar.xz:
 	$(WGET) http://ftp.midnight-commander.org/mc-$(MC_VER).tar.xz
+
+$(ARCHIVE)/pcre-$(PCRE_VER).tar.gz:
+	$(WGET) https://bs-micha.tuxcode.de/download/pcre/pcre-$(PCRE_VER).tar.gz
 
 $(ARCHIVE)/glib-$(GLIB_VER).tar.xz:
 	$(WGET) http://ftp.gnome.org/pub/gnome/sources/glib/$(GLIB_MAJOR).$(GLIB_MINOR)/$(lastword $(subst /, ,$@))

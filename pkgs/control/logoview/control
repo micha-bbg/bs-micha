@@ -1,0 +1,10 @@
+Package: logoview
+Version: @VER@-1
+Description: Logoviewer for cst stb
+Section: extras/comsole
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage:
+Source: https://gitweb.slknet.de/03/?p=cst-public-plugins-logoview.git;a=summary
+Depends: @DEP@

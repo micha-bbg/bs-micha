@@ -53,7 +53,8 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 	$(call MOVE_PC_FILE,libopkg.pc)
 	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH)/libopkg.pc
 	install -d -m 0755 $(PKGPREFIX_BASE)$(OPKG_DATA_ROOT)
-	install -d -m 0755 $(PKGPREFIX_BASE)/etc/opkg
+	install -d -m 0755 $(PKGPREFIX_BASE)/etc
+	ln -sf /var/etc/opkg $(PKGPREFIX_BASE)/etc/opkg
 	ln -sf opkg $(PKGPREFIX_BASE)/bin/opkg-cl
 	rm -fr $(PKGPREFIX_BASE)/include; rm -fr $(PKGPREFIX_BASE)/lib/pkgconfig
 	rm -f $(PKGPREFIX_BASE)/lib/*.*a $(PKGPREFIX_BASE)/lib/*.so
@@ -264,11 +265,12 @@ $(HOSTPREFIX)/bin/glib-genmarshal: | $(HOSTPREFIX)/bin
 	$(REMOVE)/glib-$(GLIB_VER)
 
 #http://www.dbox2world.net/board293-coolstream-hd1/board314-coolstream-development/9363-idee-midnight-commander/
-$(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarshal $(D)/zlib $(D)/libffi | $(TARGETPREFIX)
+$(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarshal $(D)/zlib $(D)/libffi $(D)/pcre | $(TARGETPREFIX)
 	$(REMOVE)/glib-$(GLIB_VER)
 	$(RM_PKGPREFIX)
 	$(UNTAR)/glib-$(GLIB_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/glib-$(GLIB_VER); \
+		$(PATCH)/glib-uclibc-has_not_implement_mkostemp.diff; \
 		./autogen.sh; \
 		echo "ac_cv_func_posix_getpwuid_r=yes" > config.cache; \
 		echo "ac_cv_func_posix_getgrgid_r=yes" >> config.cache; \
@@ -291,7 +293,9 @@ $(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarsh
 			--enable-shared=yes \
 			--with-html-dir=/.remove \
 			--mandir=/.remove \
-			--prefix= ;\
+			--prefix= \
+			--disable-compile-warnings \
+			; \
 		$(MAKE) all; \
 		$(MAKE) install DESTDIR=$(PKGPREFIX)
 	rm -rf $(PKGPREFIX)/.remove
@@ -319,6 +323,39 @@ $(D)/libglib: $(ARCHIVE)/glib-$(GLIB_VER).tar.xz $(HOSTPREFIX)/bin/glib-genmarsh
 	$(RM_PKGPREFIX)
 	touch $@
 
+$(D)/pcre: $(ARCHIVE)/pcre-$(PCRE_VER).tar.gz
+	$(RM_PKGPREFIX)
+	rm -fr $(BUILD_TMP)/pcre-$(PCRE_VER)
+	$(UNTAR)/pcre-$(PCRE_VER).tar.gz
+	set -e; cd $(BUILD_TMP)/pcre-$(PCRE_VER); \
+		$(CONFIGURE) \
+			--prefix= \
+			--datarootdir=/.remove \
+			--enable-unicode-properties \
+			; \
+		$(MAKE) && \
+		$(MAKE) install DESTDIR=$(PKGPREFIX)
+	rm -fr $(PKGPREFIX)/.remove
+	mv $(PKGPREFIX)/bin/pcre-config $(HOSTPREFIX)/bin
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/include
+	rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.*a
+	rm -f $(PKGPREFIX)/lib/*.so
+	$(REWRITE_LIBTOOL)/libpcrecpp.la
+	$(REWRITE_LIBTOOL)/libpcre.la
+	$(REWRITE_LIBTOOL)/libpcreposix.la
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libpcrecpp.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libpcre.pc
+	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libpcreposix.pc
+	PKG_VER=$(PCRE_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/libpcre
+	rm -fr $(BUILD_TMP)/pcre-$(PCRE_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
 $(D)/libffi: $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz | $(TARGETPREFIX)
 	$(UNTAR)/libffi-$(LIBFFI_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/libffi-$(LIBFFI_VER); \
@@ -338,6 +375,7 @@ $(D)/libffi: $(ARCHIVE)/libffi-$(LIBFFI_VER).tar.gz | $(TARGETPREFIX)
 	rm -rf $(PKGPREFIX)/lib/*.*a $(PKGPREFIX)/lib/*.so
 	PKG_VER=$(LIBFFI_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/libffi
 	rm -fr $(BUILD_TMP)/libffi-$(LIBFFI_VER)
 	$(RM_PKGPREFIX)
@@ -365,18 +403,16 @@ $(D)/gettext: $(ARCHIVE)/gettext-$(GETTEXT_VER).tar.xz | $(TARGETPREFIX)
 		make install DESTDIR=$(PKGPREFIX_BASE)
 	rm -fr $(PKGPREFIX_BASE)/.remove
 	cp -a $(PKGPREFIX_BASE)/* $(TARGETPREFIX_BASE)
-	rm -fr $(PKGPREFIX)/include
-	rm -f $(PKGPREFIX)/lib/*.a
-	rm -f $(PKGPREFIX)/lib/*.la
-	rm -f $(PKGPREFIX)/lib/*.so
+	rm -fr $(PKGPREFIX)/lib/gettext; rm -fr $(PKGPREFIX)/include;
+	rm -f $(PKGPREFIX)/lib/*.*a; rm -f $(PKGPREFIX)/lib/*.so
 	$(REWRITE_LIBTOOL)/libasprintf.la
 	$(REWRITE_LIBTOOL)/libgettextlib.la
 	$(REWRITE_LIBTOOL)/libgettextpo.la
 	$(REWRITE_LIBTOOL)/libgettextsrc.la
 	$(REWRITE_LIBTOOL)/libintl.la
 	PKG_VER=$(GETTEXT_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
-		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)/lib` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)/lib` \
 		$(OPKG_SH) $(CONTROL_DIR)/gettext
 	$(REMOVE)/gettext-$(GETTEXT_VER)
 	$(RM_PKGPREFIX)
@@ -402,6 +438,28 @@ $(D)/kernelcheck: $(ARCHIVE)/kernelcheck-$(KERNELCHECK_VER).tar.xz | $(TARGETPRE
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/kernelcheck
 	$(REMOVE)/kernelcheck-$(KERNELCHECK_VER)
+	$(RM_PKGPREFIX)
+	touch $@
+
+$(D)/logoview: | $(TARGETPREFIX)
+	$(RM_PKGPREFIX)
+	rm -rf $(BUILD_TMP)/logoview
+	cp -frd $(SOURCE_DIR)/cst-public-plugins.tmp/logoview $(BUILD_TMP)
+	cd $(BUILD_TMP)/logoview; \
+		echo "#define LV_VERSION \"$(LOGOVIEW_VER)\"" > version.h; \
+		$(MAKE) all \
+			CFLAGS_="$(TARGET_CFLAGS) -I$(SOURCE_DIR)/neutrino-hd/lib/libconfigfile" \
+			LDFLAGS_="$(TARGET_LDFLAGS)" \
+			LD_ADD="$(BUILD_TMP)/neutrino-hd/lib/libconfigfile/libtuxbox-configfile.a" \
+			CC=$(TARGET)-gcc \
+			STRIP=$(TARGET)-strip \
+			PLATFORM=$(PLATFORM) && \
+		mkdir -p $(PKGPREFIX)/bin; \
+		cp logoview $(PKGPREFIX)/bin
+	PKG_VER=$(LOGOVIEW_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/logoview
+	rm -rf $(BUILD_TMP)/logoview
 	$(RM_PKGPREFIX)
 	touch $@
 

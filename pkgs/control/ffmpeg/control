@@ -7,5 +7,5 @@ Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://ffmpeg.org/
 Source:
-Depends:
+Depends: @DEP@
 Provides: @PROV@

@@ -5,6 +5,6 @@ Section: extras/servers
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://git.slknet.de/git/?p=cst-public-gui-neutrino.git;a=shortlog;h=refs/heads/next-cc
-Source:
+Homepage: https://wiki.neutrino-hd.de/
+Source: https://gitweb.tuxcode.de/00/?p=cst-public-gui-neutrino.git;a=shortlog;h=refs/heads/cst-next
 Depends: @DEP@

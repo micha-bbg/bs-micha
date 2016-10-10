@@ -6,6 +6,6 @@ Priority: required
 Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage:
-Source: https://gitweb.slknet.de/00/?p=cst-public-drivers.git;a=summary
+Source: https://gitweb.tuxcode.de/00/?p=cst-public-drivers.git;a=summary
 Provides: libca-ci.so, libca-sc.so, libcoolstream-mt.so, liblnxcssUsr.so, liblnxdvbciUsr.so, liblnxnotifyqUsr.so, liblnxplatUsr.so, liblnxpvrUsr.so, liblnxscsUsr.so, liblnxtmasUsr.so, liblnxtmvssUsr.so, liblnxUKAL.so, libtmpvrDataManager-cst.so, libtmpvrIndexStorage.so
 Depends: @DEP@

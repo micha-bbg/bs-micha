@@ -1,0 +1,13 @@
+--- a/glib/gmessages.h
++++ b/glib/gmessages.h
+@@ -612,5 +612,10 @@
+ #endif /* !G_DISABLE_CHECKS */
+ 
+ G_END_DECLS
++ 
++#ifdef __UCLIBC__
++/* uclibc does not implement mkostemp GNU extention */
++#define mkostemp(x,y) mkstemp(x)
++#endif
+ 
+ #endif /* __G_MESSAGES_H__ */

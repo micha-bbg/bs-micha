@@ -1,12 +1,11 @@
-Package: openssl-libs
+Package: libmount
 Version: @VER@-1
-Description: OpenSSL Libraries for SSL Encryption
+Description: Library to parse/manage /etc/fstab, /etc/mtab etc.
 Section: base/libraries
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://www.openssl.org/
+Homepage: http://kernel.org/~kzak/util-linux/
 Source:
 Depends: @DEP@
 Provides: @PROV@
-

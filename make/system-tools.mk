@@ -121,7 +121,9 @@ $(D)/busybox: $(ARCHIVE)/busybox-$(BUSYBOX_VER).tar.bz2 | $(TARGETPREFIX)
 	sed -i 's/,$$//' $(BUILD_TMP)/bb-control/control
 	sed -i 's/\(^Provides:\)\(.*$$\)/\1\2\nConflicts:\2/' $(BUILD_TMP)/bb-control/control
 	echo >> $(BUILD_TMP)/bb-control/control
-	PKG_VER=$(BUSYBOX_VER) $(OPKG_SH) $(BUILD_TMP)/bb-control
+	PKG_VER=$(BUSYBOX_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		$(OPKG_SH) $(BUILD_TMP)/bb-control
 	$(REMOVE)/busybox-$(BUSYBOX_VER) $(BUILD_TMP)/bb-control
 	$(RM_PKGPREFIX)
 	touch $@
@@ -171,7 +173,10 @@ $(D)/e2fsprogs: $(ARCHIVE)/e2fsprogs-$(E2FSPROGS_VER).tar.gz | $(TARGETPREFIX)
 	cd $(PKGPREFIX_BASE) && rm sbin/badblocks sbin/dumpe2fs sbin/logsave \
 		sbin/e2undo sbin/filefrag sbin/e2freefrag bin/chattr bin/lsattr bin/uuidgen \
 		lib/*.so && rm -r lib/pkgconfig include && rm -f lib/*.a
-	PKG_VER=$(E2FSPROGS_VER) $(OPKG_SH) $(CONTROL_DIR)/e2fsprogs
+	PKG_VER=$(E2FSPROGS_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX_BASE)` \
+		$(OPKG_SH) $(CONTROL_DIR)/e2fsprogs
 	$(RM_PKGPREFIX)
 	touch $@
 
@@ -505,6 +510,11 @@ $(D)/openvpn: $(D)/killproc $(D)/openssl $(ARCHIVE)/openvpn-$(OPENVPN_VER).tar.x
 		make install DESTDIR=$(PKGPREFIX)
 	rm -fr $(PKGPREFIX)/include $(PKGPREFIX)/share
 	cp $(PKGPREFIX)/sbin/openvpn $(TARGETPREFIX)/sbin
+ifneq ($(TARGETPREFIX), $(TARGETPREFIX_BASE))
+	mkdir -p $(PKGPREFIX_BASE)/sbin
+	ln -sf /usr/sbin/openvpn $(PKGPREFIX_BASE)/sbin/openvpn
+	ln -sf /usr/sbin/openvpn $(TARGETPREFIX_BASE)/sbin/openvpn
+endif
 	PKG_VER=$(OPENVPN_VER) \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/openvpn
@@ -727,17 +737,22 @@ $(D)/fontconfig: $(ARCHIVE)/fontconfig-$(FONTCONFIG_VER).tar.bz2 | $(TARGETPREFI
 	$(RM_PKGPREFIX)
 	touch $@
 
-$(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPREFIX)
+$(D)/util-linux: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPREFIX)
 	$(REMOVE)/util-linux-$(UTIL_LINUX_VER)
 	$(RM_PKGPREFIX)
+	$(REMOVE)/util_linux_tmp
 	$(UNTAR)/util-linux-$(UTIL_LINUX_VER).tar.xz
 	set -e; cd $(BUILD_TMP)/util-linux-$(UTIL_LINUX_VER); \
+		rm configure; ./autogen.sh; \
 		if [ "$(UCLIBC_BUILD)" = "1" ]; then \
-			$(PATCH)/util-linux/0001-sscanf-no-ms-as.patch; \
+			$(PATCH)/util-linux/0001-$(UTIL_LINUX_MAJOR)-sscanf-no-ms-as.patch; \
 			$(PATCH)/util-linux/0003-c.h-define-mkostemp-for-older-version-of-uClibc.patch; \
 		fi; \
-		$(PATCH)/util-linux/0002-program-invocation-short-name.patch; \
-		$(BUILDENV) \
+		CFLAGS="$(TARGET_CFLAGS)" \
+		CPPFLAGS="$(TARGET_CPPFLAGS)" \
+		CXXFLAGS="$(TARGET_CXXFLAGS)" \
+		LDFLAGS="$(TARGET_LDFLAGS) -Wl,-rpath-link,$(TARGETPREFIX)/lib" \
+		PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
 		NCURSES_CFLAGS="-I$(TARGETPREFIX)/include/ncurses" \
 		NCURSES_LIBS="-L$(TARGETPREFIX)/lib -lncurses" \
 		./configure \
@@ -752,14 +767,8 @@ $(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPRE
 			--with-ncurses \
 			--disable-login \
 			--disable-su \
-			--disable-fsck \
-			--disable-uuidd \
-			--disable-tls \
-			--disable-libmount \
-			--disable-mount \
 			--disable-losetup \
 			--disable-zramctl \
-			--disable-fsck \
 			--disable-mountpoint \
 			--disable-fallocate \
 			--disable-unshare \
@@ -774,7 +783,6 @@ $(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPRE
 			--disable-wdctl \
 			--disable-switch_root \
 			--disable-pivot_root \
-			--disable-kill \
 			--disable-last \
 			--disable-utmpdump \
 			--disable-mesg \
@@ -782,7 +790,6 @@ $(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPRE
 			--disable-rename \
 			--disable-nologin \
 			--disable-sulogin \
-			--disable-su \
 			--disable-runuser \
 			--disable-ul \
 			--disable-more \
@@ -793,22 +800,47 @@ $(D)/sfdisk-static: $(ARCHIVE)/util-linux-$(UTIL_LINUX_VER).tar.xz | $(TARGETPRE
 			--disable-fdformat \
 			--disable-wall \
 			--disable-bash-completion \
-			--disable-rpath \
 			--disable-nls \
+			--enable-rpath \
 			--enable-static-programs=sfdisk \
+			--enable-libmount \
 			; \
 		$(MAKE); \
-		install -D -m 755 sfdisk.static $(PKGPREFIX_BASE)/sbin/sfdisk; \
-		install -D -m 755 sfdisk.static $(TARGETPREFIX_BASE)/sbin/sfdisk
+		make install DESTDIR=$(BUILD_TMP)/util_linux_tmp
+	mkdir -p $(PKGPREFIX_BASE)/sbin
+	cp -fd $(BUILD_TMP)/util_linux_tmp/sbin/sfdisk.static $(PKGPREFIX_BASE)/sbin/sfdisk
+	cp -fd $(BUILD_TMP)/util_linux_tmp/sbin/sfdisk.static $(TARGETPREFIX_BASE)/sbin/sfdisk
 	PKG_VER=$(UTIL_LINUX_VER) \
 		$(OPKG_SH) $(CONTROL_DIR)/util-linux/sfdisk-static
+	$(RM_PKGPREFIX)
+	mkdir -p $(PKGPREFIX)/include/libmount
+	mkdir -p $(PKGPREFIX)/lib/pkgconfig
+	cp -fd $(BUILD_TMP)/util_linux_tmp/usr/lib/libmount.la $(PKGPREFIX)/lib
+	cp -fd $(BUILD_TMP)/util_linux_tmp/usr/lib/libmount.a $(PKGPREFIX)/lib
+	cp -fd $(BUILD_TMP)/util_linux_tmp/lib/libmount.so* $(PKGPREFIX)/lib
+	cp -d $(PKGPREFIX)/lib/libmount.so.1 $(PKGPREFIX)/lib/libmount.so
+	cp -fd $(BUILD_TMP)/util_linux_tmp/usr/include/libmount/libmount.h $(PKGPREFIX)/include/libmount
+	cp -fd $(BUILD_TMP)/util_linux_tmp/usr/lib/pkgconfig/mount.pc $(PKGPREFIX)/lib/pkgconfig
+	cp -a $(PKGPREFIX)/* $(TARGETPREFIX)
+	rm -fr $(PKGPREFIX)/include; rm -fr $(PKGPREFIX)/lib/pkgconfig
+	rm -f $(PKGPREFIX)/lib/*.*a; rm -f $(PKGPREFIX)/lib/*.so
+	$(REWRITE_LIBTOOL)/libmount.la
+	sed -i "s,^prefix=.*,prefix=$(TARGETPREFIX)," $(PKG_CONFIG_PATH)/mount.pc
+	sed -i "s,^exec_prefix=.*,exec_prefix=$(TARGETPREFIX)," $(PKG_CONFIG_PATH)/mount.pc
+	sed -i "s,^libdir=.*,libdir=$(TARGETPREFIX)/lib," $(PKG_CONFIG_PATH)/mount.pc
+	sed -i "s,^includedir=.*,includedir=$(TARGETPREFIX)/include," $(PKG_CONFIG_PATH)/mount.pc
+	PKG_VER=$(UTIL_LINUX_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/util-linux/libmount
+	$(REMOVE)/util_linux_tmp
 	$(REMOVE)/util-linux-$(UTIL_LINUX_VER)
 	$(RM_PKGPREFIX)
 	touch $@
 
 
 SYSTEM_TOOLS = $(D)/rsync $(D)/procps $(D)/busybox $(D)/e2fsprogs $(D)/vsftpd $(D)/opkg 
-SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables $(D)/sfdisk-static
+SYSTEM_TOOLS += $(D)/ntfs-3g $(D)/ntp $(D)/openvpn $(D)/ncftp $(D)/xupnpd $(D)/iptables $(D)/util-linux
 ifeq ($(UCLIBC_BUILD), 1)
 SYSTEM_TOOLS += $(D)/libiconv
 endif

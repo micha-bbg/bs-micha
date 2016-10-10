@@ -5,7 +5,7 @@ Section: base/libraries
 Priority: standard
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: http://www.openscenegraph.org/svn/osg/OpenThreads/
-Source:
-Depends:
-Provides: libOpenThreads.so.12
+Homepage: http://trac.openscenegraph.org/projects/osg//wiki/Support/KnowledgeBase/OpenThreads
+Source: http://trac.openscenegraph.org/projects/osg/browser/OpenThreads
+Depends: @DEP@
+Provides: @PROV@

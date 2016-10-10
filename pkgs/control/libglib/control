@@ -6,6 +6,6 @@ Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage: http://www.gtk.org/
-Source:
+Source: http://ftp.acc.umu.se/pub/gnome/sources/glib/
 Depends: @DEP@
 Provides: @PROV@

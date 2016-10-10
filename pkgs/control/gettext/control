@@ -5,7 +5,7 @@ Section: extras/libraries
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage:
-Source:
+Homepage: https://www.gnu.org/software/gettext/
+Source: http://ftp.gnu.org/pub/gnu/gettext/
 Depends: @DEP@
 Provides: @PROV@

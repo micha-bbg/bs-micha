@@ -5,6 +5,7 @@ Section: extras/libraries
 Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
-Homepage: https://sourceware.org/libffi
-Source:
+Homepage: https://sourceware.org/libffi/
+Source: ftp://sourceware.org/pub/libffi/
 Depends: @DEP@
+Provides: @PROV@

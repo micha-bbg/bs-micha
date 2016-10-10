@@ -6,5 +6,5 @@ Priority: optional
 Maintainer: @MAINT@
 Architecture: @ARCH@
 Homepage:
-Source: https://slknet.de/bs-micha-download
+Source: https://bs-micha.tuxcode.de/download
 Depends: @DEP@

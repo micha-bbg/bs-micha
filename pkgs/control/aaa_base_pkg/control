@@ -6,5 +6,5 @@ Priority: required
 Maintainer: @MAINT@
 Architecture: arm
 Homepage: https://wiki.neutrino-hd.de/
-Source: https://gitweb.slknet.de/00/
+Source: https://gitweb.tuxcode.de/00/
 Provides: @PROV@

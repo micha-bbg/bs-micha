@@ -1,0 +1,11 @@
+Package: libpcre
+Version: @VER@-1
+Description: Package contains Perl Compatible Regular Expression libraries.
+Section: extras/libraries
+Priority: optional
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://www.linuxfromscratch.org/blfs/view/svn/general/pcre.html
+Source: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
+Depends: @DEP@
+Provides: @PROV@

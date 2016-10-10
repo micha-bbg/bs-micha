@@ -8,6 +8,7 @@ case $1 in
 			exit
 		fi
 		chown 0:0 $CONF
+		chown -R 0:0 /share/empty
 		vsftpd $CONF
 		;;
 	stop)

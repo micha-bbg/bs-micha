@@ -1,6 +1,5 @@
 
 # opkg; a lightweight package management system based on Ipkg
-#OPKG_VER=0.3.1
 OPKG_VER=0.3.3
 
 ## for recent versions, the SVN trunk rev is used:
@@ -20,7 +19,7 @@ OPENSSH_VER = 6.2p2
 LZO_VER = 2.06
 
 # mtd-utils for the host...
-MTD_UTILS_VER = 1.5.0
+MTD_UTILS_VER = 1.5.1-cst
 
 # unrar
 UNRAR_VER = 5.2.7
@@ -153,18 +152,20 @@ READLINE_VER = 6.3
 PARTED_VER = 3.2
 
 # mc; the famous midnight commander
-MC_VER=4.8.14
+MC_VER=4.8.18
 
 LIBFFI_VER = 3.2.1
 
+PCRE_VER = 8.39
+
 # glib; the low-level core library that forms the basis for projects such as GTK+ and GNOME
 GLIB_MAJOR=2
-GLIB_MINOR=44
+GLIB_MINOR=50
 GLIB_MICRO=0
 GLIB_VER=$(GLIB_MAJOR).$(GLIB_MINOR).$(GLIB_MICRO)
 
 # gettext
-GETTEXT_VER = 0.19.4
+GETTEXT_VER = 0.19.8
 
 #WPA_SUPPLICANT_VER = 2.0
 WPA_SUPPLICANT_VER = 0.7.3
@@ -237,6 +238,7 @@ IPTABLES_RULES_VER = 0.1
 SYSTEMLIBS_DUMMY_VER = 0.1
 
 KERNELCHECK_VER = 0.4.0
+LOGOVIEW_VER = 1.07
 
 UBOOT_VER = 2015.04
 
@@ -257,7 +259,7 @@ LIBRTMP_VER = 2.3
 
 LIBARCHIVE_VER = 3.1.2
 
-UTIL_LINUX_MAJOR = 2.26
+UTIL_LINUX_MAJOR = 2.28
 UTIL_LINUX_MINOR = 2
 UTIL_LINUX_VER = $(UTIL_LINUX_MAJOR).$(UTIL_LINUX_MINOR)
 

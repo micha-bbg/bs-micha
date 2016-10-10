@@ -211,7 +211,10 @@ $(D)/libpng-$(PNG_VER): $(ARCHIVE)/libpng-$(PNG_VER).tar.xz $(D)/zlib | $(TARGET
 	rm -fr $(BUILD_TMP)/tmpman $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libpng$(PNG_VER_X).so.* $(PKGPREFIX)/lib
-	PKG_VER=$(PNG_VER) $(OPKG_SH) $(CONTROL_DIR)/libpng$(PNG_VER_X)
+	PKG_VER=$(PNG_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libpng$(PNG_VER_X)
 	$(RM_PKGPREFIX)
 	touch $@
 
@@ -296,8 +299,10 @@ $(D)/libjpeg-turbo-$(JPEG_TURBO_VER): $(ARCHIVE)/libjpeg-turbo-$(JPEG_TURBO_VER)
 	$(REMOVE)/libjpeg-turbo-$(JPEG_TURBO_VER) $(TARGETPREFIX)/.remove $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libjpeg.so.* $(PKGPREFIX)/lib
-	PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-		PKG_VER=$(JPEG_TURBO_VER) $(OPKG_SH) $(CONTROL_DIR)/libjpeg
+	PKG_VER=$(JPEG_TURBO_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+		$(OPKG_SH) $(CONTROL_DIR)/libjpeg
 	$(RM_PKGPREFIX)
 	touch $@
 
@@ -349,6 +354,7 @@ $(D)/openssl: $(ARCHIVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER).tar.gz | $(TARG
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libcrypto.pc
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libssl.pc
 	PKG_VER=$(OPENSSL_VER)$(OPENSSL_SUBVER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
 		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 			$(OPKG_SH) $(CONTROL_DIR)/openssl-libs
 	$(REMOVE)/openssl-$(OPENSSL_VER)$(OPENSSL_SUBVER)
@@ -563,7 +569,9 @@ $(D)/ffmpeg-$(FFMPEG_VER): $(FFMPEG_DEPS) $(D)/freetype $(D)/librtmp | $(TARGETP
 	$(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswresample.pc
 	test -e $(PKG_CONFIG_PATH)/libswscale.pc && $(REWRITE_PKGCONF) $(PKG_CONFIG_PATH)/libswscale.pc || true
 	rm -rf $(PKGPREFIX)/include $(PKGPREFIX)/lib/pkgconfig $(PKGPREFIX)/lib/*.so $(PKGPREFIX)/.remove
-	PKG_VER=$(FFMPEG_VER) PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+	PKG_VER=$(FFMPEG_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
 		$(OPKG_SH) $(CONTROL_DIR)/ffmpeg
 	$(REMOVE)/ffmpeg-$(FFMPEG_VER)
 	$(RM_PKGPREFIX)
@@ -630,6 +638,7 @@ $(D)/libncurses: $(ARCHIVE)/ncurses-$(NCURSES_VER).tar.gz | ncurses-prereq $(TAR
 $(D)/libdvbsi++: $(ARCHIVE)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2 \
 $(PATCHES)/libdvbsi++-src-time_date_section.cpp-fix-sectionLength-check.patch \
 $(PATCHES)/libdvbsi++-fix-unaligned-access-on-SuperH.patch
+	$(RM_PKGPREFIX)
 	$(REMOVE)/libdvbsi++-$(LIBDVBSI_VER)
 	$(UNTAR)/libdvbsi++-$(LIBDVBSI_VER).tar.bz2
 	set -e; cd $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER); \
@@ -643,10 +652,12 @@ $(PATCHES)/libdvbsi++-fix-unaligned-access-on-SuperH.patch
 			$(MAKE) install
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(BUILD_TMP)/libdvbsi++-$(LIBDVBSI_VER)/src/.libs/libdvbsi++.so.* $(PKGPREFIX)/lib
-	PKG_DEP=" " PKG_VER=$(LIBDVBSI_VER) PKG_VER=$(LIBDVBSI_VER) \
-	PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
-	$(OPKG_SH) $(CONTROL_DIR)/libdvbsi++
-	$(REMOVE)/libdvbsi++-$(LIBDVBSI_VER) $(PKGPREFIX)
+	PKG_VER=$(LIBDVBSI_VER) \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/libdvbsi++
+	$(REMOVE)/libdvbsi++-$(LIBDVBSI_VER)
+	$(RM_PKGPREFIX)
 	touch $@
 
 # the strange find | sed hack is needed for old cmake versions which
@@ -668,7 +679,10 @@ $(D)/openthreads: | $(TARGETPREFIX) find-lzma
 	$(REMOVE)/OpenThreads-svn-13083 $(PKGPREFIX)
 	mkdir -p $(PKGPREFIX)/lib
 	cp -a $(TARGETPREFIX)/lib/libOpenThreads.so.* $(PKGPREFIX)/lib
-	PKG_VER=13083 $(OPKG_SH) $(CONTROL_DIR)/libOpenThreads
+	PKG_VER=13083 \
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX)` \
+			$(OPKG_SH) $(CONTROL_DIR)/libOpenThreads
 	$(RM_PKGPREFIX)
 	touch $@
 

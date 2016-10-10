@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo "Kernel install done, reboot..."
-sleep 3
-reboot -f
