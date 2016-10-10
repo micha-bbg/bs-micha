@@ -3,6 +3,7 @@ $(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/opkg-$(OPKG_VER)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
+		$(PATCH)/opkg_change_default_dirs.diff; \
 		./autogen.sh; \
 		CFLAGS="-I/usr/include" \
 		LDFLAGS="-L/usr/lib" \
@@ -25,6 +26,7 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 	$(REMOVE)/opkg-$(OPKG_VER)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
+		$(PATCH)/opkg_change_default_dirs.diff; \
 		echo ac_cv_func_realloc_0_nonnull=yes >> config.cache; \
 		test -f ./configure || ./autogen.sh && \
 		$(BUILDENV) \

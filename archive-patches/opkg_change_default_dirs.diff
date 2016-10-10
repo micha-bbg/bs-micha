@@ -1,0 +1,20 @@
+--- a/libopkg/opkg_conf.h
++++ a/libopkg/opkg_conf.h
+@@ -35,12 +35,12 @@
+ #define OPKG_CONF_TMP_DIR_SUFFIX "opkg-XXXXXX"
+ #define OPKG_BACKUP_SUFFIX "-opkg.backup"
+ 
+-#define OPKG_CONF_DEFAULT_LISTS_DIR     "/var/lib/opkg/lists"
+-#define OPKG_CONF_DEFAULT_INFO_DIR      "/var/lib/opkg/info"
+-#define OPKG_CONF_DEFAULT_STATUS_FILE   "/var/lib/opkg/status"
+-#define OPKG_CONF_DEFAULT_CACHE_DIR     "/var/cache/opkg"
++#define OPKG_CONF_DEFAULT_LISTS_DIR     "/opt/opkg/lists"
++#define OPKG_CONF_DEFAULT_INFO_DIR      "/opt/opkg/info"
++#define OPKG_CONF_DEFAULT_STATUS_FILE   "/opt/opkg/status"
++#define OPKG_CONF_DEFAULT_CACHE_DIR     "/opt/opkg/cache"
+ #define OPKG_CONF_DEFAULT_CONF_FILE_DIR "/etc/opkg"
+-#define OPKG_CONF_DEFAULT_LOCK_FILE     "/var/run/opkg.lock"
++#define OPKG_CONF_DEFAULT_LOCK_FILE     "/tmp/opkg.lock"
+ 
+ /* In case the config file defines no dest */
+ #define OPKG_CONF_DEFAULT_DEST_NAME "root"
