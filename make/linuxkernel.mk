@@ -77,8 +77,13 @@ cskernel-image: $(HOSTPREFIX)/bin/mkimage
 		> $(BUILD_TMP)/kernel-img/zImage_DTB;
 	cd $(BUILD_TMP)/kernel-img && \
 		rm -f vmlinux.ub.gz; \
+		rm -f u-boot.bin; \
+		rm -f uldr.bin; \
 		mkimage -A ARM -O linux -T kernel -C none -a $(LOAD_ADDR) -e $(TEXT_ADDR) \
-			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d zImage_DTB vmlinux.ub.gz
+			-n "$(KRNL_NAME) $(KERNEL_BUILD_INT)" -d zImage_DTB vmlinux.ub.gz; \
+		rm -f zImage_DTB; \
+		cp -f $(SOURCE_DIR)/cst-public-drivers/$(PLATFORM)-3.x/u-boot.bin .; \
+		cp -f $(SOURCE_DIR)/cst-public-drivers/$(PLATFORM)-3.x/uldr.bin .
 
 $(D)/cskernel: $(K_OBJ)/.config
 	rm -f $(K_SRCDIR)/.config
