@@ -57,25 +57,30 @@ $(CROSS_DIR):
 
 cst-libs: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib
-	cp -a --remove-destination $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(TARGETPREFIX_BASE)/lib
+	cp -a --remove-destination $(SOURCE_DIR)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(TARGETPREFIX_BASE)/lib
 	$(RM_PKGPREFIX)
 	mkdir -p $(PKGPREFIX_BASE)/lib
-	cp -a $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(PKGPREFIX_BASE)/lib
-	PKG_VER=1.0 \
+	cp -a $(SOURCE_DIR)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/$(CST_LIBS)/*.so $(PKGPREFIX_BASE)/lib
+	if [ "$(PLATFORM)" = "nevis" ]; then \
+		CONTROL_DIR_LIBS=HD1; \
+	else \
+		CONTROL_DIR_LIBS=HD2; \
+	fi; \
+	PKG_VER=$(PLATFORM)-1.0 \
 		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
-			$(OPKG_SH) $(CONTROL_DIR)/cs-libs
+			$(OPKG_SH) $(CONTROL_DIR)/cs-libs/$$CONTROL_DIR_LIBS
 	$(RM_PKGPREFIX)
 
 cst-firmware: | $(TARGETPREFIX)
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/firmware $(TARGETPREFIX_BASE)/lib
+	cp -fa $(SOURCE_DIR)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/firmware $(TARGETPREFIX_BASE)/lib
 
 cst-modules-apollo: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(SOURCE_DIR)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
 
 cst-modules-kronos: | $(TARGETPREFIX)
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules; \
-	cp -fa $(CST_GIT)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
+	cp -fa $(SOURCE_DIR)/$(SOURCE_DRIVERS)/$(PLATFORM)$(DRIVERS_3x)/drivers/$(KVERSION) $(TARGETPREFIX_BASE)/lib/modules; \
 
 NEVIS_MODULES = \
 	8192cu.ko \
@@ -104,7 +109,7 @@ cst-modules-nevis: | $(TARGETPREFIX)
 	rm -fr $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra
 	mkdir -p $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra
 	for m in $(NEVIS_MODULES); do \
-		cp $(CST_GIT)/$(SOURCE_DRIVERS)/nevis/drivers/$(KVERSION)-nevis/$$m $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra; \
+		cp $(SOURCE_DIR)/$(SOURCE_DRIVERS)/nevis/drivers/$(KVERSION)-nevis/$$m $(TARGETPREFIX_BASE)/lib/modules/$(KVERSION)-nevis/extra; \
 	done
 
 $(TARGETPREFIX_BASE)/lib/libc.so.6: $(TARGETPREFIX)

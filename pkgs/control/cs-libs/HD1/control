@@ -1,0 +1,11 @@
+Package: cs-libs
+Version: @VER@-1
+Description: Libraries for Coolstream HD1 Hardware
+Section: base/drivers
+Priority: required
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage:
+Source: https://gitweb.slknet.de/00/?p=cst-public-drivers.git;a=summary
+Provides: libca-sc.so, libcoolstream-mt.so, libnxp.so
+Depends: @DEP@
