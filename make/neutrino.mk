@@ -68,7 +68,9 @@ N_CONFIG_OPTS += --enable-pip
 N_CONFIG_OPTS += --enable-lua
 #N_CONFIG_OPTS += --enable-testing
 N_CONFIG_OPTS += --enable-pugixml 
-N_CONFIG_OPTS += --enable-zeromq
+
+# when using libopkg
+N_CONFIG_OPTS += --enable-libopkg
 
 ifeq ($(AUDIODEC), ffmpeg)
 # enable ffmpeg audio decoder in neutrino

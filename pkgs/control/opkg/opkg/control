@@ -1,0 +1,11 @@
+Package: opkg
+Version: @VER@-1
+Description: Lightweight Package Management System
+Section: base
+Priority: required
+Maintainer: @MAINT@
+Architecture: @ARCH@
+Homepage: http://git.yoctoproject.org/cgit/cgit.cgi/opkg
+Source:
+Depends: @DEP@
+Provides: @PROV@

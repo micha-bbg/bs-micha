@@ -1,4 +1,7 @@
 
+OPKG_DATA_ROOT = /opt/opkg
+OPKG_DEBUG     = 1
+
 $(D)/opkg-host: $(ARCHIVE)/opkg-$(OPKG_VER).tar.gz | $(TARGETPREFIX)
 	$(REMOVE)/opkg-$(OPKG_VER)
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
@@ -27,7 +30,6 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 	$(UNTAR)/opkg-$(OPKG_VER).tar.gz
 	set -e; cd $(BUILD_TMP)/opkg-$(OPKG_VER); \
 		$(PATCH)/opkg_change_default_dirs.diff; \
-		echo ac_cv_func_realloc_0_nonnull=yes >> config.cache; \
 		test -f ./configure || ./autogen.sh && \
 		$(BUILDENV) \
 		LIBARCHIVE_LIBS="-L$(TARGETPREFIX)/lib -larchive" \
@@ -35,29 +37,36 @@ $(D)/opkg: $(D)/opkg-host $(D)/libcurl $(D)/libarchive $(ARCHIVE)/opkg-$(OPKG_VE
 		./configure $(CONFIGURE_OPTS) \
 			--prefix= \
 			--disable-gpg \
-			--config-cache \
 			--mandir=/.remove \
-			--with-static-libopkg \
+			--enable-libopkg-api \
 			; \
 		$(MAKE) all ; \
 		make install DESTDIR=$(TARGETPREFIX_BASE); \
 		make install DESTDIR=$(PKGPREFIX_BASE); \
+		$(PATCH)/opkg_message_h-rename_debug_options.diff; \
+		cp -f libopkg/opkg_message.h $(TARGETPREFIX_BASE)/include/libopkg
 	rm -fr $(TARGETPREFIX_BASE)/.remove; rm -fr $(PKGPREFIX_BASE)/.remove
-	rm -fr $(PKGPREFIX_BASE)/lib
-	install -d -m 0755 $(PKGPREFIX_BASE)/var/lib/opkg
-	install -d -m 0755 $(PKGPREFIX_BASE)/etc/opkg
-	ln -sf opkg $(PKGPREFIX_BASE)/bin/opkg-cl
-	install -d -m 0755 $(TARGETPREFIX_BASE)/var/lib/opkg
+	install -d -m 0755 $(TARGETPREFIX_BASE)$(OPKG_DATA_ROOT)
 	install -d -m 0755 $(TARGETPREFIX_BASE)/etc/opkg
 	ln -sf opkg $(TARGETPREFIX_BASE)/bin/opkg-cl
-	rm -fr $(TARGETPREFIX_BASE)/lib/libopkg.*
-	rm -fr $(TARGETPREFIX_BASE)/lib/pkgconfig/libopkg.pc
+	$(REWRITE_LIBTOOL_BASE)/libopkg.la
+	$(call MOVE_PC_FILE,libopkg.pc)
+	$(REWRITE_PKGCONF_BASE) $(PKG_CONFIG_PATH)/libopkg.pc
+	install -d -m 0755 $(PKGPREFIX_BASE)$(OPKG_DATA_ROOT)
+	install -d -m 0755 $(PKGPREFIX_BASE)/etc/opkg
+	ln -sf opkg $(PKGPREFIX_BASE)/bin/opkg-cl
+	rm -fr $(PKGPREFIX_BASE)/include; rm -fr $(PKGPREFIX_BASE)/lib/pkgconfig
+	rm -f $(PKGPREFIX_BASE)/lib/*.*a $(PKGPREFIX_BASE)/lib/*.so
 	PKG_VER=$(OPKG_VER) \
-		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)/bin` \
-		$(OPKG_SH) $(CONTROL_DIR)/opkg
+		PKG_DEP=`opkg-find-requires.sh $(PKGPREFIX_BASE)` \
+		PKG_PROV=`opkg-find-provides.sh $(PKGPREFIX_BASE)` \
+		$(OPKG_SH) $(CONTROL_DIR)/opkg/opkg
+ifneq ($(OPKG_DEBUG), 1)
 	$(REMOVE)/opkg-$(OPKG_VER)
+endif
 	$(RM_PKGPREFIX)
 	touch $@
+
 
 XUPNPD_WORK_BRANCH = tuxcode_1
 

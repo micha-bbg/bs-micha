@@ -1,0 +1,28 @@
+--- a/libopkg/opkg_message.h
++++ b/libopkg/opkg_message.h
+@@ -26,11 +26,11 @@
+ #endif
+ 
+ typedef enum {
+-    ERROR,                  /* error conditions */
+-    NOTICE,                 /* normal but significant condition */
+-    INFO,                   /* informational message */
+-    DEBUG,                  /* debug level message */
+-    DEBUG2,                 /* more debug level message */
++    OPKG_ERROR,             /* error conditions */
++    OPKG_NOTICE,            /* normal but significant condition */
++    OPKG_INFO,              /* informational message */
++    OPKG_DEBUG,             /* debug level message */
++    OPKG_DEBUG2,            /* more debug level message */
+ } message_level_t;
+ 
+ void free_error_list(void);
+@@ -40,7 +40,7 @@
+ 
+ #define opkg_msg(l, fmt, args...) \
+     do { \
+-        if (l == NOTICE) \
++        if (l == OPKG_NOTICE) \
+             opkg_message(l, fmt, ##args); \
+         else \
+             opkg_message(l, "%s: "fmt, __FUNCTION__, ##args); \

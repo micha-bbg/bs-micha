@@ -175,6 +175,7 @@ REWRITE_LIBTOOL_BASE = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX_BASE)/lib'," 
 REWRITE_PKGCONF_BASE = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX_BASE)',"
 REWRITE_LIBTOOL_OPT = sed -i "s,^libdir=.*,libdir='$(TARGETPREFIX)/opt/pkg/lib'," $(TARGETPREFIX)/opt/pkg/lib
 REWRITE_PKGCONF_OPT = sed -i "s,^prefix=.*,prefix='$(TARGETPREFIX)/opt/pkg',"
+MOVE_PC_FILE        = $$(test $(TARGETPREFIX) = $(TARGETPREFIX_BASE) || mv $(TARGETPREFIX_BASE)/lib/pkgconfig/$(1) $(PKG_CONFIG_PATH))
 
 # unpack tarballs, clean up
 UNTAR = tar -C $(BUILD_TMP) -xf $(ARCHIVE)

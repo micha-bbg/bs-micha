@@ -1,4 +1,4 @@
-Package: opkg
+Package: opkg-static
 Version: @VER@-1
 Description: Lightweight Package Management System
 Section: base
