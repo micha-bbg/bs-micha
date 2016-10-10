@@ -1,0 +1,38 @@
+#!/bin/sh
+
+/bin/mount -t proc proc /proc
+
+# the default "vt102" is crap.
+export TERM=linux
+#
+# reset colors, to not hurt my eyes...
+echo -e "\033[0m"
+# 132 lines
+echo -e "\033[?3h"
+
+run_initscripts() {
+	if [ "x$1" == xstop ]; then
+		action="stop"
+		files="/usr/etc/init.d/K[0-9][0-9]* /etc/init.d/K[0-9][0-9]*"
+	else
+		action="start"
+		files="/usr/etc/init.d/S[0-9][0-9]* /etc/init.d/S[0-9][0-9]*"
+	fi
+
+	names=$(for file in $files ; do echo ${file##*/} ; done | sort -u)
+
+	for name in $names; do
+		[ "${name:1}" = "[0-9][0-9]*" ] && continue # mis-globbed /usr/...
+		for file in /usr/etc/init.d/$name /etc/init.d/$name; do
+			if [ -x "$file"  ]; then
+				echo "${action}ing $file ..."
+				"$file" $action
+				break;
+				# only execute the first of a given name,
+				# to allow overriding /etc from /usr
+			fi
+		done
+	done
+}
+
+run_initscripts

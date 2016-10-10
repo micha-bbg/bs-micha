@@ -1,0 +1,29 @@
+#!/bin/sh
+
+export LD_LIBRARY_PATH=/var/lib
+#export LD_LIBRARY_PATH=/usr/lib:/var/lib:/lib
+
+paths="/var/sbin /sbin /usr/sbin /var/bin /bin /usr/bin /var/plugins /var/tuxbox/plugins /lib/tuxbox/plugins /usr/lib/tuxbox/plugins"
+P=
+for i in $paths ;do
+	if [ -d $i ]; then
+		if [ "$P" = "" ]; then
+			P=$i
+		else
+			P=$P:$i
+		fi
+	fi
+done
+export PATH=$P
+
+# hostname in prompt...
+PS1='\\h:\\w \\$ '
+
+alias ll='ls -al'
+alias c='cat'
+alias d='date'
+alias g='grep'
+alias m='more'
+alias h='history'
+alias f='file'
+alias recam='camd_start.sh restart'

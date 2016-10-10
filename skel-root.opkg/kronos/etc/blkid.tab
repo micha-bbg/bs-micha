@@ -1,0 +1,2 @@
+<device DEVNO="0x0801" TIME="15" LABEL="MICHA" UUID="90C3-4150" TYPE="vfat">/dev/sda1</device>
+<device DEVNO="0x0b00" TIME="14" LABEL="U3 System" TYPE="iso9660">/dev/sr0</device>
