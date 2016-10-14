@@ -9,4 +9,3 @@ root
 source
 build_tmp
 make/rootfs_opkg_extras.mk
-
